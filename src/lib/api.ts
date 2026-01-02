@@ -37,9 +37,12 @@ api.interceptors.response.use(
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            // Try to refresh token (using cookie)
+            // Try to refresh token (using cookie, with store token as fallback)
             try {
-                const response = await axios.post(`${API_URL}/api/auth/refresh`, {});
+                const storedRefreshToken = useAuthStore.getState().refreshToken;
+                const response = await axios.post(`${API_URL}/api/auth/refresh`, {
+                    refreshToken: storedRefreshToken // Send fallback token
+                });
 
                 const { accessToken, refreshToken: newRefreshToken } = response.data.data;
 
