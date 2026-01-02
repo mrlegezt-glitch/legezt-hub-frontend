@@ -33,21 +33,28 @@ jobs:
 
       - name: Prepare standalone package
         run: |
+          # Copy public assets
           cp -r public .next/standalone/
+          
+          # Create and populate .next folder inside standalone
           mkdir -p .next/standalone/.next
           cp -r .next/static .next/standalone/.next/
           cp .next/BUILD_ID .next/standalone/.next/
           cp .next/required-server-files.json .next/standalone/.next/
-          echo "-----------------------------------"
-          echo "DEBUG: Listing .next/standalone/.next content:"
+          
+          # Debug: List contents before zipping
+          echo "DEBUG: Content of .next/standalone/.next:"
           ls -la .next/standalone/.next/
-          echo "-----------------------------------"
+          
+          # Zip the content of standalone folder
+          cd .next/standalone
+          zip -r ../../deploy.zip .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .next/standalone
+          path: deploy.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -75,4 +82,4 @@ jobs:
         with:
           app-name: 'legezt-hub-ui-prod'
           slot-name: 'Production'
-          package: .
+          package: deploy.zip
