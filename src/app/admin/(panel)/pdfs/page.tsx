@@ -318,7 +318,7 @@ export default function PDFsPage() {
                 </button>
             </div>
 
-            {/* Recent Uploads Table */}
+            {/* Recent Uploads Table & Mobile Cards */}
             <div className="bg-dark-200 border border-dark-border rounded-xl overflow-hidden shadow-lg">
                 <div className="px-6 py-4 border-b border-dark-border">
                     <h3 className="font-bold text-white">Recent Uploads</h3>
@@ -328,76 +328,133 @@ export default function PDFsPage() {
                 ) : pdfs.length === 0 ? (
                     <div className="p-8 text-center text-gray-400">No PDFs found. Upload one to get started.</div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left min-w-[800px]">
-                            <thead className="bg-dark-300 text-gray-400 text-sm">
-                                <tr>
-                                    <th className="px-6 py-3 font-medium">Title</th>
-                                    <th className="px-6 py-3 font-medium">Location</th>
-                                    <th className="px-6 py-3 font-medium">Size</th>
-                                    <th className="px-6 py-3 font-medium">Downloads</th>
-                                    <th className="px-6 py-3 font-medium">Date</th>
-                                    <th className="px-6 py-3 font-medium text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-dark-border">
-                                {pdfs.map((pdf) => {
-                                    const folderName = pdf.folder?.name || 'Unknown';
+                    <>
+                        {/* Desktop Table */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="w-full text-left min-w-[800px]">
+                                <thead className="bg-dark-300 text-gray-400 text-sm">
+                                    <tr>
+                                        <th className="px-6 py-3 font-medium">Title</th>
+                                        <th className="px-6 py-3 font-medium">Location</th>
+                                        <th className="px-6 py-3 font-medium">Size</th>
+                                        <th className="px-6 py-3 font-medium">Downloads</th>
+                                        <th className="px-6 py-3 font-medium">Date</th>
+                                        <th className="px-6 py-3 font-medium text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-dark-border">
+                                    {pdfs.map((pdf) => {
+                                        const folderName = pdf.folder?.name || 'Unknown';
+                                        return (
+                                            <tr key={pdf.id} className="hover:bg-dark-300/50 transition-colors">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded bg-red-500/10 text-red-500 flex items-center justify-center flex-shrink-0">
+                                                            <FileText size={16} />
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-medium text-white">{pdf.title}</div>
+                                                            <div className="text-xs text-gray-500 truncate max-w-[200px]">{pdf.fileName}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-sm">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex items-center gap-2 text-white font-medium">
+                                                            <Folder size={14} className="text-yellow-500" />
+                                                            {folderName}
+                                                        </div>
+                                                        <button
+                                                            onClick={() => openLocationPopup(pdf)}
+                                                            className="p-1 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-md transition-all"
+                                                        >
+                                                            <Info size={14} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-gray-400 text-sm">{pdf.sizeFormatted}</td>
+                                                <td className="px-6 py-4 text-gray-400 text-sm">{pdf.downloadCount}</td>
+                                                <td className="px-6 py-4 text-gray-400 text-sm">
+                                                    {new Date(pdf.createdAt).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <button
+                                                            onClick={() => openEditModal(pdf)}
+                                                            className="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-500/10 rounded-lg transition-colors"
+                                                        >
+                                                            <Edit2 size={18} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(pdf.id)}
+                                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                        >
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
 
-                                    return (
-                                        <tr key={pdf.id} className="hover:bg-dark-300/50 transition-colors">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded bg-red-500/10 text-red-500 flex items-center justify-center flex-shrink-0">
-                                                        <FileText size={16} />
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-medium text-white">{pdf.title}</div>
-                                                        <div className="text-xs text-gray-500 truncate max-w-[200px]">{pdf.fileName}</div>
-                                                    </div>
+                        {/* Mobile Cards */}
+                        <div className="md:hidden divide-y divide-dark-border">
+                            {pdfs.map((pdf) => {
+                                const folderName = pdf.folder?.name || 'Unknown';
+                                return (
+                                    <div key={pdf.id} className="p-4 space-y-3">
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded bg-red-500/10 text-red-500 flex items-center justify-center flex-shrink-0">
+                                                    <FileText size={20} />
                                                 </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex items-center gap-2 text-white font-medium">
-                                                        <Folder size={14} className="text-yellow-500" />
-                                                        {folderName}
-                                                    </div>
-                                                    <button
-                                                        onClick={() => openLocationPopup(pdf)}
-                                                        className="p-1 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-md transition-all"
-                                                    >
-                                                        <Info size={14} />
-                                                    </button>
+                                                <div>
+                                                    <div className="font-medium text-white line-clamp-1">{pdf.title}</div>
+                                                    <div className="text-xs text-gray-500 truncate max-w-[200px]">{pdf.fileName}</div>
                                                 </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-gray-400 text-sm">{pdf.sizeFormatted}</td>
-                                            <td className="px-6 py-4 text-gray-400 text-sm">{pdf.downloadCount}</td>
-                                            <td className="px-6 py-4 text-gray-400 text-sm">
-                                                {new Date(pdf.createdAt).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <button
-                                                        onClick={() => openEditModal(pdf)}
-                                                        className="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-500/10 rounded-lg transition-colors"
-                                                    >
-                                                        <Edit2 size={18} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(pdf.id)}
-                                                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                                                    >
-                                                        <Trash2 size={18} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+                                            </div>
+                                            <div className="flex items-center gap-1">
+                                                <button
+                                                    onClick={() => openEditModal(pdf)}
+                                                    className="p-2 text-gray-400 hover:text-primary-500"
+                                                >
+                                                    <Edit2 size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(pdf.id)}
+                                                    className="p-2 text-gray-400 hover:text-red-500"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 text-sm text-gray-300 bg-dark-300/30 p-2 rounded-lg">
+                                            <Folder size={14} className="text-yellow-500" />
+                                            <span className="truncate flex-1">{folderName}</span>
+                                            <button
+                                                onClick={() => openLocationPopup(pdf)}
+                                                className="text-blue-400"
+                                            >
+                                                <Info size={14} />
+                                            </button>
+                                        </div>
+
+                                        <div className="flex items-center justify-between text-xs text-gray-400 px-1">
+                                            <span>{pdf.sizeFormatted}</span>
+                                            <div className="flex items-center gap-3">
+                                                <span>{pdf.downloadCount} downloads</span>
+                                                <span>{new Date(pdf.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
                 )}
             </div>
 
@@ -480,7 +537,7 @@ export default function PDFsPage() {
                             {/* Folder Selection & Management */}
                             {selectedSubject && (
                                 <div className="space-y-2 p-4 bg-dark-300/50 rounded-lg border border-dark-border">
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                         <label className="text-sm font-medium text-white flex items-center gap-2">
                                             <Folder size={16} className="text-yellow-500" />
                                             Target Folder
@@ -488,7 +545,7 @@ export default function PDFsPage() {
                                         {!isCreatingFolder && !isRenamingFolder && (
                                             <button
                                                 onClick={() => setIsCreatingFolder(true)}
-                                                className="text-xs text-primary-400 hover:text-white flex items-center gap-1"
+                                                className="text-xs text-primary-400 hover:text-white flex items-center gap-1 self-start sm:self-auto"
                                             >
                                                 <Plus size={12} /> New Folder
                                             </button>
