@@ -1,0 +1,301 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+:root.dark {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --dark-bg: #0a0a12;
+  --dark-card: #1e1e2e;
+  --dark-border: #2a2a3e;
+  --bg-gradient-start: #0a0a12;
+  --bg-gradient-end: #1a1a2e;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+}
+
+:root.light {
+  --primary: #f59e0b;
+  --primary-dark: #d97706;
+  --dark-bg: #f5f0e8;
+  --dark-card: #ffffff;
+  --dark-border: #e5ddd0;
+  --bg-gradient-start: #f5f0e8;
+  --bg-gradient-end: #ede4d3;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+/* Mobile-First Components */
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-3 rounded-xl font-medium transition-all hover:shadow-lg hover:shadow-primary-500/25 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-100 border border-dark-border text-white px-6 py-3 rounded-xl font-medium transition-all hover:bg-dark-200 active:scale-95;
+  }
+
+  .card {
+    @apply bg-dark-100/80 backdrop-blur-sm border border-dark-border rounded-2xl p-4;
+  }
+
+  .card-hover {
+    @apply card transition-all hover:border-primary-500/50 hover:shadow-lg hover:shadow-primary-500/10;
+  }
+
+  .input {
+    @apply w-full bg-dark-200 border border-dark-border rounded-xl px-4 py-3 text-white placeholder:text-gray-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
+  }
+
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+}
+
+/* Light Theme Component Overrides */
+:root.light .card {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #f0e6d3;
+  color: #1f2937;
+}
+
+:root.light .btn-secondary {
+  background: #ffffff;
+  border-color: #f0e6d3;
+  color: #1f2937;
+}
+
+:root.light .btn-secondary:hover {
+  background: #fef3c7;
+}
+
+:root.light .glass {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: #f0e6d3;
+}
+
+:root.light .input {
+  background: #ffffff;
+  border-color: #f0e6d3;
+  color: #1f2937;
+}
+
+:root.light .text-white {
+  color: #1f2937;
+}
+
+:root.light .text-gray-400 {
+  color: #6b7280;
+}
+
+:root.light .bg-dark-100,
+:root.light .bg-dark-200,
+:root.light .bg-dark-300 {
+  background: #ffffff;
+}
+
+:root.light .hover\\:bg-dark-100:hover,
+:root.light .hover\\:bg-dark-200:hover {
+  background: #fef3c7;
+}
+
+:root.light .border-dark-border {
+  border-color: #e5ddd0;
+}
+
+/* Light Theme Desktop Header */
+:root.light header.fixed {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: #e5ddd0 !important;
+}
+
+:root.light header.fixed span,
+:root.light header.fixed a {
+  color: #1f2937;
+}
+
+:root.light header.fixed nav {
+  background: rgba(245, 240, 232, 0.8);
+  border-color: #e5ddd0;
+}
+
+:root.light header.fixed nav a {
+  color: #6b7280;
+}
+
+:root.light header.fixed nav a.bg-primary-600 {
+  color: #ffffff;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+  @apply fixed bottom-0 left-0 right-0 bg-dark-300/95 backdrop-blur-lg border-t border-dark-border px-4 py-2 z-50;
+}
+
+.bottom-nav-item {
+  @apply flex flex-col items-center gap-1 py-2 px-4 text-gray-400 transition-colors;
+}
+
+.bottom-nav-item.active {
+  @apply text-primary-500;
+}
+
+/* Step Selector */
+.step-card {
+  @apply card flex items-center justify-between p-4 cursor-pointer transition-all;
+}
+
+.step-card.completed {
+  @apply border-green-500/50 bg-green-500/10;
+}
+
+.step-card.locked {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Bottom Sheet */
+.bottom-sheet {
+  @apply fixed inset-x-0 bottom-0 bg-dark-200 rounded-t-3xl z-50 transition-transform duration-300;
+}
+
+.bottom-sheet-overlay {
+  @apply fixed inset-0 bg-black/60 z-40;
+}
+
+/* PDF Card */
+.pdf-card {
+  @apply card-hover flex items-center gap-4 p-4;
+}
+
+/* Safe area for mobile */
+.safe-bottom {
+  @apply pb-[calc(env(safe-area-inset-bottom)+80px)];
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, #f97316 0%, #ec4899 50%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Loading Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, var(--dark-card) 25%, #2a2a3e 50%, var(--dark-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Slide Up Animation (for bottom sheet) */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Heartbeat & Glow Animation */
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.5));
+  }
+
+  25% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8));
+  }
+
+  40% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.5));
+  }
+
+  60% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8));
+  }
+
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.5));
+  }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 2s infinite ease-in-out;
+}

@@ -1,0 +1,66 @@
+[
+    {
+        "id": "5c6d5cc40788cb5b035dd23c",
+        "title": "What is a computer programming language?",
+        "description": "Language is a means to communicate or interact.\\n\\nSelect all the correct statements given below.",
+        "language": "java",
+        "code": "",
+        "testCases": []
+    },
+    {
+        "id": "5c6e6b904950690acf616991",
+        "title": "A simple program in Java",
+        "description": "Below is an example of a simple program written in Java programming language.\\n\\nChange the text in the below code to make the program print \"Hello Java\" instead of \"Hello C\" and click on Submit.\\n\\nNote: Please don't change the package name.",
+        "language": "java",
+        "code": "public class FirstProgram {\n\tpublic static void main(String[] args) {\n\t\tSystem.out.println(\"Hello C\");\n\t}\n}",
+        "testCases": [
+            {
+                "input": "",
+                "expectedOutput": "Hello Java",
+                "status": "pass"
+            }
+        ]
+    },
+    {
+        "id": "647722b09aa40b0719ace3a4",
+        "title": "Understanding Structure of a Java Program",
+        "description": "A Java program consists of one or more classes...\\n\\nIn the given Editor follow the comment lines and write the code.\\n\\nNote: Please don't change the package name.",
+        "language": "java",
+        "code": "package q10734;\n//Define a public class named \"FirstJavaProgram\"\n\n//Within the class, define the main method.\n\n/*In the main method Write the print statement\nin order to print the text \"India got its independence in 1947\"*/",
+        "testCases": [
+            {
+                "input": "",
+                "expectedOutput": "India got its independence in 1947",
+                "status": "pass"
+            }
+        ]
+    },
+    {
+        "id": "64b76896692d3b06f8af7d82",
+        "title": "How to write an Empty Student Class?",
+        "description": "This is how a simple class is written in Java...\\n\\nThere is a small error in the given code. Correct the code in order to execute it successfully.",
+        "language": "java",
+        "code": "package q10737;\npublic Class Student {\n\tpublic static void main(String args[]) {\n\t\ttry {\n\t\t\tClass<?> clazz = Class.forName(\"q10737.Student\");\n\t\t\tSystem.out.println(\"class Student found\");\n\t\t} catch(ClassNotFoundException cnfe) {\n\t\t\ttry {\n\t\t\t\tClass<?> badClazz = Class.forName(\"q10737.student\");\n\t\t\t\tSystem.out.println(\"class student found\");\n\t\t\t} catch(ClassNotFoundException cnfe1) {\n\t\t\t\tSystem.out.println(\"class Student not found\");\n\t\t\t}\n\t\t}\n\t}\n}",
+        "testCases": [
+            {
+                "input": "",
+                "expectedOutput": "class Student found",
+                "status": "pass"
+            }
+        ]
+    },
+    {
+        "id": "5c6d5cc40788cb5b035dd23d",
+        "title": "Java is a case sensitive language",
+        "description": "Java is a case sensitive language...\\n\\nCorrect the errors in the give code to enable successful execution.",
+        "language": "java",
+        "code": "public class CaseSensitive {\n\tpublic static void main(String[] args) {\n\t\tSystem.out.println(\"Java is case sensitive\");\n\t}\n}",
+        "testCases": [
+            {
+                "input": "",
+                "expectedOutput": "Java is case sensitive",
+                "status": "pass"
+            }
+        ]
+    }
+]
