@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import AdminSidebar from '../components/AdminSidebar';
 import { Menu, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import InstallPrompt from '../components/InstallPrompt';
 
 export default function AdminPanelLayout({ children }: { children: React.ReactNode }) {
     const { user, isAuthenticated } = useAuthStore();
@@ -99,6 +100,7 @@ export default function AdminPanelLayout({ children }: { children: React.ReactNo
                 <main className="flex-1 overflow-x-hidden relative z-10">
                     {children}
                 </main>
+                <InstallPrompt />
             </div>
         </div>
     );
