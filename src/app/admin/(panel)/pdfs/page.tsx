@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import { api, pdfApi } from '@/lib/api';
 import {
     FileText, Upload, Plus, Folder, Loader2, X, ChevronRight,
-    School, BookOpen, Layers, Calendar, Edit2, Trash2, Check, X as XIcon, Info
+    School, BookOpen, Layers, Calendar, Edit2, Trash2, Check, X as XIcon, Info, Scan
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { PDFCreatorModal } from '@/components/admin/PDFCreator';
 
 // Types
 interface College { id: string; name: string; }
@@ -45,6 +46,7 @@ export default function PDFsPage() {
     const [pdfs, setPdfs] = useState<PDF[]>([]);
     const [loading, setLoading] = useState(true);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+    const [showPDFCreator, setShowPDFCreator] = useState(false);
 
     // Filter/Selection States
     const [colleges, setColleges] = useState<College[]>([]);
@@ -574,29 +576,39 @@ export default function PDFsPage() {
 
                             {/* File Details */}
                             <div className="space-y-4 pt-4 border-t border-dark-border">
-                                <div className="border-2 border-dashed border-dark-border hover:border-primary-500/50 rounded-xl p-8 transition-colors text-center cursor-pointer relative">
-                                    <input
-                                        type="file"
-                                        accept=".pdf"
-                                        onChange={(e) => setFile(e.target.files?.[0] || null)}
-                                        className="absolute inset-0 opacity-0 cursor-pointer"
-                                    />
-                                    <div className="flex flex-col items-center gap-2">
-                                        <div className="w-12 h-12 rounded-full bg-dark-300 flex items-center justify-center text-primary-500">
-                                            <Upload size={24} />
+                                <div className="flex gap-4">
+                                    <div
+                                        className="flex-1 border-2 border-dashed border-dark-border rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary-500 hover:bg-dark-200/50 transition-all group"
+                                        onClick={() => document.getElementById('file-upload')?.click()}
+                                    >
+                                        <input
+                                            type="file"
+                                            id="file-upload"
+                                            className="hidden"
+                                            accept=".pdf"
+                                            onChange={(e) => setFile(e.target.files?.[0] || null)}
+                                        />
+                                        <div className="w-16 h-16 bg-dark-300 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                            <Upload className="text-gray-400 group-hover:text-primary-500" size={32} />
                                         </div>
-                                        {file ? (
-                                            <div>
-                                                <p className="font-medium text-white">{file.name}</p>
-                                                <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <p className="font-medium text-gray-300">Click to upload PDF</p>
-                                                <p className="text-xs text-gray-500">or drag and drop</p>
-                                            </div>
-                                        )}
+                                        <p className="text-gray-300 font-medium mb-1">
+                                            {file ? file.name : 'Click to upload PDF'}
+                                        </p>
+                                        <p className="text-xs text-gray-500">Max file size 50MB</p>
                                     </div>
+
+                                    <button
+                                        onClick={() => setShowPDFCreator(true)}
+                                        className="flex flex-col items-center justify-center px-6 border-2 border-dashed border-dark-border rounded-xl hover:border-primary-500 hover:bg-dark-200/50 transition-all group gap-2"
+                                        title="Create PDF from Images"
+                                    >
+                                        <div className="w-12 h-12 bg-dark-300 rounded-full flex items-center justify-center group-hover:bg-primary-500/20 transition-colors">
+                                            <Scan className="text-gray-400 group-hover:text-primary-500" size={24} />
+                                        </div>
+                                        <span className="text-xs font-medium text-gray-400 group-hover:text-primary-400 text-center w-20">
+                                            Create from Images
+                                        </span>
+                                    </button>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -844,6 +856,16 @@ export default function PDFsPage() {
                     </div>
                 </div>
             )}
+            {/* PDF Creator Studio */}
+            <PDFCreatorModal
+                isOpen={showPDFCreator}
+                onClose={() => setShowPDFCreator(false)}
+                onComplete={(file) => {
+                    setFile(file);
+                    // Optionally set title from filename if empty
+                    if (!title) setTitle(file.name.replace('.pdf', ''));
+                }}
+            />
         </div>
     );
 }
