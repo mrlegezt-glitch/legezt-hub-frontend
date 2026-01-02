@@ -65,6 +65,7 @@ export default function PDFsPage() {
     const [file, setFile] = useState<File | null>(null);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [notifyUsers, setNotifyUsers] = useState(true);
     const [uploading, setUploading] = useState(false);
 
     // Edit State
@@ -216,6 +217,7 @@ export default function PDFsPage() {
         formData.append('file', file);
         formData.append('title', title);
         formData.append('folderId', selectedFolder);
+        formData.append('notify', notifyUsers.toString());
         if (description) formData.append('description', description);
 
         try {
@@ -229,6 +231,7 @@ export default function PDFsPage() {
             setFile(null);
             setTitle('');
             setDescription('');
+            setNotifyUsers(true);
         } catch (error) {
             console.error(error);
             toast.error('Upload Failed');
@@ -613,6 +616,18 @@ export default function PDFsPage() {
                                             placeholder="Brief detail about the content"
                                             className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
                                         />
+                                    </div>
+                                    <div className="flex items-center gap-2 pt-2">
+                                        <input
+                                            type="checkbox"
+                                            id="notifyUsers"
+                                            checked={notifyUsers}
+                                            onChange={(e) => setNotifyUsers(e.target.checked)}
+                                            className="w-4 h-4 rounded border-gray-600 bg-dark-300 text-primary-600 focus:ring-primary-500"
+                                        />
+                                        <label htmlFor="notifyUsers" className="text-sm text-gray-300 cursor-pointer select-none">
+                                            Notify users via email
+                                        </label>
                                     </div>
                                 </div>
                             </div>
