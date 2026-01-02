@@ -20,6 +20,7 @@ import { SortablePage } from './SortablePage';
 import { ImageEditor } from './ImageEditor';
 import { generatePDFFromImages } from './pdfGenerator';
 import { FilterType } from './imageProcessor';
+import { convertPdfToImages } from '@/utils/pdfHelpers';
 import { toast } from 'sonner';
 
 interface PDFPage {
@@ -42,6 +43,7 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
 }) => {
     const [pages, setPages] = useState<PDFPage[]>([]);
     const [editingPageId, setEditingPageId] = useState<string | null>(null);
+    const [replacingPageId, setReplacingPageId] = useState<string | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
 
     const sensors = useSensors(
@@ -51,17 +53,39 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
         })
     );
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            const newPages: PDFPage[] = Array.from(e.target.files).map(file => {
-                const url = URL.createObjectURL(file);
-                return {
-                    id: uuidv4(),
-                    originalUrl: url,
-                    displayUrl: url,
-                    filter: 'original'
-                };
-            });
+            const files = Array.from(e.target.files);
+            const newPages: PDFPage[] = [];
+
+            for (const file of files) {
+                if (file.type === 'application/pdf') {
+                    // Convert PDF to images
+                    try {
+                        const images = await convertPdfToImages(file);
+                        const pdfPages = images.map(url => ({
+                            id: uuidv4(),
+                            originalUrl: url,
+                            displayUrl: url,
+                            filter: 'original' as FilterType
+                        }));
+                        newPages.push(...pdfPages);
+                        toast.success(`Imported ${pdfPages.length} pages from PDF`);
+                    } catch (error) {
+                        toast.error(`Failed to load ${file.name}`);
+                    }
+                } else {
+                    // Regular Image
+                    const url = URL.createObjectURL(file);
+                    newPages.push({
+                        id: uuidv4(),
+                        originalUrl: url,
+                        displayUrl: url,
+                        filter: 'original'
+                    });
+                }
+            }
+
             setPages(prev => [...prev, ...newPages]);
 
             // Open editor for the first new image automatically if it's the first upload
@@ -115,6 +139,37 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
         } finally {
             setIsGenerating(false);
         }
+    };
+
+    const handleReplaceFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0] && replacingPageId) {
+            const file = e.target.files[0];
+            let newUrl = '';
+
+            if (file.type === 'application/pdf') {
+                try {
+                    const images = await convertPdfToImages(file);
+                    if (images.length > 0) newUrl = images[0]; // Only take first page for single replace
+                    if (images.length > 1) toast.info('Only the first page of the PDF was used for replacement.');
+                } catch (error) {
+                    toast.error('Failed to parse PDF');
+                    return;
+                }
+            } else {
+                newUrl = URL.createObjectURL(file);
+            }
+
+            if (newUrl) {
+                setPages(prev => prev.map(p =>
+                    p.id === replacingPageId
+                        ? { ...p, originalUrl: newUrl, displayUrl: newUrl, filter: 'original' as FilterType }
+                        : p
+                ));
+                toast.success('Page Replaced');
+            }
+            setReplacingPageId(null);
+        }
+        e.target.value = '';
     };
 
     if (!isOpen) return null;
@@ -176,7 +231,7 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
                                     <input
                                         type="file"
                                         multiple
-                                        accept="image/*"
+                                        accept="image/*,.pdf"
                                         className="hidden"
                                         onChange={handleFileUpload}
                                     />
@@ -214,6 +269,10 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
                                             pageNumber={index + 1}
                                             onRemove={handleRemovePage}
                                             onEdit={setEditingPageId}
+                                            onReplace={(id) => {
+                                                setReplacingPageId(id);
+                                                document.getElementById('replace-input')?.click();
+                                            }}
                                         />
                                     ))}
 
@@ -225,7 +284,7 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
                                             <input
                                                 type="file"
                                                 multiple
-                                                accept="image/*"
+                                                accept="image/*,.pdf"
                                                 className="hidden"
                                                 onChange={handleFileUpload}
                                             />
@@ -246,6 +305,14 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
                             </SortableContext>
                         </DndContext>
                     )}
+                    {/* Hidden Replace Input */}
+                    <input
+                        id="replace-input"
+                        type="file"
+                        accept="image/*,.pdf"
+                        className="hidden"
+                        onChange={handleReplaceFile}
+                    />
                 </div>
 
                 {/* Footer */}

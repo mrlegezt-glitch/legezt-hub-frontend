@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { X, Edit2, GripVertical } from 'lucide-react';
+import { X, Edit2, GripVertical, RefreshCw } from 'lucide-react';
 
 interface SortablePageProps {
     id: string;
@@ -9,6 +9,7 @@ interface SortablePageProps {
     pageNumber: number;
     onRemove: (id: string) => void;
     onEdit: (id: string) => void;
+    onReplace: (id: string) => void;
 }
 
 export const SortablePage: React.FC<SortablePageProps> = ({
@@ -17,6 +18,7 @@ export const SortablePage: React.FC<SortablePageProps> = ({
     pageNumber,
     onRemove,
     onEdit,
+    onReplace,
 }) => {
     const {
         attributes,
@@ -51,6 +53,13 @@ export const SortablePage: React.FC<SortablePageProps> = ({
                 </span>
 
                 <div className="flex gap-2">
+                    <button
+                        onClick={() => onReplace(id)}
+                        className="p-1.5 bg-gray-600 hover:bg-gray-700 rounded-full text-white shadow-lg transition-transform hover:scale-110"
+                        title="Replace Page"
+                    >
+                        <RefreshCw size={14} />
+                    </button>
                     <button
                         onClick={() => onEdit(id)}
                         className="p-1.5 bg-blue-600 hover:bg-blue-700 rounded-full text-white shadow-lg transition-transform hover:scale-110"
