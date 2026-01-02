@@ -37,7 +37,8 @@ export const SortablePage: React.FC<SortablePageProps> = ({
         <div
             ref={setNodeRef}
             style={style}
-            className="group relative aspect-[3/4] bg-dark-200 rounded-lg overflow-hidden border border-dark-border hover:border-primary-500 transition-colors"
+            onClick={() => onEdit(id)}
+            className="group relative aspect-[3/4] bg-dark-200 rounded-lg overflow-hidden border border-dark-border hover:border-primary-500 transition-colors cursor-pointer"
         >
             {/* Image */}
             <img
@@ -54,21 +55,21 @@ export const SortablePage: React.FC<SortablePageProps> = ({
 
                 <div className="flex gap-2">
                     <button
-                        onClick={() => onReplace(id)}
+                        onClick={(e) => { e.stopPropagation(); onReplace(id); }}
                         className="p-1.5 bg-gray-600 hover:bg-gray-700 rounded-full text-white shadow-lg transition-transform hover:scale-110"
                         title="Replace Page"
                     >
                         <RefreshCw size={14} />
                     </button>
                     <button
-                        onClick={() => onEdit(id)}
+                        onClick={(e) => { e.stopPropagation(); onEdit(id); }}
                         className="p-1.5 bg-blue-600 hover:bg-blue-700 rounded-full text-white shadow-lg transition-transform hover:scale-110"
                         title="Edit Page"
                     >
                         <Edit2 size={14} />
                     </button>
                     <button
-                        onClick={() => onRemove(id)}
+                        onClick={(e) => { e.stopPropagation(); onRemove(id); }}
                         className="p-1.5 bg-red-600 hover:bg-red-700 rounded-full text-white shadow-lg transition-transform hover:scale-110"
                         title="Remove Page"
                     >
@@ -81,6 +82,7 @@ export const SortablePage: React.FC<SortablePageProps> = ({
             <div
                 {...attributes}
                 {...listeners}
+                onClick={(e) => e.stopPropagation()}
                 className="absolute top-2 right-2 p-1.5 bg-black/40 hover:bg-black/60 backdrop-blur rounded cursor-grab active:cursor-grabbing text-white opacity-0 group-hover:opacity-100 transition-opacity"
             >
                 <GripVertical size={16} />
