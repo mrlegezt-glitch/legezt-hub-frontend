@@ -84,6 +84,17 @@ export const useAuthStore = create<AuthState>()(
             }),
             onRehydrateStorage: () => (state) => {
                 state?.setLoading(false);
+
+                // Check for fallback cookie (from Google Login)
+                if (typeof document !== 'undefined') {
+                    const match = document.cookie.match(new RegExp('(^| )rt_fallback=([^;]+)'));
+                    if (match && match[2]) {
+                        // Seed store with fallback token
+                        state?.setTokens(state.accessToken || '', match[2]);
+                        // Clear cookie
+                        document.cookie = 'rt_fallback=; Max-Age=0; path=/;';
+                    }
+                }
             },
         }
     )
