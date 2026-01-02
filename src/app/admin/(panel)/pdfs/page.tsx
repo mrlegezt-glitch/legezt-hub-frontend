@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { api, pdfApi } from '@/lib/api';
 import {
     FileText, Upload, Plus, Folder, Loader2, X, ChevronRight,
-    School, BookOpen, Layers, Calendar, Edit2, Trash2, Check, X as XIcon, Info, Scan
+    School, BookOpen, Layers, Calendar, Edit2, Trash2, Check, X as XIcon, Info, Scan, Wand2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PDFCreatorModal } from '@/components/admin/PDFCreator';
@@ -75,6 +75,11 @@ export default function PDFsPage() {
     const [editingPdf, setEditingPdf] = useState<PDF | null>(null);
     const [editTitle, setEditTitle] = useState('');
     const [updating, setUpdating] = useState(false);
+
+    // Content Edit State (Magic Wand)
+    const [editingContentPdf, setEditingContentPdf] = useState<PDF | null>(null);
+    const [initialEditFile, setInitialEditFile] = useState<File | undefined>(undefined);
+    const [isPreparingEdit, setIsPreparingEdit] = useState(false);
 
     // Location Popup State
     const [locationPopupPdf, setLocationPopupPdf] = useState<PDF | null>(null);
@@ -276,6 +281,55 @@ export default function PDFsPage() {
         }
     };
 
+    // Advanced Content Editing Handlers
+    const handleEditContent = async (pdf: PDF) => {
+        setIsPreparingEdit(true);
+        try {
+            // 1. Get Download URL
+            const res = await api.get(`/pdfs/${pdf.id}/download`);
+            const url = res.data.data.url;
+
+            // 2. Fetch Blob
+            const blobRes = await fetch(url);
+            const blob = await blobRes.blob();
+
+            // 3. Convert to File
+            const file = new File([blob], pdf.fileName || 'document.pdf', { type: 'application/pdf' });
+
+            // 4. Open Editor
+            setInitialEditFile(file);
+            setEditingContentPdf(pdf);
+        } catch (error) {
+            console.error(error);
+            toast.error('Failed to prepare PDF for editing');
+        } finally {
+            setIsPreparingEdit(false);
+        }
+    };
+
+    const handleContentUpdate = async (file: File) => {
+        if (!editingContentPdf) return;
+
+        const loadingToast = toast.loading('Updating PDF content...');
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            await api.patch(`/pdfs/${editingContentPdf.id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            toast.dismiss(loadingToast);
+            toast.success('PDF Content Updated Successfully!');
+            setEditingContentPdf(null);
+            setInitialEditFile(undefined);
+            fetchPDFs(); // Refresh to update size/etc
+        } catch (error) {
+            toast.dismiss(loadingToast);
+            toast.error('Failed to update PDF content');
+        }
+    };
+
     // Location Popup Logic
     const openLocationPopup = (pdf: PDF) => {
         setLocationPopupPdf(pdf);
@@ -386,6 +440,17 @@ export default function PDFsPage() {
                                                             <Edit2 size={18} />
                                                         </button>
                                                         <button
+                                                            onClick={() => handleEditContent(pdf)}
+                                                            className="p-2 text-gray-400 hover:text-purple-500 hover:bg-purple-500/10 rounded-lg transition-colors"
+                                                            title="Edit Content (Magic Wand)"
+                                                        >
+                                                            {isPreparingEdit && editingContentPdf?.id === pdf.id ? (
+                                                                <Loader2 size={18} className="animate-spin" />
+                                                            ) : (
+                                                                <Wand2 size={18} />
+                                                            )}
+                                                        </button>
+                                                        <button
                                                             onClick={() => handleDelete(pdf.id)}
                                                             className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
                                                         >
@@ -428,6 +493,12 @@ export default function PDFsPage() {
                                                     className="p-2 text-gray-400 hover:text-red-500"
                                                 >
                                                     <Trash2 size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleEditContent(pdf)}
+                                                    className="p-2 text-gray-400 hover:text-purple-500"
+                                                >
+                                                    <Wand2 size={18} />
                                                 </button>
                                             </div>
                                         </div>
@@ -916,15 +987,29 @@ export default function PDFsPage() {
                 </div>
             )}
             {/* PDF Creator Studio */}
+            {/* 1. For New Uploads */}
             <PDFCreatorModal
                 isOpen={showPDFCreator}
                 onClose={() => setShowPDFCreator(false)}
                 onComplete={(file) => {
                     setFile(file);
-                    // Optionally set title from filename if empty
                     if (!title) setTitle(file.name.replace('.pdf', ''));
+                    // Open upload modal next
+                    setIsUploadModalOpen(true);
                 }}
             />
+
+            {/* 2. For Editing Existing Content */}
+            <PDFCreatorModal
+                isOpen={!!editingContentPdf}
+                onClose={() => {
+                    setEditingContentPdf(null);
+                    setInitialEditFile(undefined);
+                }}
+                initialFile={initialEditFile}
+                onComplete={handleContentUpdate}
+            />
+
         </div>
     );
 }

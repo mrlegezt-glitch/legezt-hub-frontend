@@ -34,17 +34,47 @@ interface PDFCreatorModalProps {
     isOpen: boolean;
     onClose: () => void;
     onComplete: (file: File) => void;
+    initialFile?: File; // New Prop
 }
 
 export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
     isOpen,
     onClose,
-    onComplete
+    onComplete,
+    initialFile
 }) => {
     const [pages, setPages] = useState<PDFPage[]>([]);
     const [editingPageId, setEditingPageId] = useState<string | null>(null);
     const [replacingPageId, setReplacingPageId] = useState<string | null>(null);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isProcessingInitial, setIsProcessingInitial] = useState(false);
+
+    // Initial File Effect
+    React.useEffect(() => {
+        const loadInitialFile = async () => {
+            if (initialFile && isOpen && pages.length === 0) {
+                setIsProcessingInitial(true);
+                try {
+                    if (initialFile.type === 'application/pdf') {
+                        const images = await convertPdfToImages(initialFile);
+                        const pdfPages = images.map(url => ({
+                            id: uuidv4(),
+                            originalUrl: url,
+                            displayUrl: url,
+                            filter: 'original' as FilterType
+                        }));
+                        setPages(pdfPages);
+                    }
+                } catch (err) {
+                    toast.error("Failed to load initial PDF");
+                } finally {
+                    setIsProcessingInitial(false);
+                }
+            }
+        };
+        loadInitialFile();
+    }, [initialFile, isOpen]);
+
 
     const sensors = useSensors(
         useSensor(PointerSensor),
