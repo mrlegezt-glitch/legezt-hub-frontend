@@ -14,6 +14,7 @@ const menuItems = [
     { icon: Users, label: 'User Monitoring', href: '/admin/users' },
     { icon: FileText, label: 'Assignments & Tests', href: '/admin/assessments' },
     { icon: Layout, label: 'Ads Configuration', href: '/admin/ads' },
+    { icon: FlaskConical, label: 'LeGeZt Tantra', href: '/admin/legezttantra' },
 ];
 
 
