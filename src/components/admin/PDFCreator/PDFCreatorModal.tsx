@@ -14,7 +14,7 @@ import {
     sortableKeyboardCoordinates,
     rectSortingStrategy
 } from '@dnd-kit/sortable';
-import { X, Upload, Plus, FileDown, Scan, Sparkles } from 'lucide-react';
+import { X, Upload, Plus, FileDown, Scan, Sparkles, Camera } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { SortablePage } from './SortablePage';
 import { ImageEditor } from './ImageEditor';
@@ -169,17 +169,31 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
                                 Upload images from your gallery or camera. You can crop, filter, and reorder them before converting.
                             </p>
 
-                            <label className="group relative flex items-center gap-3 px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold text-lg cursor-pointer transition-all hover:scale-105 shadow-lg shadow-primary-600/20">
-                                <Plus size={24} />
-                                <span>Add Images</span>
-                                <input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleFileUpload}
-                                />
-                            </label>
+                            <div className="flex gap-4">
+                                <label className="group relative flex items-center gap-3 px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold text-lg cursor-pointer transition-all hover:scale-105 shadow-lg shadow-primary-600/20">
+                                    <Plus size={24} />
+                                    <span>Add Images</span>
+                                    <input
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleFileUpload}
+                                    />
+                                </label>
+
+                                <label className="group relative flex items-center gap-3 px-8 py-4 bg-dark-300 hover:bg-dark-200 border border-dark-border hover:border-primary-500 text-white rounded-xl font-bold text-lg cursor-pointer transition-all hover:scale-105 shadow-lg">
+                                    <Camera size={24} className="text-primary-500" />
+                                    <span>Scan / Camera</span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        capture="environment"
+                                        className="hidden"
+                                        onChange={handleFileUpload}
+                                    />
+                                </label>
+                            </div>
                         </div>
                     ) : (
                         <DndContext
@@ -204,17 +218,30 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
                                     ))}
 
                                     {/* Add More Button */}
-                                    <label className="aspect-[3/4] border-2 border-dashed border-dark-border hover:border-primary-500 rounded-lg flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors bg-dark-200/50 hover:bg-dark-200 text-gray-400 hover:text-primary-500">
-                                        <Plus size={32} />
-                                        <span className="text-sm font-medium">Add Page</span>
-                                        <input
-                                            type="file"
-                                            multiple
-                                            accept="image/*"
-                                            className="hidden"
-                                            onChange={handleFileUpload}
-                                        />
-                                    </label>
+                                    <div className="aspect-[3/4] flex flex-col gap-2">
+                                        <label className="flex-1 border-2 border-dashed border-dark-border hover:border-primary-500 rounded-lg flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors bg-dark-200/50 hover:bg-dark-200 text-gray-400 hover:text-primary-500">
+                                            <Plus size={24} />
+                                            <span className="text-xs font-medium">Gallery</span>
+                                            <input
+                                                type="file"
+                                                multiple
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={handleFileUpload}
+                                            />
+                                        </label>
+                                        <label className="flex-1 border-2 border-dashed border-dark-border hover:border-primary-500 rounded-lg flex flex-col items-center justify-center gap-1 cursor-pointer transition-colors bg-dark-200/50 hover:bg-dark-200 text-gray-400 hover:text-primary-500">
+                                            <Camera size={24} />
+                                            <span className="text-xs font-medium">Camera</span>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                capture="environment"
+                                                className="hidden"
+                                                onChange={handleFileUpload}
+                                            />
+                                        </label>
+                                    </div>
                                 </div>
                             </SortableContext>
                         </DndContext>
