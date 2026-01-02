@@ -2,7 +2,8 @@ export type FilterType = 'original' | 'grayscale' | 'magic' | 'bw';
 
 export const applyFilter = async (
     imageUrl: string,
-    filter: FilterType
+    filter: FilterType,
+    options?: { threshold?: number }
 ): Promise<string> => {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -33,9 +34,10 @@ export const applyFilter = async (
                     data[i + 2] = avg; // B
                 }
             } else if (filter === 'bw') {
+                const threshold = options?.threshold ?? 128; // Default to 128 if not provided
                 for (let i = 0; i < data.length; i += 4) {
                     const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                    const val = avg > 128 ? 255 : 0; // Simple threshold
+                    const val = avg > threshold ? 255 : 0; // Dynamic threshold
                     data[i] = val;
                     data[i + 1] = val;
                     data[i + 2] = val;

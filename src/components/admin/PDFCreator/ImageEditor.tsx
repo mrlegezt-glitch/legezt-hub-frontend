@@ -13,6 +13,7 @@ interface ImageEditorProps {
 export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCancel }) => {
     const cropperRef = useRef<ReactCropperElement>(null);
     const [currentFilter, setCurrentFilter] = useState<FilterType>('original');
+    const [bwThreshold, setBwThreshold] = useState(128); // 0-255
     const [previewUrl, setPreviewUrl] = useState(imageUrl);
     const [processing, setProcessing] = useState(false);
     const [filterApplying, setFilterApplying] = useState(false);
@@ -28,7 +29,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCa
             setFilterApplying(true);
             try {
                 // Apply filter to the ORIGINAL source image
-                const filtered = await applyFilter(imageUrl, currentFilter);
+                const filtered = await applyFilter(imageUrl, currentFilter, { threshold: bwThreshold });
                 setPreviewUrl(filtered);
             } catch (error) {
                 console.error("Filter failed", error);
@@ -38,7 +39,7 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCa
         };
 
         updatePreview();
-    }, [currentFilter, imageUrl]);
+    }, [currentFilter, imageUrl, bwThreshold]);
 
     const handleApplyFilter = (filter: FilterType) => {
         if (filter === currentFilter) return;
@@ -76,7 +77,8 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCa
     return (
         <div className="fixed inset-0 z-50 bg-black/90 flex flex-col animate-in fade-in zoom-in-95 duration-200">
             {/* Toolbar */}
-            <div className="flex-shrink-0 flex items-center justify-between p-4 bg-dark-300 border-b border-dark-border z-10">
+            {/* Toolbar - Added safe area padding */}
+            <div className="flex-shrink-0 flex items-center justify-between p-4 pt-12 md:pt-4 bg-dark-300 border-b border-dark-border z-10">
                 <h3 className="text-white font-medium">Edit Image</h3>
                 <div className="flex gap-2">
                     <button
@@ -150,6 +152,21 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCa
                     <RotateCw size={20} />
                     <span className="text-xs whitespace-nowrap">Rotate</span>
                 </button>
+
+                {/* B&W Slider */}
+                {currentFilter === 'bw' && (
+                    <div className="flex flex-col gap-1 w-32 ml-4 border-l border-gray-700 pl-4">
+                        <label className="text-xs text-gray-400">Threshold: {bwThreshold}</label>
+                        <input
+                            type="range"
+                            min="0"
+                            max="255"
+                            value={bwThreshold}
+                            onChange={(e) => setBwThreshold(Number(e.target.value))}
+                            className="w-full h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer accent-primary-500"
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );
