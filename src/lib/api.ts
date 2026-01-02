@@ -37,30 +37,24 @@ api.interceptors.response.use(
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            const refreshToken = useAuthStore.getState().refreshToken;
+            // Try to refresh token (using cookie)
+            try {
+                const response = await axios.post(`${API_URL}/api/auth/refresh`, {});
 
-            if (refreshToken) {
-                try {
-                    // Try to refresh token
-                    const response = await axios.post(`${API_URL}/api/auth/refresh`, {
-                        refreshToken,
-                    });
+                const { accessToken, refreshToken: newRefreshToken } = response.data.data;
 
-                    const { accessToken, refreshToken: newRefreshToken } = response.data.data;
+                // Update store
+                useAuthStore.getState().setTokens(accessToken, newRefreshToken);
 
-                    // Update store
-                    useAuthStore.getState().setTokens(accessToken, newRefreshToken);
-
-                    // Retry original request
-                    if (originalRequest.headers) {
-                        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-                    }
-
-                    return api(originalRequest);
-                } catch {
-                    // Refresh failed - logout
-                    useAuthStore.getState().logout();
+                // Retry original request
+                if (originalRequest.headers) {
+                    originalRequest.headers.Authorization = `Bearer ${accessToken}`;
                 }
+
+                return api(originalRequest);
+            } catch {
+                // Refresh failed - logout
+                useAuthStore.getState().logout();
             }
         }
 

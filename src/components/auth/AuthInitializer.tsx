@@ -9,7 +9,7 @@ export default function AuthInitializer() {
 
     useEffect(() => {
         const validateSession = async () => {
-            if (!isAuthenticated || !accessToken) return;
+            if (!isAuthenticated) return;
 
             try {
                 // Fetch fresh user profile (this will generate a new SAS token for the logo)
