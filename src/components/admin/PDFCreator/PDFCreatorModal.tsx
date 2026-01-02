@@ -207,12 +207,27 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
     // EDITOR VIEW
     if (editingPageId) {
         const page = pages.find(p => p.id === editingPageId);
+        const editingIndex = pages.findIndex(p => p.id === editingPageId);
+
         if (page) {
             return (
                 <ImageEditor
                     imageUrl={page.originalUrl} // Always edit from original
                     onSave={handleSaveEdit}
                     onCancel={() => setEditingPageId(null)}
+                    // Navigation
+                    hasPrev={editingIndex > 0}
+                    hasNext={editingIndex < pages.length - 1}
+                    onPrev={() => setEditingPageId(pages[editingIndex - 1].id)}
+                    onNext={() => setEditingPageId(pages[editingIndex + 1].id)}
+                    // Replace Logic
+                    onReplace={(source) => {
+                        setReplacingPageId(editingPageId);
+                        setTimeout(() => {
+                            if (source === 'camera') document.getElementById('replace-input-camera')?.click();
+                            else document.getElementById('replace-input')?.click();
+                        }, 0);
+                    }}
                 />
             );
         }
@@ -335,11 +350,19 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
                             </SortableContext>
                         </DndContext>
                     )}
-                    {/* Hidden Replace Input */}
+                    {/* Hidden Replace Inputs */}
                     <input
                         id="replace-input"
                         type="file"
                         accept="image/*,.pdf"
+                        className="hidden"
+                        onChange={handleReplaceFile}
+                    />
+                    <input
+                        id="replace-input-camera"
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
                         className="hidden"
                         onChange={handleReplaceFile}
                     />

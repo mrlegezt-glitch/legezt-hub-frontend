@@ -2,22 +2,34 @@ import React, { useRef, useState } from 'react';
 import Cropper, { ReactCropperElement } from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 import { FilterType, applyFilter } from './imageProcessor';
-import { RotateCw, Check, X, Wand2, Image as ImageIcon, Pencil, Eraser, Type, Minus, Plus, Trash2 } from 'lucide-react';
+import { RotateCw, Check, X, Wand2, Image as ImageIcon, Pencil, Eraser, Type, Minus, Plus, Trash2, ArrowLeft, ArrowRight, RefreshCw, Camera } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ImageEditorProps {
     imageUrl: string;
     onSave: (newUrl: string, filter: FilterType) => void;
     onCancel: () => void;
+    // Navigation Props
+    onNext?: () => void;
+    onPrev?: () => void;
+    hasNext?: boolean;
+    hasPrev?: boolean;
+    // Replace Props
+    onReplace?: (source: 'camera' | 'gallery') => void;
 }
 
-export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCancel }) => {
+export const ImageEditor: React.FC<ImageEditorProps> = ({
+    imageUrl, onSave, onCancel,
+    onNext, onPrev, hasNext, hasPrev,
+    onReplace
+}) => {
     const cropperRef = useRef<ReactCropperElement>(null);
     const [currentFilter, setCurrentFilter] = useState<FilterType>('original');
     const [bwThreshold, setBwThreshold] = useState(128); // 0-255
     const [previewUrl, setPreviewUrl] = useState(imageUrl);
     const [processing, setProcessing] = useState(false);
     const [filterApplying, setFilterApplying] = useState(false);
+    const [showReplaceOptions, setShowReplaceOptions] = useState(false);
 
     // Drawing State
     const [mode, setMode] = useState<'crop' | 'draw'>('crop');
@@ -240,6 +252,24 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCa
                     className="h-full w-full object-contain"
                 />
 
+                {/* Navigation Arrows */}
+                {hasPrev && (
+                    <button
+                        onClick={onPrev}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/80 rounded-full text-white backdrop-blur-sm z-40 transition-all hover:scale-110"
+                    >
+                        <ArrowLeft size={24} />
+                    </button>
+                )}
+                {hasNext && (
+                    <button
+                        onClick={onNext}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/50 hover:bg-black/80 rounded-full text-white backdrop-blur-sm z-40 transition-all hover:scale-110"
+                    >
+                        <ArrowRight size={24} />
+                    </button>
+                )}
+
                 {/* Drawing Overlay */}
                 {mode === 'draw' && (
                     <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none overflow-hidden">
@@ -430,8 +460,37 @@ export const ImageEditor: React.FC<ImageEditorProps> = ({ imageUrl, onSave, onCa
                             <span className="text-xs">B&W</span>
                         </button>
                     </div>
+
+                    <div className="h-8 w-px bg-gray-700 mx-2" />
+
+                    {/* Replace Button with Options */}
+                    <div className="relative">
+                        {showReplaceOptions && (
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-dark-200 border border-dark-border rounded-xl shadow-xl p-1 flex flex-col gap-1 w-32 animate-in slide-in-from-bottom-2 z-50">
+                                <button
+                                    onClick={() => { onReplace?.('camera'); setShowReplaceOptions(false); }}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg text-left"
+                                >
+                                    <Camera size={16} /> Camera
+                                </button>
+                                <button
+                                    onClick={() => { onReplace?.('gallery'); setShowReplaceOptions(false); }}
+                                    className="flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/10 rounded-lg text-left"
+                                >
+                                    <ImageIcon size={16} /> Gallery
+                                </button>
+                            </div>
+                        )}
+                        <button
+                            onClick={() => setShowReplaceOptions(!showReplaceOptions)}
+                            className="flex flex-col items-center gap-1 p-2 text-gray-400 hover:text-red-400 transition-colors"
+                        >
+                            <RefreshCw size={20} />
+                            <span className="text-xs whitespace-nowrap">Replace</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
