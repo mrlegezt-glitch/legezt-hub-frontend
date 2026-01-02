@@ -66,6 +66,7 @@ export default function PDFsPage() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [notifyUsers, setNotifyUsers] = useState(true);
+    const [isBacklog, setIsBacklog] = useState(false);
     const [uploading, setUploading] = useState(false);
 
     // Edit State
@@ -218,6 +219,7 @@ export default function PDFsPage() {
         formData.append('title', title);
         formData.append('folderId', selectedFolder);
         formData.append('notify', notifyUsers.toString());
+        formData.append('isBacklog', isBacklog.toString());
         if (description) formData.append('description', description);
 
         try {
@@ -232,6 +234,7 @@ export default function PDFsPage() {
             setTitle('');
             setDescription('');
             setNotifyUsers(true);
+            setIsBacklog(false);
         } catch (error) {
             console.error(error);
             toast.error('Upload Failed');
@@ -617,17 +620,41 @@ export default function PDFsPage() {
                                             className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
                                         />
                                     </div>
-                                    <div className="flex items-center gap-2 pt-2">
-                                        <input
-                                            type="checkbox"
-                                            id="notifyUsers"
-                                            checked={notifyUsers}
-                                            onChange={(e) => setNotifyUsers(e.target.checked)}
-                                            className="w-4 h-4 rounded border-gray-600 bg-dark-300 text-primary-600 focus:ring-primary-500"
-                                        />
-                                        <label htmlFor="notifyUsers" className="text-sm text-gray-300 cursor-pointer select-none">
-                                            Notify users via email
-                                        </label>
+                                    <div className="flex flex-col gap-2 pt-2">
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                id="notifyUsers"
+                                                checked={notifyUsers}
+                                                onChange={(e) => setNotifyUsers(e.target.checked)}
+                                                className="w-4 h-4 rounded border-gray-600 bg-dark-300 text-primary-600 focus:ring-primary-500"
+                                            />
+                                            <label htmlFor="notifyUsers" className="text-sm text-gray-300 cursor-pointer select-none">
+                                                Notify users via email
+                                            </label>
+                                        </div>
+
+                                        {notifyUsers && (
+                                            <div className="ml-6 p-3 bg-dark-300/50 rounded-lg border border-dark-border animate-in slide-in-from-top-2">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="isBacklog"
+                                                        checked={isBacklog}
+                                                        onChange={(e) => setIsBacklog(e.target.checked)}
+                                                        className="w-4 h-4 rounded border-gray-600 bg-dark-300 text-yellow-500 focus:ring-yellow-500"
+                                                    />
+                                                    <label htmlFor="isBacklog" className="text-sm font-medium text-white cursor-pointer select-none">
+                                                        Prefer Backlog / Important Update?
+                                                    </label>
+                                                </div>
+                                                <p className="text-xs text-gray-400 leading-relaxed">
+                                                    <span className="text-yellow-500 font-bold">Checked:</span> Broadcasts to <b>ALL</b> users (Important for exams).
+                                                    <br />
+                                                    <span className="text-blue-400 font-bold">Unchecked:</span> Sends email <b>ONLY</b> to users in this Semester/Year.
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
