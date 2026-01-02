@@ -27,7 +27,7 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
     const { logout } = useAuthStore();
 
     return (
-        <aside className={`${isMobile ? 'flex' : 'hidden md:flex'} w-64 bg-dark-200 border-r border-dark-border h-full flex flex-col`}>
+        <aside className={`${isMobile ? 'flex w-full' : 'hidden md:flex w-64'} bg-dark-200/60 backdrop-blur-xl border-r border-dark-border h-full flex-col z-20`}>
             {/* Logo Area */}
             <div className="p-6 border-b border-dark-border flex items-center gap-3">
                 <img src="/logo.png" alt="Admin Logo" className="w-8 h-8 object-contain animate-heartbeat" />
@@ -46,9 +46,9 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
                             key={item.href}
                             href={item.href}
                             onClick={onItemClick}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group ${isActive
-                                ? 'bg-primary-600/10 text-primary-400'
-                                : 'text-gray-400 hover:text-white hover:bg-dark-100'
+                            className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-300 group ${isActive
+                                ? 'bg-gradient-to-r from-primary-600/20 to-primary-600/5 text-primary-400 shadow-[0_0_20px_-5px_rgba(var(--primary-500),0.3)] border border-primary-500/10'
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             <item.icon
@@ -65,9 +65,9 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
                 </div>
                 <Link
                     href="/admin/settings"
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group ${pathname === '/admin/settings'
-                        ? 'bg-primary-600/10 text-primary-400'
-                        : 'text-gray-400 hover:text-white hover:bg-dark-100'
+                    className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-all duration-300 group ${pathname === '/admin/settings'
+                        ? 'bg-gradient-to-r from-primary-600/20 to-primary-600/5 text-primary-400 shadow-[0_0_20px_-5px_rgba(var(--primary-500),0.3)] border border-primary-500/10'
+                        : 'text-gray-400 hover:text-white hover:bg-white/5'
                         }`}
                 >
                     <Settings size={18} className="text-gray-500 group-hover:text-white" />
@@ -76,7 +76,7 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
             </nav>
 
             {/* Footer / User Profile */}
-            <div className="p-4 border-t border-dark-border bg-dark-200/50">
+            <div className="p-4 border-t border-dark-border bg-white/5 backdrop-blur-md">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <img

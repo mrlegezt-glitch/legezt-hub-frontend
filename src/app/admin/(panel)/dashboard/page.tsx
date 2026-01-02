@@ -63,7 +63,7 @@ export default function AdminDashboardPage() {
                     { label: 'Total Downloads', value: stats?.downloads || 0, icon: BarChart3, color: 'text-green-400', bg: 'bg-green-500/10' },
                     { label: 'Colleges', value: stats?.colleges || 0, icon: Database, color: 'text-orange-400', bg: 'bg-orange-500/10' },
                 ].map((stat, i) => (
-                    <div key={i} className="card p-6 border-dark-border hover:border-primary-500/30 transition-colors">
+                    <div key={i} className="card p-6 border-white/10 bg-dark-200/40 backdrop-blur-md hover:border-primary-500/30 transition-all duration-300 hover:-translate-y-1">
                         <div className="flex items-start justify-between mb-4">
                             <div className={`p-3 rounded-lg ${stat.bg}`}>
                                 {loading ? (
@@ -83,7 +83,7 @@ export default function AdminDashboardPage() {
 
             {/* Advanced Panels */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 card p-6 border-dark-border min-h-[400px] flex flex-col">
+                <div className="lg:col-span-2 card p-6 border-white/10 bg-dark-200/40 backdrop-blur-md min-h-[400px] flex flex-col">
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h2 className="text-xl font-bold text-white">System Growth</h2>
@@ -114,7 +114,7 @@ export default function AdminDashboardPage() {
                     </div>
                 </div>
 
-                <div className="card p-6 border-dark-border h-fit">
+                <div className="card p-6 border-white/10 bg-dark-200/40 backdrop-blur-md h-fit">
                     <h2 className="text-xl font-bold text-white mb-6">Quick Actions</h2>
                     <div className="space-y-3">
                         <button onClick={() => router.push('/admin/colleges')} className="w-full p-4 text-left hover:bg-white/5 rounded-xl transition-all border border-dark-border flex items-center justify-between group">
