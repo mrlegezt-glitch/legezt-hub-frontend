@@ -10,16 +10,11 @@ import {
     ArrowLeft,
     Share2,
     Download,
-    ZoomIn,
-    ZoomOut,
-    Maximize,
-    ChevronLeft,
-    ChevronRight,
-    MoreVertical,
     Heart
 } from 'lucide-react';
 import { pdfApi, userApi } from '@/lib/api';
 import { toast } from 'sonner';
+import { NativePDFViewer } from './components/NativePDFViewer';
 
 interface PdfData {
     url: string;
@@ -36,9 +31,6 @@ export default function PdfViewerPage() {
     const [pdfData, setPdfData] = useState<PdfData | null>(null);
     const [loading, setLoading] = useState(true);
     const [isBookmarked, setIsBookmarked] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [zoom, setZoom] = useState(100);
-    const [isFullscreen, setIsFullscreen] = useState(false);
 
     useEffect(() => {
         const fetchPdf = async () => {
@@ -110,16 +102,6 @@ export default function PdfViewerPage() {
         }
     };
 
-    const toggleFullscreen = () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-            setIsFullscreen(true);
-        } else {
-            document.exitFullscreen();
-            setIsFullscreen(false);
-        }
-    };
-
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-dark-300">
@@ -181,15 +163,9 @@ export default function PdfViewerPage() {
             </header>
 
             {/* PDF Content - Full Height */}
-            <div className="flex-1 relative bg-gray-800">
-                <iframe
-                    src={`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(pdfData.url)}`}
-                    className="absolute inset-0 w-full h-full border-0"
-                    title={pdfData.title}
-                    allowFullScreen
-                />
+            <div className="flex-1 relative bg-gray-800 overflow-hidden">
+                <NativePDFViewer url={pdfData.url} />
             </div>
         </div>
     );
 }
-
