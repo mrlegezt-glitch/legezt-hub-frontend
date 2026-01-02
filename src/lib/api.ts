@@ -27,6 +27,25 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// Queue to hold requests while refreshing
+let isRefreshing = false;
+let failedQueue: Array<{
+    resolve: (token: string) => void;
+    reject: (error: any) => void;
+}> = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+    failedQueue.forEach((prom) => {
+        if (error) {
+            prom.reject(error);
+        } else {
+            prom.resolve(token!);
+        }
+    });
+
+    failedQueue = [];
+};
+
 // Response interceptor - handle token refresh
 api.interceptors.response.use(
     (response) => response,
@@ -35,7 +54,25 @@ api.interceptors.response.use(
 
         // If 401 and not already retried
         if (error.response?.status === 401 && !originalRequest._retry) {
+            if (isRefreshing) {
+                // If already refreshing, queue this request
+                return new Promise(function (resolve, reject) {
+                    failedQueue.push({
+                        resolve: (token: string) => {
+                            if (originalRequest.headers) {
+                                originalRequest.headers.Authorization = `Bearer ${token}`;
+                            }
+                            resolve(api(originalRequest));
+                        },
+                        reject: (err: any) => {
+                            reject(err);
+                        },
+                    });
+                });
+            }
+
             originalRequest._retry = true;
+            isRefreshing = true;
 
             // Try to refresh token (using cookie, with store token as fallback)
             try {
@@ -49,15 +86,25 @@ api.interceptors.response.use(
                 // Update store
                 useAuthStore.getState().setTokens(accessToken, newRefreshToken);
 
+                // Set default header for future requests
+                api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+                // Process queued requests
+                processQueue(null, accessToken);
+
                 // Retry original request
                 if (originalRequest.headers) {
                     originalRequest.headers.Authorization = `Bearer ${accessToken}`;
                 }
 
                 return api(originalRequest);
-            } catch {
+            } catch (err) {
                 // Refresh failed - logout
+                processQueue(err, null);
                 useAuthStore.getState().logout();
+                return Promise.reject(err);
+            } finally {
+                isRefreshing = false;
             }
         }
 

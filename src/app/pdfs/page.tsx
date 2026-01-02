@@ -11,6 +11,8 @@ import Link from 'next/link';
 import BottomNav from '@/components/navigation/BottomNav';
 import PdfCard from '@/components/pdf/PdfCard';
 import { pdfApi } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
+import { QuoteLoader } from '@/components/ui/QuoteLoader';
 
 interface Pdf {
     id: string;
@@ -32,33 +34,28 @@ export default function PdfsPage() {
     const semesterId = searchParams.get('semester');
     const folderId = searchParams.get('folder');
 
-    const [pdfs, setPdfs] = useState<Pdf[]>([]);
-    const [folders, setFolders] = useState<FolderType[]>([]);
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const [pdfsRes, foldersRes] = await Promise.all([
-                    pdfApi.list({ folderId: folderId || undefined }),
-                    pdfApi.getFolders({ subjectId: folderId ? undefined : semesterId || undefined, parentId: folderId || undefined }),
-                ]);
-                setPdfs(pdfsRes.data.data);
-                setFolders(foldersRes.data.data);
-            } catch (error) {
-                console.error('Failed to fetch PDFs:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const { data, isLoading } = useQuery({
+        queryKey: ['pdfs', { semesterId, folderId }],
+        queryFn: async () => {
+            const [pdfsRes, foldersRes] = await Promise.all([
+                pdfApi.list({ folderId: folderId || undefined }),
+                pdfApi.getFolders({ subjectId: folderId ? undefined : semesterId || undefined, parentId: folderId || undefined }),
+            ]);
+            return {
+                pdfs: pdfsRes.data.data,
+                folders: foldersRes.data.data
+            };
+        },
+        staleTime: 5 * 60 * 1000, // 5 minutes
+    });
 
-        fetchData();
-    }, [semesterId, folderId]);
+    const pdfs = data?.pdfs || [];
+    const folders = data?.folders || [];
 
     const filteredPdfs = searchQuery
-        ? pdfs.filter(pdf =>
+        ? pdfs.filter((pdf: Pdf) =>
             pdf.title.toLowerCase().includes(searchQuery.toLowerCase())
         )
         : pdfs;
@@ -118,7 +115,7 @@ export default function PdfsPage() {
                     <section className="pb-6 md:pb-10">
                         <h2 className="text-sm font-medium text-gray-400 mb-3 md:mb-4">Folders</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-                            {folders.map((folder) => (
+                            {folders.map((folder: FolderType) => (
                                 <Link
                                     key={folder.id}
                                     href={`/pdfs?folder=${folder.id}`}
@@ -145,12 +142,8 @@ export default function PdfsPage() {
                         <h2 className="text-sm font-medium text-gray-400 mb-3">Files</h2>
                     )}
 
-                    {loading ? (
-                        <div className="space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
-                            {[1, 2, 3, 4, 5, 6].map(i => (
-                                <div key={i} className="skeleton h-24 rounded-2xl" />
-                            ))}
-                        </div>
+                    {isLoading ? (
+                        <QuoteLoader />
                     ) : filteredPdfs.length === 0 ? (
                         <div className="text-center py-12 md:py-24 bg-dark-100/30 rounded-3xl border border-dashed border-dark-border">
                             <Folder size={48} className="mx-auto text-dark-border mb-4" />
@@ -158,7 +151,7 @@ export default function PdfsPage() {
                         </div>
                     ) : (
                         <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
-                            {filteredPdfs.map((pdf) => (
+                            {filteredPdfs.map((pdf: Pdf) => (
                                 <div key={pdf.id} className="h-full">
                                     <PdfCard {...pdf} />
                                 </div>
