@@ -135,8 +135,8 @@ export const PDFCreatorModal: React.FC<PDFCreatorModalProps> = ({
 
     // MAIN VIEW
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-dark-200 w-full max-w-5xl h-[85vh] rounded-2xl border border-dark-border shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-dark-200 w-full max-w-5xl h-full md:h-[85vh] rounded-none md:rounded-2xl border-y-0 border-x-0 md:border border-dark-border shadow-2xl flex flex-col overflow-hidden">
 
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-dark-border flex items-center justify-between bg-dark-300">
