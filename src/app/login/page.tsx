@@ -4,7 +4,7 @@
 // Login Page
 // ==================================
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
@@ -86,6 +86,99 @@ export default function LoginPage() {
             <p className="text-sm text-gray-500 mt-8">
                 Founded by Mohd Jibraan
             </p>
+
+            <BannedModal />
         </main>
     );
+
+    function BannedModal() {
+        const error = searchParams.get('error');
+        const [feedback, setFeedback] = useState('');
+        const [show, setShow] = useState(false);
+        const [loading, setLoading] = useState(false);
+        const [sent, setSent] = useState(false);
+
+        useEffect(() => {
+            if (error === 'banned' || error === 'ACCOUNT_BANNED') {
+                setShow(true);
+            }
+        }, [error]);
+
+        const handleSubmit = async (e: React.FormEvent) => {
+            e.preventDefault();
+            setLoading(true);
+            try {
+                // We might need email here. For now asking user to input or just sending message
+                // The backend endpoint expects { email, message }. 
+                // Since we don't have the email from the redirect securely, let's ask user or rely on cookies if setup
+                // But safer to ask user or just send "Unknown" if not provided? 
+                // Let's modify the form to ask for email if not present in query
+                await fetch(`${API_URL}/api/auth/banned-feedback`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: searchParams.get('email') || 'User from Login Page',
+                        message: feedback
+                    })
+                });
+                setSent(true);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (!show) return null;
+
+        return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                <div className="bg-dark-200 border border-red-500/30 rounded-2xl p-6 w-full max-w-md shadow-2xl relative">
+                    <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-center text-white mb-2">Access Denied</h2>
+                    <p className="text-gray-400 text-center mb-6">
+                        Sorry, you do not have permission to access this account. Contact the administrator if you believe this is a mistake.
+                    </p>
+
+                    {sent ? (
+                        <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 text-center">
+                            <p className="text-green-400 font-medium">Feedback sent successfully!</p>
+                            <button onClick={() => setShow(false)} className="mt-4 text-sm text-gray-400 hover:text-white underline">Close</button>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleSubmit}>
+                            <textarea
+                                value={feedback}
+                                onChange={(e) => setFeedback(e.target.value)}
+                                placeholder="Explain why you should be unbanned..."
+                                className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white placeholder-gray-500 mb-4 focus:outline-none focus:border-red-500/50 min-h-[100px]"
+                                required
+                            />
+                            <div className="flex gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => { setShow(false); router.replace('/login'); }}
+                                    className="flex-1 py-3 rounded-xl bg-dark-100 text-gray-400 hover:bg-dark-50 font-medium transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium transition-colors disabled:opacity-50"
+                                >
+                                    {loading ? 'Sending...' : 'Contact Admin'}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </div>
+            </div>
+        );
+    }
 }

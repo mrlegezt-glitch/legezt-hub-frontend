@@ -52,6 +52,16 @@ api.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
+        // Handle Banned User Global Redirect
+        if (
+            error.response?.status === 403 &&
+            (error.response?.data as any)?.message === 'ACCOUNT_BANNED'
+        ) {
+            useAuthStore.getState().logout();
+            window.location.href = '/login?error=banned';
+            return Promise.reject(error);
+        }
+
         // If 401 and not already retried
         if (error.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
