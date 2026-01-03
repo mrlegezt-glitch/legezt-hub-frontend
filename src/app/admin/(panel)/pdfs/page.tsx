@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { api, pdfApi } from '@/lib/api';
 import {
     FileText, Upload, Plus, Folder, Loader2, X, ChevronRight,
-    School, BookOpen, Layers, Calendar, Edit2, Trash2, Check, X as XIcon, Info, Scan, Wand2
+    School, BookOpen, Layers, Calendar, Edit2, Trash2, Check, X as XIcon, Info, Scan, Wand2, Eye, Download
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PDFCreatorModal } from '@/components/admin/PDFCreator';
@@ -22,6 +22,8 @@ interface PDF {
     fileName: string;
     sizeFormatted: string;
     downloadCount: number;
+    viewCount: number;
+    thumbnailUrl?: string | null;
     createdAt: string;
     folder?: {
         id: string;
@@ -403,8 +405,17 @@ export default function PDFsPage() {
                                             <tr key={pdf.id} className="hover:bg-dark-300/50 transition-colors">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="w-8 h-8 rounded bg-red-500/10 text-red-500 flex items-center justify-center flex-shrink-0">
-                                                            <FileText size={16} />
+                                                        {/* Thumbnail with overlay */}
+                                                        <div className="w-10 h-10 rounded bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center flex-shrink-0 relative overflow-hidden transition-transform hover:scale-105">
+                                                            {pdf.thumbnailUrl ? (
+                                                                <img src={pdf.thumbnailUrl} alt={pdf.title} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <FileText size={16} />
+                                                            )}
+                                                            {/* View Count Badge */}
+                                                            <div className="absolute top-0 right-0 bg-black/70 px-0.5 rounded-bl-[2px] text-[6px] font-bold text-white flex items-center gap-[1px]">
+                                                                <Eye size={6} /> {pdf.viewCount}
+                                                            </div>
                                                         </div>
                                                         <div>
                                                             <div className="font-medium text-white">{pdf.title}</div>
@@ -473,8 +484,17 @@ export default function PDFsPage() {
                                     <div key={pdf.id} className="p-4 space-y-3">
                                         <div className="flex items-start justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded bg-red-500/10 text-red-500 flex items-center justify-center flex-shrink-0">
-                                                    <FileText size={20} />
+                                                {/* Thumbnail with overlay */}
+                                                <div className="w-10 h-10 rounded bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center flex-shrink-0 relative overflow-hidden">
+                                                    {pdf.thumbnailUrl ? (
+                                                        <img src={pdf.thumbnailUrl} alt={pdf.title} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <FileText size={20} />
+                                                    )}
+                                                    {/* Mobile Badge */}
+                                                    <div className="absolute top-0 right-0 bg-black/70 px-0.5 rounded-bl-[2px] text-[6px] font-bold text-white flex items-center gap-[1px]">
+                                                        <Eye size={6} /> {pdf.viewCount}
+                                                    </div>
                                                 </div>
                                                 <div>
                                                     <div className="font-medium text-white line-clamp-1">{pdf.title}</div>
@@ -517,7 +537,8 @@ export default function PDFsPage() {
                                         <div className="flex items-center justify-between text-xs text-gray-400 px-1">
                                             <span>{pdf.sizeFormatted}</span>
                                             <div className="flex items-center gap-3">
-                                                <span>{pdf.downloadCount} downloads</span>
+                                                <span className="flex items-center gap-1"><Eye size={10} /> {pdf.viewCount}</span>
+                                                <span className="flex items-center gap-1"><Download size={10} /> {pdf.downloadCount}</span>
                                                 <span>{new Date(pdf.createdAt).toLocaleDateString()}</span>
                                             </div>
                                         </div>
