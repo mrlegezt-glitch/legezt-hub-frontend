@@ -21,7 +21,15 @@ export default function LoginPage() {
         }
     }, [isAuthenticated, router]);
 
+    const searchParams = useSearchParams();
+
     const handleGoogleLogin = () => {
+        // Store return URL if present
+        const redirect = searchParams.get('redirect');
+        if (redirect) {
+            localStorage.setItem('auth_redirect', redirect);
+        }
+
         // Use relative path to trigger Next.js rewrite, or fallback to absolute Azure URL
         window.location.href = `${API_URL}/api/auth/google`;
     };

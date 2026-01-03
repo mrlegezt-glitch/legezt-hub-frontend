@@ -26,6 +26,16 @@ export default function AuthCallbackPage() {
 
                 // Redirect based on onboarding status
                 if (user.isOnboardingComplete) {
+                    // Check for pending redirect
+                    const redirect = localStorage.getItem('auth_redirect');
+                    if (redirect) {
+                        localStorage.removeItem('auth_redirect');
+                        // Ensure redirect is local to prevent open redirect vulnerabilities
+                        if (redirect.startsWith('/')) {
+                            router.push(redirect);
+                            return;
+                        }
+                    }
                     router.push('/');
                 } else {
                     router.push('/onboarding');

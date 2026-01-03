@@ -32,6 +32,8 @@ export default function PdfViewerPage() {
     const [loading, setLoading] = useState(true);
     const [isBookmarked, setIsBookmarked] = useState(false);
 
+    const [needsLogin, setNeedsLogin] = useState(false);
+
     useEffect(() => {
         const fetchPdf = async () => {
             try {
@@ -46,8 +48,11 @@ export default function PdfViewerPage() {
                     isBookmarked: metaRes.data.data.isBookmarked
                 });
                 setIsBookmarked(metaRes.data.data.isBookmarked);
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Failed to load PDF:', error);
+                if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+                    setNeedsLogin(true);
+                }
             } finally {
                 setLoading(false);
             }
@@ -98,7 +103,7 @@ export default function PdfViewerPage() {
         } else {
             // Fallback - copy to clipboard
             navigator.clipboard.writeText(window.location.href);
-            alert('Link copied to clipboard!');
+            toast.success('Link copied to clipboard!');
         }
     };
 
@@ -106,6 +111,34 @@ export default function PdfViewerPage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-dark-300">
                 <div className="animate-spin w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full" />
+            </div>
+        );
+    }
+
+    if (needsLogin) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-dark-300 p-6 text-center">
+                <div className="w-20 h-20 bg-dark-200 rounded-full flex items-center justify-center mb-6 shadow-xl border border-dark-border">
+                    <span className="text-4xl">🔒</span>
+                </div>
+                <h2 className="text-2xl font-bold text-white mb-2">Login Required</h2>
+                <p className="text-gray-400 mb-8 max-w-md">
+                    You have to login to see this content. Use the button below to sign in.
+                </p>
+                <div className="flex gap-4">
+                    <button
+                        onClick={() => router.push('/')}
+                        className="px-6 py-2.5 rounded-xl border border-dark-border hover:bg-white/5 text-gray-300 font-medium transition-colors"
+                    >
+                        Go Home
+                    </button>
+                    <button
+                        onClick={() => router.push(`/login?redirect=/pdfs/${pdfId}`)}
+                        className="px-8 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold shadow-lg shadow-primary-600/20 transition-all hover:scale-105 active:scale-95"
+                    >
+                        Login to View
+                    </button>
+                </div>
             </div>
         );
     }
