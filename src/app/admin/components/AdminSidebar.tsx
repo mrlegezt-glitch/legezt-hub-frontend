@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, GraduationCap, Building2, FileText, Settings, LogOut, Megaphone, Podcast, BookOpen, FlaskConical, School, Mic, Layout } from 'lucide-react';
+import { LayoutDashboard, Users, GraduationCap, Building2, FileText, Settings, LogOut, Megaphone, Podcast, BookOpen, FlaskConical, School, Mic, Layout, Activity } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 
 const menuItems = [
@@ -12,6 +12,7 @@ const menuItems = [
     { icon: Mic, label: 'LeGeZtCast', href: '/admin/podcasts' },
     { icon: BookOpen, label: 'Courses', href: '/admin/courses' },
     { icon: Users, label: 'User Monitoring', href: '/admin/users' },
+    { icon: Activity, label: 'Live Users', href: '/admin/live' },
     { icon: FileText, label: 'Assignments & Tests', href: '/admin/assessments' },
     { icon: Layout, label: 'Ads Configuration', href: '/admin/ads' },
     { icon: FlaskConical, label: 'LeGeZt Tantra', href: '/admin/legezttantra' },

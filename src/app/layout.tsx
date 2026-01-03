@@ -40,6 +40,8 @@ export const viewport: Viewport = {
 import { Toaster } from 'sonner';
 
 import AuthInitializer from '@/components/auth/AuthInitializer';
+import { SocketProvider } from '@/lib/socket-context';
+import { UserActivityTracker } from '@/components/UserActivityTracker';
 
 export default function RootLayout({
     children,
@@ -50,12 +52,15 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning className="dark">
             <body className="antialiased">
                 <ThemeProvider>
-                    <AuthInitializer />
-                    <SideMenu />
-                    <DesktopNav />
-                    <MobileHeader />
-                    {children}
-                    <Footer />
+                    <SocketProvider>
+                        <AuthInitializer />
+                        <UserActivityTracker />
+                        <SideMenu />
+                        <DesktopNav />
+                        <MobileHeader />
+                        {children}
+                        <Footer />
+                    </SocketProvider>
                     <Toaster position="top-right" theme="dark" />
                 </ThemeProvider>
             </body>
