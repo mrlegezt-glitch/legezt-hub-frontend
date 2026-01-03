@@ -86,31 +86,47 @@ export default function AdminDashboardPage() {
                 <div className="lg:col-span-2 card p-6 border-white/10 bg-dark-200/40 backdrop-blur-md min-h-[400px] flex flex-col">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h2 className="text-xl font-bold text-white">System Growth</h2>
-                            <p className="text-sm text-gray-500">Activity across all colleges</p>
+                            <h2 className="text-xl font-bold text-white">Top Viewed PDFs</h2>
+                            <p className="text-sm text-gray-500">Highest performing content</p>
                         </div>
-                        <div className="flex items-center gap-2 text-green-400 text-sm font-medium bg-green-400/10 px-3 py-1 rounded-full">
+                        <div className="flex items-center gap-2 text-primary-400 text-sm font-medium bg-primary-400/10 px-3 py-1 rounded-full">
                             <TrendingUp size={14} />
-                            +12% this week
+                            Trending Content
                         </div>
                     </div>
 
-                    <div className="flex-1 flex items-end justify-between gap-2 px-2 pb-4">
-                        {[40, 70, 45, 90, 65, 80, 50, 85, 45, 75, 60, 95].map((height, i) => (
-                            <div key={i} className="flex-1 flex flex-col items-center gap-3 group">
-                                <div className="w-full relative bg-dark-200 rounded-t-lg overflow-hidden h-48">
-                                    <motion.div
-                                        initial={{ height: 0 }}
-                                        animate={{ height: `${height}%` }}
-                                        transition={{ duration: 1, delay: i * 0.05, ease: "easeOut" }}
-                                        className="absolute bottom-0 w-full bg-gradient-to-t from-primary-600 to-primary-400 group-hover:from-primary-500 group-hover:to-primary-300 transition-all cursor-pointer"
-                                    />
-                                </div>
-                                <span className="text-[10px] text-gray-600 font-medium uppercase tracking-tighter">
-                                    {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][i]}
-                                </span>
-                            </div>
-                        ))}
+                    <div className="flex-1 flex items-end justify-between gap-4 px-2 pb-4">
+                        {(!stats?.topPdfs || stats.topPdfs.length === 0) ? (
+                            <div className="w-full text-center text-gray-500">No data available</div>
+                        ) : (
+                            stats.topPdfs.map((pdf: any, i: number) => {
+                                // Calculate normalized height (max 100%)
+                                const maxViews = Math.max(...stats.topPdfs.map((p: any) => p.viewCount), 1);
+                                const height = (pdf.viewCount / maxViews) * 100;
+
+                                return (
+                                    <div key={pdf.id} className="flex-1 flex flex-col items-center gap-3 group relative">
+                                        {/* Tooltip */}
+                                        <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-dark-100 border border-dark-border px-3 py-1 rounded text-xs text-white whitespace-nowrap z-10 pointer-events-none">
+                                            {pdf.viewCount} Views
+                                        </div>
+
+                                        <div className="w-full relative bg-dark-200 rounded-t-lg overflow-hidden h-48 flex items-end justify-center">
+                                            {/* Bar */}
+                                            <motion.div
+                                                initial={{ height: 0 }}
+                                                animate={{ height: `${Math.max(height, 5)}%` }} // Min 5% height
+                                                transition={{ duration: 1, delay: i * 0.1, ease: "easeOut" }}
+                                                className="w-full bg-gradient-to-t from-red-600 to-red-400 group-hover:from-red-500 group-hover:to-red-300 transition-all cursor-pointer rounded-t-lg mx-1"
+                                            />
+                                        </div>
+                                        <span className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter truncate max-w-[60px] md:max-w-[100px]" title={pdf.title}>
+                                            {pdf.title}
+                                        </span>
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
 
