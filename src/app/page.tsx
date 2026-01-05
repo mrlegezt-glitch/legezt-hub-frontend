@@ -9,6 +9,7 @@ import { ArrowRight, FileText, Headphones, BookOpen, Lock, Sparkles, History } f
 import BottomNav from '@/components/navigation/BottomNav';
 import { useAuthStore } from '@/stores/authStore';
 import MeteorShower from '@/components/effects/MeteorShower';
+import RecentlyViewed from '@/components/dashboard/RecentlyViewed';
 
 export default function ExplorePage() {
     const { isAuthenticated, user } = useAuthStore();
@@ -83,8 +84,15 @@ export default function ExplorePage() {
                 </div>
             </section>
 
+            {/* Recently Viewed (Jump Back In) */}
+            {isAuthenticated && (
+                <section className="max-w-7xl mx-auto px-5 md:px-6 mt-8 relative z-20">
+                    <RecentlyViewed />
+                </section>
+            )}
+
             {/* Features Grid - 2x2 */}
-            <section className="max-w-7xl mx-auto px-5 md:px-6 py-16 md:py-24 relative z-10">
+            <section className="max-w-7xl mx-auto px-5 md:px-6 py-8 md:py-16 relative z-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {/* Subjects Library */}
                     <Link href="/subjects" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col">

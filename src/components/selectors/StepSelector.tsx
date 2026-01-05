@@ -10,6 +10,7 @@ import { clsx } from 'clsx';
 import BottomSheet from '../ui/BottomSheet';
 import { useContentStore } from '@/stores/contentStore';
 import { contentApi } from '@/lib/api';
+import Skeleton from '../ui/Skeleton';
 
 interface StepData {
     step: number;
@@ -154,9 +155,9 @@ export default function StepSelector({ theme = 'dark' }: { theme?: 'light' | 'da
                 title={activeSheet ? steps[activeSheet - 1].title : ''}
             >
                 {loading ? (
-                    <div className="space-y-3 text-slate-800">
+                    <div className="space-y-3">
                         {[1, 2, 3, 4].map(i => (
-                            <div key={i} className="skeleton h-14 rounded-xl bg-gray-200/50" />
+                            <Skeleton key={i} className="h-20 w-full rounded-xl" style={{ backgroundColor: theme === 'dark' ? '#2d2d2d' : '#f3f4f6' }} />
                         ))}
                     </div>
                 ) : options.length === 0 ? (

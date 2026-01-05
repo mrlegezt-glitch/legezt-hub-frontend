@@ -21,8 +21,8 @@ export default function BottomNav() {
     const pathname = usePathname();
 
     return (
-        <nav className="bottom-nav md:hidden">
-            <div className="flex justify-around items-center max-w-lg mx-auto">
+        <nav className="bottom-nav md:hidden pb-safe">
+            <div className="flex justify-around items-center max-w-lg mx-auto h-full">
                 {navItems.map(({ href, icon: Icon, label }) => {
                     const isActive = pathname === href ||
                         (href !== '/' && pathname.startsWith(href));
@@ -31,13 +31,19 @@ export default function BottomNav() {
                         <Link
                             key={href}
                             href={href}
+                            onClick={() => {
+                                if (window.navigator?.vibrate) {
+                                    window.navigator.vibrate(50);
+                                }
+                            }}
                             className={clsx(
                                 'bottom-nav-item',
-                                isActive && 'active'
+                                isActive && 'active',
+                                'active:scale-90 transition-transform duration-200'
                             )}
                         >
                             <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-                            <span className="text-xs font-medium">{label}</span>
+                            <span className="text-[10px] font-medium mt-1">{label}</span>
                         </Link>
                     );
                 })}

@@ -203,6 +203,7 @@ export const userApi = {
     getBookmarks: () => api.get('/users/me/bookmarks'),
     toggleBookmark: (pdfId: string) => api.post(`/users/me/bookmarks/${pdfId}`),
     updateSettings: (data: any) => api.patch('/users/me/settings', data),
+    getRecentPdfs: () => api.get('/users/me/recent-pdfs'),
 };
 
 export const assessmentApi = {

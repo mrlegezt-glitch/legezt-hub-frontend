@@ -26,7 +26,9 @@ export const metadata: Metadata = {
     },
     icons: {
         icon: '/favicon.png',
+        apple: '/icons/icon-192x192.png',
     },
+    manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
@@ -42,6 +44,7 @@ import { Toaster } from 'sonner';
 import AuthInitializer from '@/components/auth/AuthInitializer';
 import { SocketProvider } from '@/lib/socket-context';
 import { UserActivityTracker } from '@/components/UserActivityTracker';
+import InstallPrompt from '@/components/ui/InstallPrompt';
 
 export default function RootLayout({
     children,
@@ -59,6 +62,7 @@ export default function RootLayout({
                         <DesktopNav />
                         <MobileHeader />
                         {children}
+                        <InstallPrompt />
                         <Footer />
                     </SocketProvider>
                     <Toaster position="top-right" theme="dark" />

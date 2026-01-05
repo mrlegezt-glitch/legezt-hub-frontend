@@ -12,7 +12,9 @@ import BottomNav from '@/components/navigation/BottomNav';
 import PdfCard from '@/components/pdf/PdfCard';
 import { pdfApi } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
-import { QuoteLoader } from '@/components/ui/QuoteLoader';
+
+import Breadcrumbs from '@/components/navigation/Breadcrumbs';
+import Skeleton from '@/components/ui/Skeleton';
 
 interface Pdf {
     id: string;
@@ -73,6 +75,21 @@ export default function PdfsPage() {
             </header>
 
             <div className="max-w-lg md:max-w-7xl mx-auto px-5 md:px-6 md:pt-8">
+                {/* Breadcrumbs for easier navigation */}
+                {(folderId || semesterId) && (
+                    <div className="mb-6 -mt-4">
+                        <Breadcrumbs
+                            items={[
+                                { label: 'Library', href: '/pdfs' },
+                                ...(semesterId ? [{ label: 'Semester', href: `/pdfs?semester=${semesterId}` }] : []),
+                                // Note: For full breadcrumbs we need the folder path from backend.
+                                // Quick fix: Show "Current Folder" if deep inside.
+                                ...(folderId ? [{ label: 'Current Folder' }] : [])
+                            ]}
+                        />
+                    </div>
+                )}
+
                 {/* Desktop Title & Controls */}
                 <div className="hidden md:flex items-center justify-between mb-8">
                     <div>
@@ -111,7 +128,11 @@ export default function PdfsPage() {
                 </section>
 
                 {/* Folders */}
-                {folders.length > 0 && (
+                {isLoading ? (
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 mb-8">
+                        {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-20 rounded-xl" />)}
+                    </div>
+                ) : folders.length > 0 && (
                     <section className="pb-6 md:pb-10">
                         <h2 className="text-sm font-medium text-gray-400 mb-3 md:mb-4">Folders</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
@@ -143,7 +164,9 @@ export default function PdfsPage() {
                     )}
 
                     {isLoading ? (
-                        <QuoteLoader />
+                        <div className="space-y-3 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+                            {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="h-32 rounded-xl" />)}
+                        </div>
                     ) : filteredPdfs.length === 0 ? (
                         <div className="text-center py-12 md:py-24 bg-dark-100/30 rounded-3xl border border-dashed border-dark-border">
                             <Folder size={48} className="mx-auto text-dark-border mb-4" />
