@@ -45,6 +45,7 @@ import AuthInitializer from '@/components/auth/AuthInitializer';
 import { SocketProvider } from '@/lib/socket-context';
 import { UserActivityTracker } from '@/components/UserActivityTracker';
 import InstallPrompt from '@/components/ui/InstallPrompt';
+import QueryProvider from '@/providers/QueryProvider';
 
 export default function RootLayout({
     children,
@@ -55,16 +56,18 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning className="dark">
             <body className="antialiased">
                 <ThemeProvider>
-                    <SocketProvider>
-                        <AuthInitializer />
-                        <UserActivityTracker />
-                        <SideMenu />
-                        <DesktopNav />
-                        <MobileHeader />
-                        {children}
-                        <InstallPrompt />
-                        <Footer />
-                    </SocketProvider>
+                    <QueryProvider>
+                        <SocketProvider>
+                            <AuthInitializer />
+                            <UserActivityTracker />
+                            <SideMenu />
+                            <DesktopNav />
+                            <MobileHeader />
+                            {children}
+                            <InstallPrompt />
+                            <Footer />
+                        </SocketProvider>
+                    </QueryProvider>
                     <Toaster position="top-right" theme="dark" />
                 </ThemeProvider>
             </body>
