@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
-import { ArrowLeft, Loader2, Layers, Calendar, BookOpen, Plus, FolderOpen, Trash2, ListTree } from 'lucide-react';
+import { ArrowLeft, Loader2, Layers, Calendar, BookOpen, Plus, FolderOpen, Trash2, ListTree, Link as LinkIcon, Search, Share2, CircleDashed } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
-interface Subject { id: string; name: string; code: string; }
+interface Subject { id: string; name: string; code: string; isShared?: boolean; }
 interface Semester { id: string; displayName: string; subjects: Subject[]; }
 interface Year { id: string; displayName: string; semesters: Semester[]; }
 interface Branch { id: string; name: string; code: string; years: Year[]; }
@@ -29,6 +29,13 @@ export default function CollegeDetailPage() {
     const [isBulkMode, setIsBulkMode] = useState(false);
     const [bulkSubjectText, setBulkSubjectText] = useState('');
 
+    // Linking State
+    const [isLinkingMode, setIsLinkingMode] = useState(false);
+    const [linkSearchQuery, setLinkSearchQuery] = useState('');
+    const [linkSearchResults, setLinkSearchResults] = useState<Subject[]>([]);
+    const [selectedLinkSubject, setSelectedLinkSubject] = useState<Subject | null>(null);
+    const [isSearching, setIsSearching] = useState(false);
+
     // Edit Modal State
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editForm, setEditForm] = useState({ name: '', code: '', logo: '' });
@@ -43,6 +50,30 @@ export default function CollegeDetailPage() {
     const [isYearModalOpen, setIsYearModalOpen] = useState(false);
     const [newYear, setNewYear] = useState({ displayName: '', yearNumber: 1 });
     const [createYearLoading, setCreateYearLoading] = useState(false);
+
+    // Search Effect
+    useEffect(() => {
+        const searchSubjects = async () => {
+            if (!linkSearchQuery || linkSearchQuery.length < 2) {
+                setLinkSearchResults([]);
+                return;
+            }
+            setIsSearching(true);
+            try {
+                // Assuming we have a global subject search endpoint or filtering existing list endpoint
+                // We'll use the generic subjects list with search param
+                const res = await api.get(`/content/subjects?search=${encodeURIComponent(linkSearchQuery)}`);
+                setLinkSearchResults(res.data.data);
+            } catch (error) {
+                console.error('Search failed', error);
+            } finally {
+                setIsSearching(false);
+            }
+        };
+
+        const timeoutId = setTimeout(searchSubjects, 500);
+        return () => clearTimeout(timeoutId);
+    }, [linkSearchQuery]);
 
     // Initialize Edit Form
     useEffect(() => {
@@ -90,21 +121,29 @@ export default function CollegeDetailPage() {
                     name: newSubject.name,
                     code: newSubject.code
                 });
-            } else {
+            } else if (isLinkingMode && selectedLinkSubject) {
+                // Link Subject
                 await api.post('/content/subjects', {
+                    semesterId: selectedSemester.id,
+                    existingSubjectId: selectedLinkSubject.id
+                });
+            } else {
+                // Create New
+                await api.post('/content/subjects', {
+                    semesterId: selectedSemester.id,
                     name: newSubject.name,
                     code: newSubject.code,
-                    semesterId: selectedSemester.id
                 });
             }
-            await fetchCollege(); // Refresh data
-            setIsModalOpen(false);
-            setEditingSubject(null);
+
             await fetchCollege(); // Refresh data
             setIsModalOpen(false);
             setEditingSubject(null);
             setNewSubject({ name: '', code: '' });
-            toast.success(editingSubject ? 'Subject updated' : 'Subject added');
+            setIsLinkingMode(false);
+            setLinkSearchQuery('');
+            setSelectedLinkSubject(null);
+            toast.success(editingSubject ? 'Subject updated' : isLinkingMode ? 'Subject linked' : 'Subject added');
         } catch (error) {
             console.error(error);
             toast.error(`Failed to ${editingSubject ? 'update' : 'create'} subject`);
@@ -383,6 +422,11 @@ export default function CollegeDetailPage() {
                                                         </div>
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-xs font-mono text-gray-600 group-hover:text-gray-400">{sub.code}</span>
+                                                            {sub.isShared && (
+                                                                <span className="text-[10px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded flex items-center gap-1" title="Shared Subject">
+                                                                    <Share2 size={10} /> Shared
+                                                                </span>
+                                                            )}
                                                             <button
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
@@ -397,11 +441,12 @@ export default function CollegeDetailPage() {
                                                                     e.stopPropagation();
                                                                     if (confirm(`Delete subject "${sub.name}"?`)) {
                                                                         try {
-                                                                            await api.delete(`/content/subjects/${sub.id}`);
+                                                                            // Use context-aware delete endpoint
+                                                                            await api.delete(`/content/semesters/${sem.id}/subjects/${sub.id}`);
                                                                             await fetchCollege();
-                                                                            toast.success('Subject deleted');
+                                                                            toast.success('Subject removed');
                                                                         } catch (err) {
-                                                                            toast.error('Failed to delete subject');
+                                                                            toast.error('Failed to remove subject');
                                                                         }
                                                                     }
                                                                 }}
@@ -435,17 +480,70 @@ export default function CollegeDetailPage() {
                             <h3 className="text-xl font-bold text-white">
                                 {editingSubject ? 'Edit Subject' : isBulkMode ? 'Bulk Add Subjects' : `Add Subject to ${selectedSemester.name}`}
                             </h3>
-                            {!editingSubject && (
+                            <div className="flex bg-dark-300 p-1 rounded-lg">
                                 <button
-                                    onClick={() => setIsBulkMode(!isBulkMode)}
-                                    className={`text-xs px-2 py-1 rounded transition-colors ${isBulkMode ? 'bg-primary-600 text-white' : 'bg-dark-300 text-gray-400 hover:text-white'}`}
+                                    onClick={() => { setIsLinkingMode(false); setIsBulkMode(false); }}
+                                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${!isLinkingMode && !isBulkMode ? 'bg-primary-600 text-white' : 'text-gray-400 hover:text-white'}`}
                                 >
-                                    {isBulkMode ? 'Single Entry' : 'Bulk Mode'}
+                                    New
                                 </button>
-                            )}
+                                <button
+                                    onClick={() => { setIsLinkingMode(false); setIsBulkMode(true); }}
+                                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${isBulkMode ? 'bg-primary-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                    Bulk
+                                </button>
+                                <button
+                                    onClick={() => { setIsLinkingMode(true); setIsBulkMode(false); }}
+                                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${isLinkingMode ? 'bg-primary-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                    Link Existing
+                                </button>
+                            </div>
                         </div>
 
-                        {isBulkMode ? (
+                        {isLinkingMode ? (
+                            <div className="space-y-4">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+                                    <input
+                                        type="text"
+                                        value={linkSearchQuery}
+                                        onChange={(e) => setLinkSearchQuery(e.target.value)}
+                                        className="w-full bg-dark-300 border border-dark-border rounded-lg pl-9 pr-4 py-2 text-white focus:ring-2 focus:ring-primary-500 outline-none placeholder:text-gray-600"
+                                        placeholder="Search subjects..."
+                                        autoFocus
+                                    />
+                                    {isSearching && (
+                                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 animate-spin" size={14} />
+                                    )}
+                                </div>
+                                <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
+                                    {linkSearchResults.length === 0 && linkSearchQuery.length > 1 && !isSearching ? (
+                                        <p className="text-center text-gray-500 text-sm py-4">No subjects found</p>
+                                    ) : (
+                                        linkSearchResults.map((subject) => (
+                                            <div
+                                                key={subject.id}
+                                                onClick={() => setSelectedLinkSubject(subject)}
+                                                className={`p-3 rounded-lg cursor-pointer border transition-colors flex items-center justify-between ${selectedLinkSubject?.id === subject.id
+                                                    ? 'bg-primary-500/20 border-primary-500 text-white'
+                                                    : 'bg-dark-300 border-transparent hover:bg-dark-400 text-gray-300'
+                                                    }`}
+                                            >
+                                                <div className="flex-1">
+                                                    <p className="font-medium text-sm">{subject.name}</p>
+                                                    <p className="text-xs opacity-70">{subject.code}</p>
+                                                </div>
+                                                {selectedLinkSubject?.id === subject.id && (
+                                                    <div className="w-2 h-2 rounded-full bg-primary-500" />
+                                                )}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        ) : isBulkMode ? (
                             <div className="space-y-4">
                                 <p className="text-xs text-gray-500 bg-dark-300 p-2 rounded border border-dark-border">
                                     Enter one subject per line: <br />
@@ -489,6 +587,9 @@ export default function CollegeDetailPage() {
                                     setIsModalOpen(false);
                                     setEditingSubject(null);
                                     setIsBulkMode(false);
+                                    setIsLinkingMode(false);
+                                    setLinkSearchQuery('');
+                                    setSelectedLinkSubject(null);
                                 }}
                                 className="px-4 py-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                             >
@@ -496,11 +597,11 @@ export default function CollegeDetailPage() {
                             </button>
                             <button
                                 onClick={isBulkMode ? handleBulkAddSubjects : handleAddSubject}
-                                disabled={createLoading || (isBulkMode ? !bulkSubjectText.trim() : (!newSubject.name || !newSubject.code))}
+                                disabled={createLoading || (isLinkingMode ? !selectedLinkSubject : isBulkMode ? !bulkSubjectText.trim() : (!newSubject.name || !newSubject.code))}
                                 className="btn-primary px-4 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {createLoading ? <Loader2 size={18} className="animate-spin" /> : isBulkMode ? <ListTree size={18} /> : editingSubject ? <FolderOpen size={18} /> : <Plus size={18} />}
-                                {editingSubject ? 'Update Subject' : isBulkMode ? 'Add Subjects' : 'Create Subject'}
+                                {createLoading ? <Loader2 size={18} className="animate-spin" /> : isLinkingMode ? <LinkIcon size={18} /> : isBulkMode ? <ListTree size={18} /> : editingSubject ? <FolderOpen size={18} /> : <Plus size={18} />}
+                                {editingSubject ? 'Update Subject' : isLinkingMode ? 'Link Subject' : isBulkMode ? 'Add Subjects' : 'Create Subject'}
                             </button>
                         </div>
                     </div>
