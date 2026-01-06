@@ -218,7 +218,7 @@ export const assessmentApi = {
 
 export const adminApi = {
     getStats: () => api.get('/admin/analytics'),
-    getStorageStats: () => api.get('/admin/stats/storage'),
+    getStorageStats: () => api.get('/admin/storage-stats'),
     cleanupStorage: () => api.post('/admin/maintenance/cleanup-storage'),
     clearCache: () => api.post('/admin/maintenance/clear-cache'),
 };
