@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { BarChart3, Users, FileText, Database, Loader2, Sparkles, TrendingUp } from 'lucide-react';
 import { api } from '@/lib/api';
 import { motion } from 'framer-motion';
+import StorageStats from '@/components/admin/StorageStats';
 
 export default function AdminDashboardPage() {
     const { user, isAuthenticated } = useAuthStore();
@@ -63,9 +64,9 @@ export default function AdminDashboardPage() {
                     { label: 'Total Downloads', value: stats?.downloads || 0, icon: BarChart3, color: 'text-green-400', bg: 'bg-green-500/10' },
                     { label: 'Colleges', value: stats?.colleges || 0, icon: Database, color: 'text-orange-400', bg: 'bg-orange-500/10' },
                 ].map((stat, i) => (
-                    <div key={i} className="card p-6 border-white/10 bg-dark-200/40 backdrop-blur-md hover:border-primary-500/30 transition-all duration-300 hover:-translate-y-1">
+                    <div key={i} className="card hover:translate-y-[-4px] transition-transform duration-300">
                         <div className="flex items-start justify-between mb-4">
-                            <div className={`p-3 rounded-lg ${stat.bg}`}>
+                            <div className={`p-4 rounded-2xl ${stat.bg}`}>
                                 {loading ? (
                                     <Loader2 className={`animate-spin ${stat.color}`} size={24} />
                                 ) : (
@@ -73,25 +74,25 @@ export default function AdminDashboardPage() {
                                 )}
                             </div>
                         </div>
-                        <h3 className="text-2xl font-bold text-white mb-1">
+                        <h3 className="text-3xl font-bold text-white mb-1">
                             {loading ? '...' : stat.value}
                         </h3>
-                        <p className="text-sm text-gray-400">{stat.label}</p>
+                        <p className="text-sm text-gray-400 font-medium">{stat.label}</p>
                     </div>
                 ))}
             </div>
 
             {/* Advanced Panels */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 card p-6 border-white/10 bg-dark-200/40 backdrop-blur-md min-h-[400px] flex flex-col">
+                <div className="lg:col-span-2 card min-h-[400px] flex flex-col">
                     <div className="flex items-center justify-between mb-8">
                         <div>
                             <h2 className="text-xl font-bold text-white">Top Viewed PDFs</h2>
                             <p className="text-sm text-gray-500">Highest performing content</p>
                         </div>
-                        <div className="flex items-center gap-2 text-primary-400 text-sm font-medium bg-primary-400/10 px-3 py-1 rounded-full">
-                            <TrendingUp size={14} />
-                            Trending Content
+                        <div className="flex items-center gap-2 text-primary text-sm font-medium bg-primary/10 px-4 py-2 rounded-full">
+                            <TrendingUp size={16} />
+                            Trending
                         </div>
                     </div>
 
@@ -107,17 +108,17 @@ export default function AdminDashboardPage() {
                                 return (
                                     <div key={pdf.id} className="flex-1 flex flex-col items-center gap-3 group relative">
                                         {/* Tooltip */}
-                                        <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-dark-100 border border-dark-border px-3 py-1 rounded text-xs text-white whitespace-nowrap z-10 pointer-events-none">
+                                        <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-dark-bg border border-dark-border px-3 py-1 rounded text-xs text-white whitespace-nowrap z-10 pointer-events-none shadow-lg">
                                             {pdf.viewCount} Views
                                         </div>
 
-                                        <div className="w-full relative bg-dark-200 rounded-t-lg overflow-hidden h-48 flex items-end justify-center">
+                                        <div className="w-full relative bg-dark-bg rounded-t-2xl overflow-hidden h-48 flex items-end justify-center">
                                             {/* Bar */}
                                             <motion.div
                                                 initial={{ height: 0 }}
                                                 animate={{ height: `${Math.max(height, 5)}%` }} // Min 5% height
                                                 transition={{ duration: 1, delay: i * 0.1, ease: "easeOut" }}
-                                                className="w-full bg-gradient-to-t from-red-600 to-red-400 group-hover:from-red-500 group-hover:to-red-300 transition-all cursor-pointer rounded-t-lg mx-1"
+                                                className="w-full bg-gradient-to-t from-primary-600 to-primary-400 group-hover:from-primary-500 group-hover:to-primary-300 transition-all cursor-pointer rounded-t-lg mx-1.5"
                                             />
                                         </div>
                                         <span className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter truncate max-w-[60px] md:max-w-[100px]" title={pdf.title}>
@@ -130,18 +131,22 @@ export default function AdminDashboardPage() {
                     </div>
                 </div>
 
-                <div className="card p-6 border-white/10 bg-dark-200/40 backdrop-blur-md h-fit">
-                    <h2 className="text-xl font-bold text-white mb-6">Quick Actions</h2>
-                    <div className="space-y-3">
-                        <button onClick={() => router.push('/admin/colleges')} className="w-full p-4 text-left hover:bg-white/5 rounded-xl transition-all border border-dark-border flex items-center justify-between group">
-                            <span className="text-gray-300 font-medium">Add New College</span>
-                            <span className="w-8 h-8 rounded-full bg-dark-100 flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-primary-600 transition-all">+</span>
-                        </button>
-                        <button onClick={() => router.push('/admin/pdfs')} className="w-full p-4 text-left hover:bg-white/5 rounded-xl transition-all border border-dark-border flex items-center justify-between group">
-                            <span className="text-gray-300 font-medium">Upload Bulk PDFs</span>
-                            <span className="w-8 h-8 rounded-full bg-dark-100 flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-primary-600 transition-all">↑</span>
-                        </button>
+                <div className="flex flex-col gap-6 h-fit">
+                    <div className="card">
+                        <h2 className="text-xl font-bold text-white mb-6">Quick Actions</h2>
+                        <div className="space-y-3">
+                            <button onClick={() => router.push('/admin/colleges')} className="w-full p-4 text-left hover:bg-dark-bg rounded-2xl transition-all border border-transparent hover:border-dark-border flex items-center justify-between group">
+                                <span className="text-gray-300 font-medium group-hover:text-white">Add New College</span>
+                                <span className="w-8 h-8 rounded-full bg-dark-bg flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-primary transition-all">+</span>
+                            </button>
+                            <button onClick={() => router.push('/admin/pdfs')} className="w-full p-4 text-left hover:bg-dark-bg rounded-2xl transition-all border border-transparent hover:border-dark-border flex items-center justify-between group">
+                                <span className="text-gray-300 font-medium group-hover:text-white">Upload Bulk PDFs</span>
+                                <span className="w-8 h-8 rounded-full bg-dark-bg flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-primary transition-all">↑</span>
+                            </button>
+                        </div>
                     </div>
+
+                    <StorageStats />
                 </div>
             </div>
         </div>

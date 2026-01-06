@@ -23,12 +23,7 @@ export default function AdminPanelLayout({ children }: { children: React.ReactNo
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-900/20 via-dark-900 to-black flex relative overflow-hidden">
-            {/* Ambient Background Effects */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-                <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-primary-600/10 rounded-full blur-[120px]" />
-                <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-secondary-600/10 rounded-full blur-[120px]" />
-            </div>
+        <div className="min-h-screen bg-dark-bg flex relative overflow-hidden text-text-primary">
             {/* Sidebar (Desktop) */}
             <AdminSidebar />
 

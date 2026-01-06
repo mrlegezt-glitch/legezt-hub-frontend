@@ -216,5 +216,12 @@ export const assessmentApi = {
     delete: (id: string) => api.delete(`/assessments/${id}`),
 };
 
+export const adminApi = {
+    getStats: () => api.get('/admin/analytics'),
+    getStorageStats: () => api.get('/admin/stats/storage'),
+    cleanupStorage: () => api.post('/admin/maintenance/cleanup-storage'),
+    clearCache: () => api.post('/admin/maintenance/clear-cache'),
+};
+
 export default api;
 

@@ -14,19 +14,27 @@ module.exports = {
                     200: '#c7d2fe',
                     300: '#a5b4fc',
                     400: '#818cf8',
-                    500: '#6366f1',
-                    600: '#4f46e5',
+                    500: 'var(--primary)',      // Mapped to Global Variable
+                    DEFAULT: 'var(--primary)',  // Enables bg-primary, text-primary
+                    600: 'var(--primary-dark)', // Mapped to Global Variable
                     700: '#4338ca',
                     800: '#3730a3',
                     900: '#312e81',
                     950: '#1e1b4b',
                 },
                 dark: {
-                    100: '#1e1e2e',
-                    200: '#181825',
+                    bg: 'var(--dark-bg)',
+                    card: 'var(--dark-card)',
+                    border: 'var(--dark-border)',
+                    100: 'var(--dark-card)',   // Map legacy to card
+                    200: 'var(--dark-bg)',     // Map legacy to background
                     300: '#11111b',
                     400: '#0a0a12',
-                    border: '#2a2a3e',
+                },
+                accent: 'var(--accent)',
+                text: {
+                    primary: 'var(--text-primary)',
+                    secondary: 'var(--text-secondary)',
                 },
             },
             fontFamily: {
