@@ -2,22 +2,22 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, GraduationCap, Building2, FileText, Settings, LogOut, Megaphone, Podcast, BookOpen, FlaskConical, School, Mic, Layout, Activity } from 'lucide-react';
+import { LayoutDashboard, Users, GraduationCap, Building2, FileText, Settings, LogOut, Megaphone, Podcast, BookOpen, FlaskConical, School, Mic, Layout, Activity, ShieldAlert, BadgeCheck } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 
 const menuItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
-    { icon: School, label: 'Colleges & Branches', href: '/admin/colleges' },
-    { icon: FileText, label: 'PDF Management', href: '/admin/pdfs' },
-    { icon: Mic, label: 'LeGeZtCast', href: '/admin/podcasts' },
-    { icon: BookOpen, label: 'Courses', href: '/admin/courses' },
-    { icon: Users, label: 'User Monitoring', href: '/admin/users' },
-    { icon: Activity, label: 'Live Users', href: '/admin/live' },
-    { icon: FileText, label: 'Assignments & Tests', href: '/admin/assessments' },
-    { icon: Layout, label: 'Ads Configuration', href: '/admin/ads' },
-    { icon: FlaskConical, label: 'LeGeZt Tantra', href: '/admin/legezttantra' },
+    { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard', roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { icon: ShieldAlert, label: 'Admin Requests', href: '/admin/requests', roles: ['SUPER_ADMIN'] },
+    { icon: School, label: 'Colleges & Branches', href: '/admin/colleges', roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { icon: FileText, label: 'PDF Management', href: '/admin/pdfs', roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { icon: Mic, label: 'LeGeZtCast', href: '/admin/podcasts', roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { icon: BookOpen, label: 'Courses', href: '/admin/courses', roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { icon: Users, label: 'User Monitoring', href: '/admin/users', roles: ['SUPER_ADMIN'] },
+    { icon: Activity, label: 'Live Users', href: '/admin/live', roles: ['SUPER_ADMIN'] },
+    { icon: FileText, label: 'Assignments & Tests', href: '/admin/assessments', roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { icon: Layout, label: 'Ads Configuration', href: '/admin/ads', roles: ['SUPER_ADMIN'] },
+    { icon: FlaskConical, label: 'LeGeZt Tantra', href: '/admin/legezttantra', roles: ['ADMIN', 'SUPER_ADMIN'] },
 ];
-
 
 interface AdminSidebarProps {
     isMobile?: boolean;
@@ -26,7 +26,7 @@ interface AdminSidebarProps {
 
 export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProps) {
     const pathname = usePathname();
-    const { logout } = useAuthStore();
+    const { logout, user } = useAuthStore();
 
     return (
         <aside className={`${isMobile ? 'flex w-full' : 'hidden md:flex w-72'} bg-dark-card border-r border-dark-border/50 h-full flex-col z-20`}>
@@ -43,6 +43,9 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
                 </div>
                 {menuItems.map((item) => {
                     const isActive = pathname === item.href;
+                    // Filter based on role
+                    if (user && item.roles && !item.roles.includes(user.role)) return null;
+
                     return (
                         <Link
                             key={item.href}
@@ -88,8 +91,13 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
                             className="w-9 h-9 rounded-full object-cover"
                         />
                         <div className="flex flex-col">
-                            <span className="text-sm font-semibold text-white">{useAuthStore.getState().user?.name || 'Admin'}</span>
-                            <span className="text-[10px] text-gray-500 truncate max-w-[100px]">{useAuthStore.getState().user?.email}</span>
+                            <div className="flex items-center gap-1">
+                                <span className="text-sm font-semibold text-white">{user?.name || 'Admin'}</span>
+                                {user?.badges?.includes('VERIFIED_ADMIN') && (
+                                    <BadgeCheck className="w-4 h-4 text-blue-400" fill="currentColor" size={12} />
+                                )}
+                            </div>
+                            <span className="text-[10px] text-gray-500 truncate max-w-[100px]">{user?.email}</span>
                         </div>
                     </div>
                     <button

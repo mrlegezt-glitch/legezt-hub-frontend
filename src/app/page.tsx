@@ -5,14 +5,18 @@
 // ==================================
 
 import Link from 'next/link';
-import { ArrowRight, FileText, Headphones, BookOpen, Lock, Sparkles, History } from 'lucide-react';
+import { ArrowRight, FileText, Headphones, BookOpen, Lock, Sparkles, History, ShieldCheck } from 'lucide-react';
 import BottomNav from '@/components/navigation/BottomNav';
 import { useAuthStore } from '@/stores/authStore';
 import MeteorShower from '@/components/effects/MeteorShower';
 import RecentlyViewed from '@/components/dashboard/RecentlyViewed';
 
+import { useState } from 'react';
+import BecomeAdminModal from '@/components/admin/BecomeAdminModal';
+
 export default function ExplorePage() {
     const { isAuthenticated, user } = useAuthStore();
+    const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
     return (
         <main className="min-h-screen pb-24 md:pb-12 relative">
@@ -84,12 +88,48 @@ export default function ExplorePage() {
                 </div>
             </section>
 
+            {/* Become Admin Highlight - Only for Students */}
+            {
+                isAuthenticated && user?.role === 'USER' && (
+                    <section className="max-w-4xl mx-auto px-5 mb-12">
+                        <div className="bg-gradient-to-r from-primary/10 via-transparent to-transparent border border-primary/20 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
+
+                            <div className="relative z-10">
+                                <h2 className="text-xl md:text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                                    <ShieldCheck className="text-primary" />
+                                    Want to become an Admin?
+                                </h2>
+                                <p className="text-gray-400 text-sm md:text-base max-w-md">
+                                    Help your peers by managing PDFs, podcasts, and study materials. Apply now to get access.
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={() => setIsAdminModalOpen(true)}
+                                className="relative z-10 px-6 py-3 bg-primary text-black font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 whitespace-nowrap"
+                            >
+                                Apply Now
+                            </button>
+                        </div>
+                    </section>
+                )
+            }
+
+            <BecomeAdminModal
+                isOpen={isAdminModalOpen}
+                onClose={() => setIsAdminModalOpen(false)}
+                user={user}
+            />
+
             {/* Recently Viewed (Jump Back In) */}
-            {isAuthenticated && (
-                <section className="max-w-7xl mx-auto px-5 md:px-6 mt-8 relative z-20">
-                    <RecentlyViewed />
-                </section>
-            )}
+            {
+                isAuthenticated && (
+                    <section className="max-w-7xl mx-auto px-5 md:px-6 mt-8 relative z-20">
+                        <RecentlyViewed />
+                    </section>
+                )
+            }
 
             {/* Features Grid - 2x2 */}
             <section className="max-w-7xl mx-auto px-5 md:px-6 py-8 md:py-16 relative z-10">
@@ -197,23 +237,25 @@ export default function ExplorePage() {
             </section>
 
             {/* Authenticated Preview Notice */}
-            {!isAuthenticated && (
-                <section className="max-w-4xl mx-auto px-5 text-center pb-12">
-                    <div className="p-8 rounded-3xl bg-gradient-to-b from-dark-100 to-transparent border border-white/5">
-                        <Lock className="mx-auto text-gray-500 mb-4" size={32} />
-                        <h2 className="text-2xl font-bold mb-2">Member Exclusive Content</h2>
-                        <p className="text-gray-400 mb-6">
-                            Browse freely, but you&apos;ll need to login to open documents, play full podcasts, or enroll.
-                        </p>
-                        <Link href="/login" className="text-primary-400 hover:text-primary-300 font-semibold">
-                            Login / Sign Up
-                        </Link>
-                    </div>
-                </section>
-            )}
+            {
+                !isAuthenticated && (
+                    <section className="max-w-4xl mx-auto px-5 text-center pb-12">
+                        <div className="p-8 rounded-3xl bg-gradient-to-b from-dark-100 to-transparent border border-white/5">
+                            <Lock className="mx-auto text-gray-500 mb-4" size={32} />
+                            <h2 className="text-2xl font-bold mb-2">Member Exclusive Content</h2>
+                            <p className="text-gray-400 mb-6">
+                                Browse freely, but you&apos;ll need to login to open documents, play full podcasts, or enroll.
+                            </p>
+                            <Link href="/login" className="text-primary-400 hover:text-primary-300 font-semibold">
+                                Login / Sign Up
+                            </Link>
+                        </div>
+                    </section>
+                )
+            }
 
             {/* Bottom Navigation (Hidden on Desktop) */}
             <BottomNav />
-        </main>
+        </main >
     );
 }

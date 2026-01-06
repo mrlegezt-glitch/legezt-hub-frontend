@@ -21,6 +21,8 @@ interface User {
     semesterId?: string;
     semesterName?: string;
     isOnboardingComplete?: boolean;
+    badges?: string[];
+    lastActiveAt?: string;
 }
 
 interface AuthState {
