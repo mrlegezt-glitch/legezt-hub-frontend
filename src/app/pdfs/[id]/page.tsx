@@ -10,7 +10,8 @@ import {
     ArrowLeft,
     Share2,
     Download,
-    Heart
+    Heart,
+    ExternalLink
 } from 'lucide-react';
 import { pdfApi, userApi } from '@/lib/api';
 import { toast } from 'sonner';
@@ -91,19 +92,22 @@ export default function PdfViewerPage() {
     };
 
     const handleShare = async () => {
+        const shareText = `📚 *${pdfData?.title || 'Study Material'}*\n\nI found this useful study material on LeGeZt Hub! 🚀\n\n🔗 *View PDF:*\n${window.location.href}\n\n✨ *Explore more resources:*\nhttps://legezt.app`;
+
         if (navigator.share) {
             try {
                 await navigator.share({
                     title: pdfData?.title || 'PDF',
+                    text: shareText,
                     url: window.location.href,
                 });
             } catch (error) {
                 // User cancelled
             }
         } else {
-            // Fallback - copy to clipboard
-            navigator.clipboard.writeText(window.location.href);
-            toast.success('Link copied to clipboard!');
+            // Fallback - copy full text to clipboard
+            navigator.clipboard.writeText(shareText);
+            toast.success('Share message copied to clipboard!');
         }
     };
 
@@ -177,6 +181,13 @@ export default function PdfViewerPage() {
                         title={isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}
                     >
                         <Heart size={20} fill={isBookmarked ? "currentColor" : "none"} />
+                    </button>
+                    <button
+                        onClick={() => window.open(pdfData.url, '_blank')}
+                        className="p-2 rounded-lg hover:bg-gray-700 text-gray-400"
+                        title="Open in New Tab"
+                    >
+                        <ExternalLink size={20} />
                     </button>
                     <button
                         onClick={handleShare}
