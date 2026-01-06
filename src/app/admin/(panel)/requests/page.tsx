@@ -20,7 +20,7 @@ export default function AdminRequestsPage() {
 
     const fetchRequests = async () => {
         try {
-            const { data } = await api.get("/admin/admin-requests");
+            const { data } = await api.get("/admin-requests");
             setRequests(data);
         } catch (error) {
             toast.error("Failed to fetch requests");
@@ -32,7 +32,7 @@ export default function AdminRequestsPage() {
     const handleStatusUpdate = async (id: string, status: "APPROVED" | "REJECTED") => {
         setProcessingId(id);
         try {
-            await api.put(`/admin/admin-requests/${id}/status`, { status });
+            await api.put(`/admin-requests/${id}/status`, { status });
             toast.success(`Request ${status.toLowerCase()} successfully`);
             // Remove from list
             setRequests((prev) => prev.filter((req) => req.id !== id));
