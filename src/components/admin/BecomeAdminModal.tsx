@@ -107,21 +107,25 @@ export default function BecomeAdminModal({ isOpen, onClose, user }: BecomeAdminM
                                 {/* Pre-filled info */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1">
-                                        <label className="text-xs font-medium text-text-secondary">College</label>
+                                        <label className="text-xs font-medium text-text-secondary">College <span className="text-red-500">*</span></label>
                                         <input
                                             type="text"
-                                            className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-xl text-gray-400 cursor-not-allowed text-sm"
+                                            className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-xl text-white focus:border-primary text-sm"
                                             value={formData.college}
-                                            readOnly
+                                            onChange={(e) => setFormData({ ...formData, college: e.target.value })}
+                                            placeholder="Enter your college name"
+                                            required
                                         />
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-xs font-medium text-text-secondary">Branch</label>
+                                        <label className="text-xs font-medium text-text-secondary">Branch <span className="text-red-500">*</span></label>
                                         <input
                                             type="text"
-                                            className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-xl text-gray-400 cursor-not-allowed text-sm"
+                                            className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-xl text-white focus:border-primary text-sm"
                                             value={formData.branch}
-                                            readOnly
+                                            onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
+                                            placeholder="Enter your branch name"
+                                            required
                                         />
                                     </div>
                                 </div>
