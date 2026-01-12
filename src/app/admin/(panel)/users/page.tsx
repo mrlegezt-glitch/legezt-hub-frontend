@@ -10,10 +10,12 @@ import {
     MoreHorizontal,
     Loader2,
     Calendar,
-    Mail
+    Mail,
+    Send
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
+import SendNotificationModal from '@/components/admin/SendNotificationModal';
 
 interface User {
     id: string;
@@ -32,6 +34,19 @@ export default function AdminUsersPage() {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+
+    // Notification Modal State
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [selectedUserForNotification, setSelectedUserForNotification] = useState<{ id: string, name: string } | null>(null);
+
+    const openNotificationModal = (user?: User) => {
+        if (user) {
+            setSelectedUserForNotification({ id: user.id, name: user.name });
+        } else {
+            setSelectedUserForNotification(null);
+        }
+        setIsNotificationOpen(true);
+    };
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -92,15 +107,25 @@ export default function AdminUsersPage() {
                     <p className="text-gray-400">Monitor activity and manage system access</p>
                 </div>
 
-                <div className="relative w-full md:w-80">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search name or email..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-full bg-dark-200 border border-dark-border rounded-xl py-2.5 pl-10 pr-4 text-sm focus:border-primary-500 outline-none transition-all"
-                    />
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => openNotificationModal()}
+                        className="flex items-center gap-2 px-4 py-2.5 bg-primary/10 text-primary rounded-xl font-medium hover:bg-primary/20 transition-colors"
+                    >
+                        <Send size={18} />
+                        Broadcast
+                    </button>
+
+                    <div className="relative w-full md:w-80">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search name or email..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full bg-dark-200 border border-dark-border rounded-xl py-2.5 pl-10 pr-4 text-sm focus:border-primary-500 outline-none transition-all"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -184,6 +209,13 @@ export default function AdminUsersPage() {
                                                 <button className="p-2 rounded-lg hover:bg-dark-100 text-gray-400">
                                                     <MoreHorizontal size={18} />
                                                 </button>
+                                                <button
+                                                    onClick={() => openNotificationModal(user)}
+                                                    className="p-2 rounded-lg hover:bg-primary/10 text-gray-400 hover:text-primary transition-colors"
+                                                    title="Send Notification"
+                                                >
+                                                    <Send size={18} />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -216,6 +248,12 @@ export default function AdminUsersPage() {
                     </div>
                 </div>
             </div>
+
+            <SendNotificationModal
+                isOpen={isNotificationOpen}
+                onClose={() => setIsNotificationOpen(false)}
+                preSelectedUser={selectedUserForNotification}
+            />
         </div>
     );
 }

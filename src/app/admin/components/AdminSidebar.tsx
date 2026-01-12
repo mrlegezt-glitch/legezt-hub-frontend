@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Users, GraduationCap, Building2, FileText, Settings, LogOut, Megaphone, Podcast, BookOpen, FlaskConical, School, Mic, Layout, Activity, ShieldAlert, BadgeCheck } from 'lucide-react';
+import { LayoutDashboard, Users, GraduationCap, Building2, FileText, Settings, LogOut, Megaphone, Podcast, BookOpen, FlaskConical, School, Mic, Layout, Activity, ShieldAlert, BadgeCheck, Calendar } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 
 const menuItems = [
@@ -16,6 +16,8 @@ const menuItems = [
     { icon: Activity, label: 'Live Users', href: '/admin/live', roles: ['SUPER_ADMIN'] },
     { icon: FileText, label: 'Assignments & Tests', href: '/admin/assessments', roles: ['ADMIN', 'SUPER_ADMIN'] },
     { icon: Layout, label: 'Ads Configuration', href: '/admin/ads', roles: ['SUPER_ADMIN'] },
+    { icon: Users, label: 'Faculty', href: '/admin/academic/faculty', roles: ['ADMIN', 'SUPER_ADMIN'] },
+    { icon: Calendar, label: 'Schedule', href: '/admin/academic/schedule', roles: ['ADMIN', 'SUPER_ADMIN'] },
     { icon: FlaskConical, label: 'LeGeZt Tantra', href: '/admin/legezttantra', roles: ['ADMIN', 'SUPER_ADMIN'] },
 ];
 
