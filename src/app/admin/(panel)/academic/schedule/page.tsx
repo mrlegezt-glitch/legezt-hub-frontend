@@ -1,12 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import { Loader2, Save, Calendar } from 'lucide-react';
 
 export default function SchedulePage() {
     const [loading, setLoading] = useState(false);
+    const [subjects, setSubjects] = useState<any[]>([]);
+    const [branches, setBranches] = useState<any[]>([]);
+    const [semesters, setSemesters] = useState<any[]>([]);
+
+    // Fetch lists on mount
+    useEffect(() => {
+        const fetchLists = async () => {
+            try {
+                const [subRes, branchRes, semRes] = await Promise.all([
+                    api.get('/academic/subjects'),
+                    api.get('/academic/branches'),
+                    api.get('/academic/semesters')
+                ]);
+                setSubjects(subRes.data);
+                setBranches(branchRes.data);
+                setSemesters(semRes.data);
+            } catch (err) {
+                toast.error('Failed to load dropdown lists');
+            }
+        };
+        fetchLists();
+    }, []);
+
     const [formData, setFormData] = useState({
         dayOfWeek: 1, // Monday
         startTime: '09:00',
@@ -27,8 +50,8 @@ export default function SchedulePage() {
                 dayOfWeek: parseInt(formData.dayOfWeek as any)
             });
             toast.success('Schedule slot added');
-        } catch (error) {
-            toast.error('Failed to add schedule');
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to add schedule');
         } finally {
             setLoading(false);
         }
@@ -82,31 +105,45 @@ export default function SchedulePage() {
                             />
                         </div>
 
-                        <input
-                            type="text"
-                            placeholder="Subject ID (UUID)"
+                        {/* Subject Select */}
+                        <select
                             className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white"
                             value={formData.subjectId}
                             onChange={e => setFormData({ ...formData, subjectId: e.target.value })}
                             required
-                        />
+                        >
+                            <option value="">Select Subject</option>
+                            {subjects.map(sub => (
+                                <option key={sub.id} value={sub.id}>{sub.name} ({sub.code})</option>
+                            ))}
+                        </select>
 
-                        <input
-                            type="text"
-                            placeholder="Semester ID (UUID)"
+                        {/* Semester Select */}
+                        <select
                             className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white"
                             value={formData.semesterId}
                             onChange={e => setFormData({ ...formData, semesterId: e.target.value })}
                             required
-                        />
-                        <input
-                            type="text"
-                            placeholder="Branch ID (UUID)"
+                        >
+                            <option value="">Select Semester</option>
+                            {semesters.map(sem => (
+                                <option key={sem.id} value={sem.id}>{sem.displayName}</option>
+                            ))}
+                        </select>
+
+                        {/* Branch Select */}
+                        <select
                             className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white"
                             value={formData.branchId}
                             onChange={e => setFormData({ ...formData, branchId: e.target.value })}
                             required
-                        />
+                        >
+                            <option value="">Select Branch</option>
+                            {branches.map(br => (
+                                <option key={br.id} value={br.id}>{br.name}</option>
+                            ))}
+                        </select>
+
                         <input
                             type="text"
                             placeholder="Room Number (e.g. 304)"
