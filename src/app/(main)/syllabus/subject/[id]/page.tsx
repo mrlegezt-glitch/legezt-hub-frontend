@@ -63,12 +63,17 @@ export default function SubjectDetailPage() {
                         <p className="text-sm text-gray-400">{faculty.designation}</p>
                     </div>
                     <div className="flex gap-2">
-                        {faculty.email && (
-                            <a href={`mailto:${faculty.email}`} className="p-2 bg-white/5 rounded-full text-gray-300 hover:bg-primary-500 hover:text-white transition-colors">
-                                <Mail size={18} />
+                        {faculty.phone && (
+                            <a
+                                href={`https://wa.me/${faculty.phone.replace(/\D/g, '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 bg-[#25D366]/10 text-[#25D366] rounded-full hover:bg-[#25D366] hover:text-white transition-all flex items-center justify-center"
+                                title="Chat on WhatsApp"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-message-circle"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>
                             </a>
                         )}
-                        {/* Ask Doubt Button (Future: Chat) */}
                     </div>
                 </div>
             ) : (
