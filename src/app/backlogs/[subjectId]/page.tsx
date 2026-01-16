@@ -139,7 +139,7 @@ export default function SubjectDetailPage() {
                         </div>
                         <h3 className="text-xl font-medium text-gray-300">No materials uploaded yet</h3>
                         <p className="text-gray-500 mt-2 max-w-sm mx-auto">
-                            We're currently updating content for {subject?.name}. Check back soon!
+                            We&apos;re currently updating content for {subject?.name}. Check back soon!
                         </p>
                     </div>
                 ) : (

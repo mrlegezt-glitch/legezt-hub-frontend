@@ -359,7 +359,7 @@ export default function CollegeDetailPage() {
                             </div>
                             <h3 className="text-xl font-bold text-white mb-2">No Years Added</h3>
                             <p className="text-gray-400 mb-6 text-center max-w-sm">
-                                This branch doesn't have any years configured yet. Add a year to start organizing semesters and subjects.
+                                This branch doesn&apos;t have any years configured yet. Add a year to start organizing semesters and subjects.
                             </p>
                             <button
                                 onClick={() => setIsYearModalOpen(true)}

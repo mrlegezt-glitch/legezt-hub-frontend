@@ -129,7 +129,7 @@ export default function AdminRequestsPage() {
                                 <div className="bg-dark-bg/50 p-4 rounded-xl">
                                     <h4 className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">Reason for Interest</h4>
                                     <p className="text-sm text-gray-300 leading-relaxed italic">
-                                        "{req.reason}"
+                                        &quot;{req.reason}&quot;
                                     </p>
                                 </div>
 

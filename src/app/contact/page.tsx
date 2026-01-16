@@ -33,7 +33,7 @@ export default function ContactPage() {
                         Get in <span className="gradient-text">Touch</span>
                     </h1>
                     <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-                        Have a question, suggestion, or just want to say hi? We'd love to hear from you.
+                        Have a question, suggestion, or just want to say hi? We&apos;d love to hear from you.
                     </p>
                 </div>
 
@@ -108,7 +108,7 @@ export default function ContactPage() {
 
                             <div>
                                 <h3 className="text-2xl font-bold text-white mb-2">Send a Message</h3>
-                                <p className="text-gray-400 text-sm">Fill out the form below and we'll reply within 24 hours.</p>
+                                <p className="text-gray-400 text-sm">Fill out the form below and we&apos;ll reply within 24 hours.</p>
                             </div>
 
                             <div className="space-y-4">

@@ -78,7 +78,7 @@ export default function InstallPrompt() {
 
                             {isIOS ? (
                                 <div className="text-xs text-gray-500 bg-white/5 p-2 rounded-lg">
-                                    Tap <Share size={12} className="inline mx-1" /> then "Add to Home Screen"
+                                    Tap <Share size={12} className="inline mx-1" /> then &quot;Add to Home Screen&quot;
                                 </div>
                             ) : (
                                 <div className="flex gap-2">

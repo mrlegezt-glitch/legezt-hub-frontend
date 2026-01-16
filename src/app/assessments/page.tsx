@@ -107,7 +107,7 @@ export default function AssessmentsPage() {
                     <div className="text-center py-20 bg-white border border-dashed border-slate-200 rounded-3xl">
                         <FileText className="text-slate-200 mx-auto mb-6" size={80} />
                         <h3 className="text-slate-800 font-bold text-xl">No pending assessments</h3>
-                        <p className="text-slate-500 mt-2 max-w-sm mx-auto">Your instructors haven't posted any assignments or surprise tests for your section yet.</p>
+                        <p className="text-slate-500 mt-2 max-w-sm mx-auto">Your instructors haven&apos;t posted any assignments or surprise tests for your section yet.</p>
                     </div>
                 ) : (
                     <motion.div

@@ -61,7 +61,7 @@ export default function CollegesPage() {
                 </div>
             ) : colleges.length === 0 ? (
                 <div className="text-gray-500 italic p-12 text-center border-2 border-dashed border-dark-border rounded-xl">
-                    No colleges found. Click "Add New College" to create one.
+                    No colleges found. Click &quot;Add New College&quot; to create one.
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4">

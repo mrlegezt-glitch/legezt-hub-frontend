@@ -24,7 +24,7 @@ export default function Error({
 
             <h1 className="text-4xl font-extrabold text-slate-900 mb-2 mt-4 tracking-tight">System Interruption</h1>
             <p className="text-slate-500 max-w-md mx-auto mb-10 leading-relaxed font-medium">
-                We've encountered an unexpected error. Don't worry, your progress is likely safe. Let's try to restore the session.
+                We&apos;ve encountered an unexpected error. Don&apos;t worry, your progress is likely safe. Let&apos;s try to restore the session.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xs sm:max-w-md justify-center">

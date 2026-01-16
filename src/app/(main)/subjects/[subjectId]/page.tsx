@@ -71,7 +71,7 @@ export default function SubjectDetailPage() {
                 <div className="max-w-md mx-auto bg-dark-200 border border-dark-border rounded-2xl p-8">
                     <h1 className="text-2xl font-bold mb-2">Subject Not Found</h1>
                     <p className="text-gray-400 mb-6">
-                        We couldn't load the details for this subject.
+                        We couldn&apos;t load the details for this subject.
                     </p>
                     <button onClick={() => router.back()} className="btn-secondary w-full py-3 rounded-xl">
                         Go Back
@@ -139,7 +139,7 @@ export default function SubjectDetailPage() {
                         <div className="text-center py-20 bg-dark-200/50 rounded-3xl border border-dark-border border-dashed">
                             <FileText size={48} className="mx-auto text-gray-600 mb-4" />
                             <h3 className="text-xl font-bold text-gray-400">No Content Yet</h3>
-                            <p className="text-gray-500">This subject doesn't have any uploaded materials.</p>
+                            <p className="text-gray-500">This subject doesn&apos;t have any uploaded materials.</p>
                         </div>
                     )}
                 </div>
