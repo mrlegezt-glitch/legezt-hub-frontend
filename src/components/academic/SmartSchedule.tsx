@@ -111,7 +111,7 @@ export default function SmartSchedule({ schedule }: { schedule: ScheduleItem[] }
                             disabled={loading}
                             className="flex-1 bg-white text-primary-600 py-2 rounded-xl text-sm font-bold shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
                         >
-                            <CheckCircle size={16} /> I'm Here
+                            <CheckCircle size={16} /> I&apos;m Here
                         </button>
                         <button
                             onClick={() => handleAttendance('ABSENT')}

@@ -27,14 +27,26 @@ export default function Footer() {
                             Built for students, by students.
                         </p>
                         <div className="flex gap-4">
-                            <a href="#" className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
-                                <Github size={20} />
+                            <a
+                                href="#"
+                                className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                                aria-label="Visit our GitHub"
+                            >
+                                <Github size={20} aria-hidden="true" />
                             </a>
-                            <a href="#" className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
-                                <Linkedin size={20} />
+                            <a
+                                href="#"
+                                className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                                aria-label="Connect on LinkedIn"
+                            >
+                                <Linkedin size={20} aria-hidden="true" />
                             </a>
-                            <a href="#" className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
-                                <Mail size={20} />
+                            <a
+                                href="#"
+                                className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                                aria-label="Contact us via Email"
+                            >
+                                <Mail size={20} aria-hidden="true" />
                             </a>
                         </div>
                     </div>
