@@ -80,7 +80,7 @@ export default function LeGeZtAdminDashboard() {
                                             <TrendingUp size={18} />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-bold text-gray-300 group-hover/item:text-white transition-colors tracking-tight">System provisioned new course module <span className="text-primary-500">"Advanced Neural Nets"</span></p>
+                                            <p className="text-sm font-bold text-gray-300 group-hover/item:text-white transition-colors tracking-tight">System provisioned new course module <span className="text-primary-500">&quot;Advanced Neural Nets&quot;</span></p>
                                             <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mt-1">Deploy Node: Alpha-01 • {i + 1}h ago</p>
                                         </div>
                                     </div>

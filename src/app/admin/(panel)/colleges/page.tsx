@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Plus, School, Users, Layers, ChevronRight, Loader2, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { api, contentApi } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -10,11 +11,7 @@ export default function CollegesPage() {
     const [colleges, setColleges] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchColleges();
-    }, []);
-
-    const fetchColleges = async () => {
+    const fetchColleges = useCallback(async () => {
         try {
             const res = await api.get('/admin/colleges');
             setColleges(res.data.data);
@@ -23,7 +20,12 @@ export default function CollegesPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchColleges();
+    }, [fetchColleges]);
+
 
     const handleDelete = async (e: React.MouseEvent, id: string, name: string) => {
         e.preventDefault();
@@ -61,7 +63,7 @@ export default function CollegesPage() {
                 </div>
             ) : colleges.length === 0 ? (
                 <div className="text-gray-500 italic p-12 text-center border-2 border-dashed border-dark-border rounded-xl">
-                    No colleges found. Click "Add New College" to create one.
+                    No colleges found. Click &quot;Add New College&quot; to create one.
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-4">
@@ -73,7 +75,7 @@ export default function CollegesPage() {
                         >
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-dark-300 rounded-lg flex items-center justify-center text-2xl">
-                                    {college.logo ? <img src={college.logo} alt="" className="w-full h-full object-cover rounded-lg" /> : '🏛️'}
+                                    {college.logo ? <div className="relative w-full h-full"><Image src={college.logo} alt="" fill className="object-cover rounded-lg" /></div> : '🏛️'}
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-lg text-white group-hover:text-primary-400 transition-colors">

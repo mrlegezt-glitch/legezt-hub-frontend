@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FileText, Calendar, Clock, ArrowRight, BookOpen, AlertCircle, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { assessmentApi } from '@/lib/api';
 
 export default function AssessmentsPage() {
@@ -23,11 +24,7 @@ export default function AssessmentsPage() {
         }
     };
 
-    useEffect(() => {
-        fetchAssessments();
-    }, []);
-
-    const fetchAssessments = async () => {
+    const fetchAssessments = useCallback(async () => {
         try {
             const res = await assessmentApi.getMine();
             setAssessments(res.data.data);
@@ -37,7 +34,12 @@ export default function AssessmentsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchAssessments();
+    }, [fetchAssessments]);
+
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -60,7 +62,7 @@ export default function AssessmentsPage() {
                 {/* Hero section */}
                 <div className="relative rounded-[2.5rem] overflow-hidden mb-12 group">
                     <div className="absolute inset-0 bg-slate-900">
-                        <img src="/assets/assessments_hero.png" alt="" className="w-full h-full object-cover opacity-40 scale-105 group-hover:scale-100 transition-transform duration-1000" />
+                        <Image src="/assets/assessments_hero.png" alt="" fill className="object-cover opacity-40 scale-105 group-hover:scale-100 transition-transform duration-1000" />
                         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent" />
                     </div>
 
@@ -107,7 +109,7 @@ export default function AssessmentsPage() {
                     <div className="text-center py-20 bg-white border border-dashed border-slate-200 rounded-3xl">
                         <FileText className="text-slate-200 mx-auto mb-6" size={80} />
                         <h3 className="text-slate-800 font-bold text-xl">No pending assessments</h3>
-                        <p className="text-slate-500 mt-2 max-w-sm mx-auto">Your instructors haven't posted any assignments or surprise tests for your section yet.</p>
+                        <p className="text-slate-500 mt-2 max-w-sm mx-auto">Your instructors haven&apos;t posted any assignments or surprise tests for your section yet.</p>
                     </div>
                 ) : (
                     <motion.div

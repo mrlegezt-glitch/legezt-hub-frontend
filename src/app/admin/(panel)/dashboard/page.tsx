@@ -51,7 +51,7 @@ export default function AdminDashboardPage() {
                     </span>
                     <button className="btn-primary text-sm px-4 py-2 flex items-center gap-2">
                         <Sparkles size={16} />
-                        What's New
+                        What&apos;s New
                     </button>
                 </div>
             </div>

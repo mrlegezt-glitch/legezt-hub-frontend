@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import {
@@ -8,17 +8,14 @@ import {
     MapPin, GraduationCap, Layout
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import Image from "next/image";
 
 export default function AdminRequestsPage() {
     const [requests, setRequests] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [processingId, setProcessingId] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchRequests();
-    }, []);
-
-    const fetchRequests = async () => {
+    const fetchRequests = useCallback(async () => {
         try {
             const { data } = await api.get("/admin-requests");
             setRequests(data);
@@ -27,7 +24,12 @@ export default function AdminRequestsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchRequests();
+    }, [fetchRequests]);
+
 
     const handleStatusUpdate = async (id: string, status: "APPROVED" | "REJECTED") => {
         setProcessingId(id);
@@ -81,7 +83,7 @@ export default function AdminRequestsPage() {
                                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-purple-500 p-[2px] mb-3">
                                     <div className="w-full h-full rounded-full bg-dark-card overflow-hidden">
                                         {req.user?.avatar ? (
-                                            <img src={req.user.avatar} alt={req.user.name} className="w-full h-full object-cover" />
+                                            <div className="relative w-full h-full"><Image src={req.user.avatar} alt={req.user.name} fill className="object-cover" /></div>
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center bg-dark-bg">
                                                 <User className="w-8 h-8 text-gray-500" />
@@ -129,7 +131,7 @@ export default function AdminRequestsPage() {
                                 <div className="bg-dark-bg/50 p-4 rounded-xl">
                                     <h4 className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">Reason for Interest</h4>
                                     <p className="text-sm text-gray-300 leading-relaxed italic">
-                                        "{req.reason}"
+                                        &quot;{req.reason}&quot;
                                     </p>
                                 </div>
 
