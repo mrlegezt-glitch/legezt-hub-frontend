@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 import LeGeZtHeader from '@/components/labs/LeGeZtHeader';
+import { labApi } from '@/lib/api';
 
 // Mock Data for Labs (to match screenshot style)
 const initialLabs = [
@@ -35,7 +36,26 @@ const initialLabs = [
 
 export default function LabsListPage() {
     const [searchQuery, setSearchQuery] = useState('');
-    const [labs, setLabs] = useState(initialLabs);
+    const [labs, setLabs] = useState<any[]>(initialLabs);
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const res = await labApi.getCourses();
+                const dbLabs = res.data.map((course: any) => ({
+                    id: course.id,
+                    title: course.title,
+                    subtitle: course.description || course.title,
+                    link: `/labs/legezttantra/courses/${course.id}` // Standard Course View
+                }));
+                // Merge hardcoded and DB labs (avoid duplicates if any)
+                setLabs(prev => [...initialLabs, ...dbLabs]);
+            } catch (error) {
+                console.error("Failed to load dynamic labs", error);
+            }
+        };
+        fetchCourses();
+    }, []);
 
     const filteredLabs = labs.filter(lab =>
         lab.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
