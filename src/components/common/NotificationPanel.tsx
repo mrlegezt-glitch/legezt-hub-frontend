@@ -122,7 +122,7 @@ export default function NotificationPanel() {
                                             <Bell className="text-gray-600" size={20} />
                                         </div>
                                         <p className="text-gray-400 font-medium">No notifications yet</p>
-                                        <p className="text-xs text-gray-600 mt-1">We'll let you know when something arrives.</p>
+                                        <p className="text-xs text-gray-600 mt-1">We&apos;ll let you know when something arrives.</p>
                                     </div>
                                 ) : (
                                     <div className="divide-y divide-dark-border/50">

@@ -67,11 +67,18 @@ export default function SideMenu() {
     if (!isSideMenuOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex">
+        <div
+            id="main-menu"
+            className="fixed inset-0 z-[100] flex"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Main menu"
+        >
             {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
                 onClick={closeSideMenu}
+                aria-hidden="true"
             />
 
             {/* Sidebar */}
@@ -85,8 +92,9 @@ export default function SideMenu() {
                     <button
                         onClick={closeSideMenu}
                         className="p-2 text-gray-400 hover:text-white hover:bg-dark-100 rounded-lg transition-colors"
+                        aria-label="Close menu"
                     >
-                        <X size={24} />
+                        <X size={24} aria-hidden="true" />
                     </button>
                 </div>
 

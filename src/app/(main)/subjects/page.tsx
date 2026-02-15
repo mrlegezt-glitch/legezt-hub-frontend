@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { BookOpen, AlertCircle, Loader2, ArrowRight, ArrowLeft, Building2 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -11,6 +12,7 @@ interface Subject {
     name: string;
     code: string;
     description?: string;
+    thumbnailUrl?: string;
 }
 
 export default function SubjectsPage() {
@@ -172,15 +174,25 @@ export default function SubjectsPage() {
                             <Link
                                 href={`/subjects/${subject.id}`}
                                 key={subject.id}
-                                className="group relative bg-dark-200 hover:bg-dark-300 border border-dark-border hover:border-primary-500/50 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-primary-900/10"
+                                className="group bg-dark-200 border border-dark-border rounded-2xl overflow-hidden hover:border-primary-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary-900/10"
                             >
-                                <div className="absolute top-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                                    <BookOpen size={64} />
+                                <div className="aspect-video bg-dark-300">
+                                    {subject.thumbnailUrl ? (
+                                        <Image
+                                            src={subject.thumbnailUrl}
+                                            alt={subject.name}
+                                            width={500}
+                                            height={281}
+                                            className="w-full h-full object-cover"
+                                            priority
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-600">
+                                            <BookOpen size={48} />
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="relative z-10">
-                                    <div className="w-12 h-12 rounded-xl bg-primary-500/10 text-primary-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                        <BookOpen size={24} />
-                                    </div>
+                                <div className="p-6">
                                     <h3 className="text-xl font-bold mb-1 group-hover:text-primary-400 transition-colors">
                                         {subject.name}
                                     </h3>

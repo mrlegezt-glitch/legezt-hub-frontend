@@ -222,7 +222,7 @@ export default function GlobalSearch() {
                                 </div>
                             ) : query.length >= 2 ? (
                                 <div className="py-20 text-center">
-                                    <p className="text-gray-500 text-sm">No results found for "{query}"</p>
+                                    <p className="text-gray-500 text-sm">No results found for &quot;{query}&quot;</p>
                                 </div>
                             ) : (
                                 <div className="py-20 text-center">

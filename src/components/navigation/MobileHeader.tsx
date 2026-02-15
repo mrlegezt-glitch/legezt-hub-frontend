@@ -7,7 +7,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
 
 export default function MobileHeader() {
-    const { openSideMenu } = useUIStore();
+    const { openSideMenu, isSideMenuOpen } = useUIStore();
     const pathname = usePathname();
 
     // Hide on pages that have their own specialized headers (Admin, Subjects)
@@ -27,8 +27,11 @@ export default function MobileHeader() {
                 <button
                     onClick={openSideMenu}
                     className="p-2 -mr-2 text-gray-300 hover:text-white active:scale-95 transition-transform"
+                    aria-label="Open main menu"
+                    aria-expanded={isSideMenuOpen}
+                    aria-controls="main-menu"
                 >
-                    <Menu size={24} />
+                    <Menu size={24} aria-hidden="true" />
                 </button>
             </div>
         </header>
