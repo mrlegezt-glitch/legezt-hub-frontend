@@ -212,7 +212,9 @@ export const assessmentApi = {
 
     // Admin
     list: () => api.get('/assessments'),
-    create: (data: any) => api.post('/assessments', data),
+    create: (data: any) => api.post('/assessments', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
     delete: (id: string) => api.delete(`/assessments/${id}`),
 };
 
