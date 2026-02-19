@@ -37,7 +37,7 @@ export default function SendNotificationModal({ isOpen, onClose, preSelectedUser
         setLoading(true);
 
         try {
-            await api.post('/admin/notifications/send', {
+            await api.post('/notifications/send', {
                 title,
                 message,
                 priority,
@@ -144,10 +144,10 @@ export default function SendNotificationModal({ isOpen, onClose, preSelectedUser
                                                 type="button"
                                                 onClick={() => setPriority(p)}
                                                 className={`flex-1 py-2 text-xs font-bold rounded-lg border transition-all ${priority === p
-                                                        ? p === 'CRITICAL' ? 'bg-red-500/20 border-red-500 text-red-500' :
-                                                            p === 'HIGH' ? 'bg-orange-500/20 border-orange-500 text-orange-500' :
-                                                                'bg-primary/20 border-primary text-primary'
-                                                        : 'border-dark-border text-gray-500 hover:bg-white/5'
+                                                    ? p === 'CRITICAL' ? 'bg-red-500/20 border-red-500 text-red-500' :
+                                                        p === 'HIGH' ? 'bg-orange-500/20 border-orange-500 text-orange-500' :
+                                                            'bg-primary/20 border-primary text-primary'
+                                                    : 'border-dark-border text-gray-500 hover:bg-white/5'
                                                     }`}
                                             >
                                                 {p}

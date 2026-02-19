@@ -3,7 +3,7 @@ const nextConfig = {
     reactStrictMode: false,
     output: 'standalone',
     images: {
-        domains: ['lh3.googleusercontent.com', 'legeztstorage.blob.core.windows.net'],
+        domains: ['lh3.googleusercontent.com', 'legeztstorage.blob.core.windows.net', 'legeztstorage2347.blob.core.windows.net'],
     },
     async rewrites() {
         return [
