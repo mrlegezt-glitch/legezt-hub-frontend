@@ -10,6 +10,16 @@ import {
 import Link from 'next/link';
 import { labApi } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+const MDEditor = dynamic(
+    () => import("@uiw/react-md-editor").then((mod) => mod.default),
+    { ssr: false }
+);
+const MonacoEditor = dynamic(
+    () => import("@monaco-editor/react"),
+    { ssr: false }
+);
 
 export default function CreateExperimentPage({ params }: { params: { courseId: string } }) {
     const router = useRouter();
@@ -184,22 +194,21 @@ export default function CreateExperimentPage({ params }: { params: { courseId: s
                                         onChange={(e) => setLabDetails({ ...labDetails, aim: e.target.value })}
                                     ></textarea>
                                 </div>
-                                <div>
+                                <div className="w-full min-w-0">
                                     <label className="text-[10px] font-bold text-primary-500 uppercase tracking-[0.2em] block mb-4">Step-by-Step Instructions</label>
-                                    <div className="bg-dark-100 border border-dark-border rounded-2xl overflow-hidden">
-                                        <div className="px-6 py-4 bg-dark-border/30 flex items-center justify-between border-b border-dark-border">
-                                            <span className="text-[10px] font-bold text-gray-500">MARKDOWN EDITOR</span>
-                                            <div className="flex gap-4 text-[10px] font-bold text-gray-600">
-                                                <button className="hover:text-white">PREVIEW</button>
-                                                <button className="hover:text-white">GUIDE</button>
-                                            </div>
-                                        </div>
-                                        <textarea
-                                            className="w-full h-[400px] p-6 bg-transparent text-gray-300 font-mono text-sm leading-7 outline-none resize-none selection:bg-primary-500/30"
-                                            placeholder="# Heading&#10;1. First Step..."
+                                    <div className="bg-dark-100 border border-dark-border rounded-2xl overflow-hidden" data-color-mode="dark">
+                                        <MDEditor
                                             value={labDetails.procedure}
-                                            onChange={(e) => setLabDetails({ ...labDetails, procedure: e.target.value })}
-                                        ></textarea>
+                                            onChange={(val) => setLabDetails({ ...labDetails, procedure: val || '' })}
+                                            height={450}
+                                            preview="live"
+                                            hideToolbar={false}
+                                            enableScroll={true}
+                                            className="w-full !border-0"
+                                            textareaProps={{
+                                                placeholder: "# Heading\n1. First Step...\n2. Second Step..."
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </motion.div>
@@ -227,17 +236,32 @@ export default function CreateExperimentPage({ params }: { params: { courseId: s
                                     </select>
                                 </div>
 
-                                <div className="relative rounded-2xl overflow-hidden border border-dark-border shadow-2xl bg-[#0d0d17]">
-                                    <div className="absolute top-0 left-0 w-12 h-full bg-black/20 border-r border-white/5 flex flex-col items-center pt-6 text-[10px] font-mono text-gray-600 select-none">
-                                        {[...Array(20)].map((_, i) => <div key={i} className="h-6">0{i + 1}</div>)}
-                                    </div>
-                                    <textarea
-                                        className="w-full h-[550px] pl-16 pr-6 py-6 bg-transparent text-primary-100 font-mono text-sm leading-6 outline-none resize-none selection:bg-primary-500/50"
-                                        placeholder="// Enter the optimal solution code..."
-                                        spellCheck={false}
+                                <div className="h-[550px] w-full rounded-2xl overflow-hidden border border-dark-border shadow-2xl relative">
+                                    {/* Muted background when empty */}
+                                    {!labDetails.solutionCode && (
+                                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                            <span className="text-gray-600 opacity-50 text-sm font-mono tracking-widest">// optimal_solution_goes_here</span>
+                                        </div>
+                                    )}
+                                    <MonacoEditor
+                                        height="100%"
+                                        language={labDetails.language === 'c' || labDetails.language === 'cpp' ? 'cpp' : labDetails.language}
+                                        theme="vs-dark"
                                         value={labDetails.solutionCode}
-                                        onChange={(e) => setLabDetails({ ...labDetails, solutionCode: e.target.value })}
-                                    ></textarea>
+                                        onChange={(val) => setLabDetails({ ...labDetails, solutionCode: val || '' })}
+                                        options={{
+                                            minimap: { enabled: false },
+                                            fontSize: 14,
+                                            fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                                            padding: { top: 20 },
+                                            scrollBeyondLastLine: false,
+                                            smoothScrolling: true,
+                                            cursorBlinking: 'smooth',
+                                            cursorSmoothCaretAnimation: 'on',
+                                            renderLineHighlight: 'all',
+                                            lineHeight: 24,
+                                        }}
+                                    />
                                 </div>
                             </motion.div>
                         )}
@@ -320,6 +344,6 @@ export default function CreateExperimentPage({ params }: { params: { courseId: s
                     </AnimatePresence>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
