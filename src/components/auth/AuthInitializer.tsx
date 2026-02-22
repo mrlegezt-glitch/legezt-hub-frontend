@@ -40,10 +40,10 @@ export default function AuthInitializer() {
 
                 // Update store (Re-login the user)
                 setAuth(user, accessToken, refreshToken);
-                console.log('Session restored via cookie');
+
             } catch (error) {
                 // Fail silently - user is truly logged out
-                // console.log('No valid session to restore');
+
             }
         };
 

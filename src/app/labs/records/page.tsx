@@ -210,7 +210,7 @@ export default function StudentRecordsPage() {
                         </div>
                         <h3 className="text-2xl font-black text-white mb-2 tracking-tight">Vault Empty</h3>
                         <p className="text-gray-500 max-w-sm mx-auto mb-8 text-sm">
-                            We couldn't find any lab records matching your active filters. Try clearing them to see all available documents.
+                            We couldn&apos;t find any lab records matching your active filters. Try clearing them to see all available documents.
                         </p>
                         <button
                             onClick={() => {

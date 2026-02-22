@@ -198,7 +198,7 @@ export default function StudentManualsPage() {
                         </div>
                         <h3 className="text-2xl font-black text-white mb-2 tracking-tight">Vault Empty</h3>
                         <p className="text-gray-500 max-w-sm mx-auto mb-8 text-sm">
-                            We couldn't find any lab manuals matching your active filters.
+                            We couldn&apos;t find any lab manuals matching your active filters.
                         </p>
                         <button
                             onClick={() => setSearch('')}

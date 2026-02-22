@@ -240,7 +240,7 @@ export default function CreateExperimentPage({ params }: { params: { courseId: s
                                     {/* Muted background when empty */}
                                     {!labDetails.solutionCode && (
                                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                            <span className="text-gray-600 opacity-50 text-sm font-mono tracking-widest">// optimal_solution_goes_here</span>
+                                            <span className="text-gray-600 opacity-50 text-sm font-mono tracking-widest">{`// optimal_solution_goes_here`}</span>
                                         </div>
                                     )}
                                     <MonacoEditor
