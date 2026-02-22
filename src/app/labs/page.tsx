@@ -32,17 +32,18 @@ export default function LabsPage() {
             <section className="max-w-5xl mx-auto px-5 md:px-6 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Materials Card */}
-                    <Link href="/labs/materials" className="group">
+                    <Link href="/labs/records" className="group">
                         <div className="card md:p-8 p-6 h-full relative overflow-hidden hover:border-purple-500/50 transition-all">
-                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                                <BookOpen size={120} />
+
+                            <div className="absolute -right-8 -top-8 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all duration-700" />
+
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-purple-500/20">
+                                <BookOpen className="text-purple-400 group-hover:text-purple-300 transition-colors" size={32} />
                             </div>
-                            <div className="w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-6">
-                                <TestTube size={28} />
-                            </div>
-                            <h3 className="text-2xl font-bold mb-3">Materials</h3>
-                            <p className="text-gray-400 mb-6">
-                                Chemistry lab manuals, non-technical practicals, and other lab documents.
+
+                            <h3 className="text-2xl font-bold mb-3">Lab Records</h3>
+                            <p className="text-gray-400 mb-8 leading-relaxed">
+                                Access digital PDF lab records, manuals, and study guides optimized for your semester and computing branch.
                             </p>
                             <div className="flex flex-wrap gap-2 mb-6">
                                 <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs">Chemistry</span>
