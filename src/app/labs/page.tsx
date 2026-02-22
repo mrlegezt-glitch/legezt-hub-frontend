@@ -5,7 +5,7 @@
 // ==================================
 
 import Link from 'next/link';
-import { ArrowRight, FlaskConical, Code, BookOpen, TestTube, FileText } from 'lucide-react';
+import { ArrowRight, FlaskConical, Code, BookOpen, TestTube, FileText, ChevronRight, BeakerIcon, Terminal } from 'lucide-react';
 import BottomNav from '@/components/navigation/BottomNav';
 
 export default function LabsPage() {
@@ -31,7 +31,31 @@ export default function LabsPage() {
             {/* Two Main Cards */}
             <section className="max-w-5xl mx-auto px-5 md:px-6 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Materials Card */}
+                    {/* Lab Manuals Card */}
+                    <Link href="/labs/manuals" className="group">
+                        <div className="card md:p-8 p-6 h-full relative overflow-hidden hover:border-blue-500/50 transition-all">
+
+                            <div className="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-700" />
+
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 border border-blue-500/20">
+                                <FileText className="text-blue-400 group-hover:text-blue-300 transition-colors" size={32} />
+                            </div>
+
+                            <h3 className="text-2xl font-bold mb-3">Lab Manuals</h3>
+                            <p className="text-gray-400 mb-8 leading-relaxed">
+                                Access primary lab manuals, experiment methodologies, and reference readings uploaded by professors for your specific subjects.
+                            </p>
+                            <div className="flex flex-wrap gap-2 mb-6">
+                                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs">PDF</span>
+                                <span className="px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs">Readings</span>
+                            </div>
+                            <span className="text-blue-400 font-medium flex items-center gap-2 group-hover:translate-x-2 transition-transform">
+                                Browse Manuals <ArrowRight size={18} />
+                            </span>
+                        </div>
+                    </Link>
+
+                    {/* Lab Records Card */}
                     <Link href="/labs/records" className="group">
                         <div className="card md:p-8 p-6 h-full relative overflow-hidden hover:border-purple-500/50 transition-all">
 
@@ -43,14 +67,14 @@ export default function LabsPage() {
 
                             <h3 className="text-2xl font-bold mb-3">Lab Records</h3>
                             <p className="text-gray-400 mb-8 leading-relaxed">
-                                Access digital PDF lab records, manuals, and study guides optimized for your semester and computing branch.
+                                Access digital PDF lab records, observation blanks, and study guides optimized for your semester and computing branch.
                             </p>
                             <div className="flex flex-wrap gap-2 mb-6">
                                 <span className="px-3 py-1 rounded-full bg-green-500/10 text-green-400 text-xs">Chemistry</span>
                                 <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 text-xs">Non-Technical</span>
                             </div>
                             <span className="text-purple-400 font-medium flex items-center gap-2 group-hover:translate-x-2 transition-transform">
-                                Browse Materials <ArrowRight size={18} />
+                                Browse Records <ArrowRight size={18} />
                             </span>
                         </div>
                     </Link>

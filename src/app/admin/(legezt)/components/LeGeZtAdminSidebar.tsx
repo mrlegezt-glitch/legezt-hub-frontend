@@ -13,6 +13,7 @@ export default function LeGeZtAdminSidebar() {
     const menuItems = [
         { label: 'Dashboard', icon: LayoutDashboard, href: '/admin/legezttantra' },
         { label: 'Record Manager', icon: FolderOpen, href: '/admin/legezttantra/records' },
+        { label: 'Manual Manager', icon: FileText, href: '/admin/legezttantra/manuals' },
         { label: 'Course Manager', icon: BookOpen, href: '/admin/legezttantra/courses' },
         { label: 'Users', icon: Users, href: '/admin/legezttantra/users' },
         { label: 'Settings', icon: Settings, href: '/admin/legezttantra/settings' },
