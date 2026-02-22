@@ -49,9 +49,10 @@ export default function ManualManagerPage() {
     const loadSubjects = async () => {
         try {
             const res = await api.get('/academic/subjects');
-            setSubjects(res.data.data);
-            if (res.data.data.length > 0 && !selectedSubject) {
-                setSelectedSubject(res.data.data[0].id);
+            const data = res.data?.data || res.data || [];
+            setSubjects(data);
+            if (data.length > 0 && !selectedSubject) {
+                setSelectedSubject(data[0].id);
             }
         } catch (error) {
             toast.error('Failed to load subjects');
@@ -67,7 +68,7 @@ export default function ManualManagerPage() {
             if (search) url += `&search=${search}`;
 
             const res = await api.get(url);
-            setManuals(res.data.data);
+            setManuals(res.data?.data || res.data || []);
         } catch (error) {
             console.error(error);
             toast.error('Failed to load manuals');

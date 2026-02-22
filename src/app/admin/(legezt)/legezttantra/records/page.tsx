@@ -64,7 +64,7 @@ export default function RecordManagerPage() {
             if (semesterId) params.append('semesterId', semesterId);
 
             const res = await api.get(`/records?${params.toString()}`);
-            setRecords(res.data.data);
+            setRecords(res.data?.data || res.data || []);
         } catch (error) {
             console.error(error);
             toast.error('Failed to load records');
@@ -76,13 +76,13 @@ export default function RecordManagerPage() {
     const loadMetadata = async () => {
         try {
             const [bRes, yRes, sRes] = await Promise.all([
-                api.get('/academic/branches'),
-                api.get('/academic/years'),
-                api.get('/academic/semesters')
+                api.get('/academic/branches').catch(() => ({ data: [] })),
+                api.get('/academic/years').catch(() => ({ data: [] })),
+                api.get('/academic/semesters').catch(() => ({ data: [] }))
             ]);
-            setBranches(bRes.data.data);
-            setYears(yRes.data.data);
-            setSemesters(sRes.data.data);
+            setBranches(bRes.data?.data || bRes.data || []);
+            setYears(yRes.data?.data || yRes.data || []);
+            setSemesters(sRes.data?.data || sRes.data || []);
         } catch (error) {
             console.error("Failed to load metadata", error);
         }
