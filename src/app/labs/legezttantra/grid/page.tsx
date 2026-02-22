@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
+import { Search, Share2 } from 'lucide-react';
 import LeGeZtHeader from '@/components/labs/LeGeZtHeader';
 import { labApi } from '@/lib/api';
 
@@ -90,14 +90,14 @@ export default function LabsListPage() {
                         <Link
                             href={lab.link}
                             key={lab.id}
-                            className="block bg-white border border-slate-200 shadow-sm rounded-sm hover:shadow-md transition-shadow overflow-hidden group"
+                            className="block bg-white border border-slate-200 shadow-sm rounded-sm hover:shadow-md transition-shadow overflow-hidden group relative"
                         >
                             <div className="flex">
                                 {/* Blue Accent Bar */}
                                 <div className="w-1.5 bg-[#00bcd4] h-auto shrink-0 self-stretch"></div>
 
-                                <div className="p-4 flex flex-col gap-1 w-full">
-                                    <h3 className="text-[#0091ea] text-lg font-medium group-hover:underline">
+                                <div className="p-4 flex flex-col gap-1 w-full pr-16">
+                                    <h3 className="text-[#0091ea] text-lg font-medium group-hover:underline pr-4">
                                         {lab.title}
                                     </h3>
                                     <p className="text-slate-500 text-sm">
@@ -105,6 +105,21 @@ export default function LabsListPage() {
                                     </p>
                                 </div>
                             </div>
+
+                            {/* WhatsApp Share Button */}
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}${lab.link}` : '';
+                                    const message = `Check out this course on LeGeZt Hub: ${lab.title}. Learn more at: ${shareUrl}`;
+                                    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                                }}
+                                className="absolute top-1/2 -translate-y-1/2 right-4 p-2 text-slate-400 hover:text-green-500 bg-slate-50 rounded-full hover:bg-green-50 border border-slate-200 transition-all opacity-0 group-hover:opacity-100 shadow-sm"
+                                title="Share on WhatsApp"
+                            >
+                                <Share2 size={16} />
+                            </button>
                         </Link>
                     ))}
 

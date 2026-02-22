@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import { labApi } from '@/lib/api';
 import {
     ChevronLeft, Check, Info, Code, FileText,
-    Terminal, Loader2, Maximize2,
-    Search, ChevronRight, RotateCcw, Send
+    Terminal, Loader2, Maximize2, Lock,
+    Search, ChevronRight, RotateCcw, Send, Folder, CheckCircle2, Server, Clock, Activity
 } from 'lucide-react';
 import LeGeZtHeader from '@/components/labs/LeGeZtHeader';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function StudentCodeViewerPage({ params }: { params: { labId: string } }) {
     const labId = params.labId;
@@ -345,46 +347,86 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                 />
 
                 {/* 3. SOLUTION PANEL (Right) */}
-                <div className="flex-1 bg-white flex flex-col overflow-hidden">
+                <div className="flex-1 bg-[#0f172a] flex flex-col overflow-hidden">
                     {/* Tab Bar */}
-                    <div className="h-11 bg-[#f8fafc] border-b border-slate-200 flex items-center px-4 shrink-0 justify-between">
+                    <div className="h-11 bg-[#1e293b] border-b border-slate-800 flex items-center px-4 shrink-0 justify-between">
                         <div className="flex h-full items-center">
-                            <div className="bg-white h-full px-5 border-x border-slate-200 text-[11px] font-bold text-slate-700 flex items-center gap-2 border-t-2 border-t-indigo-600 shadow-[0_-2px_8px_rgba(0,0,0,0.02)]">
-                                <Code size={13} className="text-indigo-600" />
-                                Solution.{lab.content?.language === 'python' ? 'py' : 'java'}
+                            <div className="bg-[#0f172a] h-full px-5 border-x border-slate-800 text-[11px] font-bold text-slate-300 flex items-center gap-2 border-t-2 border-t-indigo-500 shadow-md">
+                                <Code size={13} className="text-indigo-400" />
+                                Solution.{lab.content?.language === 'python' ? 'py' : lab.content?.language === 'java' ? 'java' : 'c'}
                             </div>
-                            <div className="px-4 text-[10px] font-medium text-slate-400 flex items-center gap-2 italic">
+                            <div className="px-4 text-[10px] font-medium text-slate-500 flex items-center gap-2 italic">
                                 Read Only Access
                             </div>
                         </div>
                         <button
                             onClick={() => navigator.clipboard.writeText(solutionCode)}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold px-3 py-1.5 rounded flex items-center gap-2 transition-all shadow-md shadow-indigo-600/20"
+                            className="bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-3 py-1.5 rounded flex items-center gap-2 transition-all shadow-md"
                         >
-                            <span className="opacity-70">COPY CODE</span>
+                            <span className="opacity-90">COPY CODE</span>
                             <Check size={12} />
                         </button>
                     </div>
 
                     {/* Code Editor Body */}
-                    <div className="flex-1 overflow-auto relative custom-scrollbar bg-white group">
-                        <div className="flex min-h-full">
-                            {/* Line Numbers */}
-                            <div className="w-14 bg-[#fbfbfc] border-r border-slate-100 flex flex-col items-end pr-4 pt-6 text-slate-300 text-xs font-mono select-none py-6 transition-colors group-hover:text-slate-400">
-                                {solutionCode.split('\n').map((_: any, i: number) => (
-                                    <div key={i} className="leading-7 h-7">{i + 1}</div>
-                                ))}
-                            </div>
-                            {/* Content */}
-                            <div className="flex-1 relative">
-                                <pre className="p-6 pt-6 font-mono text-[13px] leading-7 text-slate-800 selection:bg-indigo-600 selection:text-white tab-4 outline-none overflow-x-auto selection:rounded">
-                                    <code className={`language-${lab.content?.language || 'text'}`}>
-                                        {solutionCode}
-                                    </code>
-                                </pre>
+                    <div className="flex-1 overflow-auto relative custom-scrollbar bg-[#0f172a]">
+                        <SyntaxHighlighter
+                            language={lab.content?.language || 'javascript'}
+                            style={vscDarkPlus}
+                            customStyle={{
+                                margin: 0,
+                                background: 'transparent',
+                                fontSize: '14px',
+                                padding: '1.5rem',
+                                lineHeight: '1.6',
+                            }}
+                            showLineNumbers={true}
+                            lineNumberStyle={{ minWidth: '3em', paddingRight: '1.5em', color: '#475569', textAlign: 'right', borderRight: '1px solid #1e293b', marginRight: '1.5em' }}
+                        >
+                            {solutionCode}
+                        </SyntaxHighlighter>
+                    </div>
 
-                                {/* Overlay Gradient for better scrolling feel */}
-                                <div className="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-white/50 pointer-events-none"></div>
+                    {/* Mock Test Results UI */}
+                    <div className="h-1/3 min-h-[260px] bg-[#1a2333] border-t border-slate-800 flex flex-col shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-20">
+                        {/* Header */}
+                        <div className="h-12 bg-[#0f172a] flex items-center justify-between px-6 border-b border-slate-800 shrink-0">
+                            <div className="flex items-center gap-3">
+                                <div className="p-1 px-2 bg-emerald-500/10 border border-emerald-500/20 rounded-md flex items-center gap-2">
+                                    <CheckCircle2 size={13} className="text-emerald-400" />
+                                    <span className="text-emerald-400 text-[10px] font-black tracking-widest uppercase">Executed Successfully</span>
+                                </div>
+                                <span className="text-slate-500 text-[10px] font-bold">Passed all 2 test cases</span>
+                            </div>
+                            <div className="flex items-center gap-4 text-[10px] font-mono text-slate-500">
+                                <span className="flex items-center gap-1.5"><Clock size={12} /> 0.042s</span>
+                                <span className="flex items-center gap-1.5"><Server size={12} /> 14MB Memory</span>
+                            </div>
+                        </div>
+
+                        {/* Results Content */}
+                        <div className="flex-1 flex overflow-hidden">
+                            {/* Test Cases Sidebar */}
+                            <div className="w-48 bg-[#1e293b]/50 border-r border-slate-800 flex flex-col shrink-0">
+                                <div className="p-3 text-[10px] font-bold text-slate-500 tracking-widest uppercase border-b border-slate-800">Test Suite</div>
+                                <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                                    <button className="w-full text-left px-3 py-2 text-xs rounded bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-between shadow-sm">
+                                        <span className="font-mono">Case 1</span> <Check size={14} className="text-emerald-400" />
+                                    </button>
+                                    <button className="w-full text-left px-3 py-2 text-xs rounded hover:bg-slate-800/50 text-slate-400 flex items-center justify-between transition-colors">
+                                        <span className="font-mono flex items-center gap-2"><Lock size={10} className="text-slate-500" /> Case 2</span> <Check size={14} className="text-emerald-400" />
+                                    </button>
+                                </div>
+                            </div>
+                            {/* Verification Detail */}
+                            <div className="flex-1 p-5 overflow-y-auto custom-scrollbar bg-[#161f2e]">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <Activity size={16} className="text-indigo-400" />
+                                    <h4 className="text-slate-300 text-sm font-bold">Standard Output</h4>
+                                </div>
+                                <pre className="bg-[#0f172a] border border-slate-800 p-4 rounded-xl text-emerald-400 font-mono text-xs leading-relaxed shadow-inner">
+                                    {`Build successful...\nExecuting binary...\n\nOutput matched expected result strictly.\nExit code: 0`}
+                                </pre>
                             </div>
                         </div>
                     </div>
@@ -396,11 +438,11 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
             <div className="h-14 bg-[#1e293b] border-t border-slate-800 flex items-center justify-between px-2 md:px-6 shrink-0 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.3)] overflow-x-auto custom-scrollbar">
                 {/* Left Controls */}
                 <div className="flex h-full items-center gap-1 shrink-0">
-                    <button className="h-full px-3 md:px-5 text-[10px] md:text-[11px] font-extrabold text-slate-100 border-r border-slate-800/50 hover:bg-slate-800/50 flex items-center gap-2 transition-all border-b-2 border-transparent hover:border-indigo-500">
-                        <Terminal size={14} className="text-indigo-400" /> <span className="hidden md:inline">CONSOLE</span>
-                    </button>
-                    <button className="h-full px-3 md:px-5 text-[10px] md:text-[11px] font-extrabold text-white border-r border-slate-800/50 bg-slate-800/60 flex items-center gap-2 transition-all border-b-2 border-orange-500 shadow-inner">
-                        <Check size={14} className="text-orange-500" /> <span className="hidden md:inline">TEST BENCH</span>
+                    <button
+                        onClick={() => lab.unit?.course?.id && router.push(`/labs/legezttantra/courses/${lab.unit.course.id}`)}
+                        className="h-full px-4 md:px-6 text-[11px] font-extrabold text-white border-r border-slate-800/50 bg-indigo-600/20 hover:bg-indigo-600/30 flex items-center gap-2 transition-all border-b-2 border-indigo-500 shadow-inner"
+                    >
+                        <Folder size={14} className="text-indigo-400" /> <span className="hidden md:inline uppercase tracking-widest block">Go to Course</span>
                     </button>
                 </div>
 
@@ -428,10 +470,6 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
 
                     <button className="hidden md:flex bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-[11px] font-bold px-5 py-2 rounded-lg transition-all border border-slate-700 items-center gap-2">
                         <RotateCcw size={14} /> RESET
-                    </button>
-
-                    <button className="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] md:text-[11px] font-extrabold px-4 md:px-6 py-2 rounded-lg transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2 border border-emerald-500 active:scale-95">
-                        <Send size={14} /> <span className="hidden md:inline">SUBMIT WORK</span><span className="md:hidden">SUBMIT</span>
                     </button>
                 </div>
             </div>

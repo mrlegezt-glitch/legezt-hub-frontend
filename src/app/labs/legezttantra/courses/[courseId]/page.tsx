@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight, ArrowLeft, Folder, Code, ChevronDown, Play, FileText, CheckCircle2, Clock, Lock } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Folder, Code, ChevronDown, Play, FileText, CheckCircle2, Clock, Lock, Share2 } from 'lucide-react';
 import { labApi } from '@/lib/api';
 import LeGeZtHeader from '@/components/labs/LeGeZtHeader';
 
@@ -61,6 +61,13 @@ export default function StudentCourseContentPage({ params }: { params: { courseI
         }));
     };
 
+    const handleShareCourse = () => {
+        if (!course) return;
+        const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}/labs/legezttantra/courses/${courseId}` : '';
+        const message = `Check out this course on LeGeZt Hub: ${course.title}. Learn more at: ${shareUrl}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
@@ -110,7 +117,10 @@ export default function StudentCourseContentPage({ params }: { params: { courseI
                         <button onClick={() => setShowMobileSidebar(false)} className="md:hidden text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">
                             Close
                         </button>
-                        <Link href="/labs/legezttantra/courses" className="text-slate-400 hover:text-slate-600 hidden md:block">
+                        <button onClick={handleShareCourse} className="text-slate-400 hover:text-green-500 transition-colors" title="Share Course">
+                            <Share2 size={16} />
+                        </button>
+                        <Link href="/labs/legezttantra/courses" className="text-slate-400 hover:text-slate-600 hidden md:block" title="Back to Courses">
                             <ArrowLeft size={18} />
                         </Link>
                     </div>
@@ -201,9 +211,14 @@ export default function StudentCourseContentPage({ params }: { params: { courseI
                         </Link>
                         <span className="font-extrabold text-slate-800 text-sm truncate max-w-[180px]">{course?.title}</span>
                     </div>
-                    <button onClick={() => setShowMobileSidebar(true)} className="text-indigo-600 font-bold text-xs bg-indigo-50 px-4 py-2 rounded-lg shadow-sm border border-indigo-100">
-                        Syllabus
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button onClick={handleShareCourse} className="p-1.5 text-slate-400 hover:text-green-500 bg-slate-50 rounded-lg border border-slate-100 shadow-sm" title="Share Course">
+                            <Share2 size={16} />
+                        </button>
+                        <button onClick={() => setShowMobileSidebar(true)} className="text-indigo-600 font-bold text-xs bg-indigo-50 px-4 py-2 rounded-lg shadow-sm border border-indigo-100">
+                            Syllabus
+                        </button>
+                    </div>
                 </div>
 
                 {!activeUnit ? (

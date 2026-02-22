@@ -17,6 +17,7 @@ export default function CourseDetailsPage({ params }: { params: { courseId: stri
     const [showCreateUnit, setShowCreateUnit] = useState(false);
     const [newUnitTitle, setNewUnitTitle] = useState('');
     const [uploadingBulk, setUploadingBulk] = useState(false);
+    const [creatingUnit, setCreatingUnit] = useState(false);
 
     useEffect(() => {
         if (!courseId) {
@@ -55,14 +56,27 @@ export default function CourseDetailsPage({ params }: { params: { courseId: stri
     };
 
     const handleCreateUnit = async () => {
-        if (!newUnitTitle) return;
+        if (!newUnitTitle.trim() || creatingUnit) return;
         try {
-            await labApi.createUnit({ courseId, title: newUnitTitle });
+            setCreatingUnit(true);
+            await labApi.createUnit({ courseId, title: newUnitTitle.trim() });
             setNewUnitTitle('');
             setShowCreateUnit(false);
             loadData();
         } catch (error) {
             alert('Failed to create unit');
+        } finally {
+            setCreatingUnit(false);
+        }
+    };
+
+    const handleDeleteExperiment = async (expId: string) => {
+        if (!confirm('Are you sure you want to delete this experiment? This action cannot be undone.')) return;
+        try {
+            await labApi.deleteExperiment(expId);
+            loadData();
+        } catch (error) {
+            alert('Failed to delete experiment');
         }
     };
 
@@ -309,10 +323,12 @@ export default function CourseDetailsPage({ params }: { params: { courseId: stri
                                             </div>
 
                                             <div className="flex items-center gap-3 opacity-0 group-hover/item:opacity-100 transition-all translate-x-4 group-hover/item:translate-x-0">
-                                                <button className="p-3 bg-dark-300 border border-dark-border text-gray-500 hover:text-primary-400 hover:border-primary-500/30 rounded-2xl transition-all" title="Edit Logic">
-                                                    <Edit size={18} />
-                                                </button>
-                                                <button className="p-3 bg-dark-300 border border-dark-border text-gray-500 hover:text-red-400 hover:border-red-500/30 rounded-2xl transition-all" title="Wipe Asset">
+                                                <Link href={`/admin/legezttantra/courses/${courseId}/experiments/${exp.id}/edit`}>
+                                                    <button className="p-3 bg-dark-300 border border-dark-border text-gray-500 hover:text-primary-400 hover:border-primary-500/30 rounded-2xl transition-all" title="Edit Logic">
+                                                        <Edit size={18} />
+                                                    </button>
+                                                </Link>
+                                                <button onClick={() => handleDeleteExperiment(exp.id)} className="p-3 bg-dark-300 border border-dark-border text-gray-500 hover:text-red-400 hover:border-red-500/30 rounded-2xl transition-all" title="Wipe Asset">
                                                     <Trash2 size={18} />
                                                 </button>
                                             </div>

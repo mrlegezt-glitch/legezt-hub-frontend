@@ -195,6 +195,8 @@ export const labApi = {
     createUnit: (data: any) => api.post('/labs/units', data),
     createExperiment: (data: any) => api.post('/labs/experiments', data),
     getExperiment: (id: string) => api.get(`/labs/experiments/${id}`),
+    updateExperiment: (id: string, data: any) => api.put(`/labs/experiments/${id}`, data),
+    deleteExperiment: (id: string) => api.delete(`/labs/experiments/${id}`),
     bulkCreate: (courseId: string, data: any) => api.post(`/labs/courses/${courseId}/bulk`, data),
 };
 

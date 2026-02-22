@@ -125,6 +125,7 @@ export default function SubjectsPage() {
                         <div className="flex items-center gap-6 mb-2 animate-fade-in text-left">
                             {user.collegeLogo && (
                                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/5 border border-white/10 p-2 flex items-center justify-center shrink-0 shadow-xl shadow-black/20 overflow-hidden relative">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
                                     <img
                                         src={user.collegeLogo}
                                         alt={user.collegeName}
