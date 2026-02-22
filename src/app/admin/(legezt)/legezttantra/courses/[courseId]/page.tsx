@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight, Plus, FlaskConical, Edit, Trash2, Code, Loader2, ArrowLeft, Folder } from 'lucide-react';
+import { ChevronRight, Plus, FlaskConical, Edit, Trash2, Code, Loader2, ArrowLeft, Folder, Upload } from 'lucide-react';
 import { labApi } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -16,6 +16,7 @@ export default function CourseDetailsPage({ params }: { params: { courseId: stri
     const [loading, setLoading] = useState(true);
     const [showCreateUnit, setShowCreateUnit] = useState(false);
     const [newUnitTitle, setNewUnitTitle] = useState('');
+    const [uploadingBulk, setUploadingBulk] = useState(false);
 
     useEffect(() => {
         if (!courseId) {
@@ -62,6 +63,83 @@ export default function CourseDetailsPage({ params }: { params: { courseId: stri
             loadData();
         } catch (error) {
             alert('Failed to create unit');
+        }
+    };
+
+    const handleBulkUpload = async (e: any) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) return;
+
+        try {
+            setUploadingBulk(true);
+            const unitsMap = new Map<string, any>();
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const pathParts = file.webkitRelativePath.split('/');
+
+                // Typical structure: [CourseFolder, UnitName, ExperimentName, filename]
+                if (pathParts.length < 4) continue;
+
+                const unitTitle = pathParts[1];
+                const expTitle = pathParts[2];
+                const filename = pathParts[3].toLowerCase();
+
+                if (!unitsMap.has(unitTitle)) {
+                    unitsMap.set(unitTitle, { title: unitTitle, experimentsMap: new Map() });
+                }
+                const unitData = unitsMap.get(unitTitle);
+
+                if (!unitData.experimentsMap.has(expTitle)) {
+                    unitData.experimentsMap.set(expTitle, {
+                        title: expTitle,
+                        aim: '',
+                        procedure: '',
+                        solutionCode: '',
+                        language: 'python',
+                        output: ''
+                    });
+                }
+                const expData = unitData.experimentsMap.get(expTitle);
+                const text = await file.text();
+
+                if (filename.includes('aim') || filename.includes('objective')) {
+                    expData.aim = text;
+                } else if (filename.includes('step') || filename.includes('procedure')) {
+                    expData.procedure = text;
+                } else if (filename.includes('output') || filename.includes('test')) {
+                    expData.output = text;
+                } else if (filename.includes('program') || filename.includes('code') || filename.includes('solution') || filename.endsWith('.c') || filename.endsWith('.py') || filename.endsWith('.java') || filename.endsWith('.cpp')) {
+                    expData.solutionCode = text;
+                    if (filename.endsWith('.c')) expData.language = 'c';
+                    else if (filename.endsWith('.cpp')) expData.language = 'cpp';
+                    else if (filename.endsWith('.java')) expData.language = 'java';
+                    else if (filename.endsWith('.js')) expData.language = 'javascript';
+                    else if (filename.endsWith('.py')) expData.language = 'python';
+                }
+            }
+
+            const payloadUnits = Array.from(unitsMap.values()).map((unit: any) => ({
+                title: unit.title,
+                experiments: Array.from(unit.experimentsMap.values())
+            }));
+
+            if (payloadUnits.length === 0) {
+                alert('No valid units/experiments found in the selected folder.');
+                setUploadingBulk(false);
+                return;
+            }
+
+            await labApi.bulkCreate(courseId, { units: payloadUnits });
+            alert(`Successfully imported ${payloadUnits.length} units.`);
+            loadData();
+
+        } catch (err: any) {
+            console.error(err);
+            alert('Failed to bulk upload. ' + err.message);
+        } finally {
+            setUploadingBulk(false);
+            e.target.value = '';
         }
     };
 
@@ -114,13 +192,34 @@ export default function CourseDetailsPage({ params }: { params: { courseId: stri
                             <span className="text-primary-500">{units.length} ACTIVE MODULES</span>
                         </p>
                     </div>
-                    <button
-                        onClick={() => setShowCreateUnit(true)}
-                        className="btn-primary px-8 py-3.5 flex items-center gap-3 shadow-2xl shadow-primary-500/30 active:scale-95 text-sm"
-                    >
-                        <Plus size={20} />
-                        ADD SYLLABUS UNIT
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => document.getElementById('bulk-upload-input')?.click()}
+                            disabled={uploadingBulk}
+                            className="bg-dark-300 text-gray-300 border border-dark-border px-6 py-3.5 rounded-2xl flex items-center gap-2 font-black hover:bg-dark-border transition-all uppercase tracking-tighter text-sm disabled:opacity-50"
+                        >
+                            {uploadingBulk ? <Loader2 className="animate-spin" size={20} /> : <Upload size={20} />}
+                            {uploadingBulk ? 'IMPORTING...' : 'BULK IMPORT'}
+                        </button>
+                        <input
+                            type="file"
+                            id="bulk-upload-input"
+                            hidden
+                            //@ts-ignore
+                            webkitdirectory="true"
+                            directory="true"
+                            multiple
+                            onChange={handleBulkUpload}
+                        />
+                        <button
+                            onClick={() => setShowCreateUnit(true)}
+                            className="btn-primary px-8 py-3.5 flex items-center gap-3 shadow-2xl shadow-primary-500/30 active:scale-95 text-sm disabled:opacity-50"
+                            disabled={uploadingBulk}
+                        >
+                            <Plus size={20} />
+                            ADD SYLLABUS UNIT
+                        </button>
+                    </div>
                 </div>
             </div>
 

@@ -21,6 +21,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
     const [sidebarWidth, setSidebarWidth] = useState(300);
     const [instructionWidth, setInstructionWidth] = useState(45); // percentage
     const [searchQuery, setSearchQuery] = useState('');
+    const [isMobile, setIsMobile] = useState(false);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,6 +44,17 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            const mobile = window.innerWidth < 768;
+            setIsMobile(mobile);
+            if (mobile && isSidebarOpen) setSidebarOpen(false); // auto close sidebar on mobile
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
     const loadData = async () => {
@@ -102,26 +114,31 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
             <LeGeZtHeader className="shrink-0" />
 
             {/* MAIN WORKSPACE */}
-            <div className="flex-1 flex overflow-hidden pt-16 relative">
+            <div className="flex-1 flex flex-col md:flex-row overflow-hidden pt-16 relative">
 
                 {/* 1. EXPLORER SIDEBAR */}
                 <AnimatePresence initial={false}>
                     {isSidebarOpen && (
                         <motion.aside
                             initial={{ width: 0, opacity: 0 }}
-                            animate={{ width: sidebarWidth, opacity: 1 }}
+                            animate={{ width: isMobile ? '100%' : sidebarWidth, opacity: 1 }}
                             exit={{ width: 0, opacity: 0 }}
-                            className="bg-[#fcfcfd] border-r border-slate-200 flex flex-col shrink-0 z-20 overflow-hidden relative"
+                            className="bg-[#fcfcfd] border-r border-slate-200 flex flex-col shrink-0 z-50 overflow-hidden absolute inset-0 md:relative h-full"
                         >
-                            <div className="p-4 flex flex-col h-full min-w-[300px]">
-                                <div className="mb-4">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h2 className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Explorer</h2>
-                                        <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">Lab v2.0</span>
+                            <div className="p-4 flex flex-col h-full min-w-[300px] w-full">
+                                <div className="mb-4 flex items-center justify-between">
+                                    <div className="flex-1 min-w-0 pr-4">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h2 className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Explorer</h2>
+                                            <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">Lab v2.0</span>
+                                        </div>
+                                        <h1 className="text-sm font-bold text-slate-800 truncate" title={lab.unit?.course?.title}>
+                                            {lab.unit?.course?.title}
+                                        </h1>
                                     </div>
-                                    <h1 className="text-sm font-bold text-slate-800 truncate" title={lab.unit?.course?.title}>
-                                        {lab.unit?.course?.title}
-                                    </h1>
+                                    <button onClick={() => setSidebarOpen(false)} className="md:hidden shrink-0 text-slate-400 p-2 bg-slate-100 rounded-lg">
+                                        <ChevronLeft size={16} />
+                                    </button>
                                 </div>
 
                                 {/* Search Field */}
@@ -193,19 +210,19 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                 {/* Sidebar Toggle (Floating) */}
                 <button
                     onClick={() => setSidebarOpen(!isSidebarOpen)}
-                    className="absolute top-1/2 left-0 z-40 w-5 h-10 bg-white border border-slate-200 border-l-0 rounded-r-md flex items-center justify-center shadow-md hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-all -translate-y-1/2"
-                    style={{ left: isSidebarOpen ? sidebarWidth : 0 }}
+                    className="absolute top-1/2 left-0 z-40 w-5 h-10 md:w-5 md:h-10 bg-white border border-slate-200 border-l-0 rounded-r-md flex items-center justify-center shadow-md hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-all -translate-y-1/2"
+                    style={{ left: isMobile ? (isSidebarOpen ? '100%' : 0) : (isSidebarOpen ? sidebarWidth : 0), display: isMobile && isSidebarOpen ? 'none' : 'flex' }}
                 >
                     {isSidebarOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
                 </button>
 
                 {/* 2. INSTRUCTION PANEL (Center) */}
                 <div
-                    className="bg-white flex flex-col overflow-hidden border-r border-slate-200"
-                    style={{ width: `${instructionWidth}%` }}
+                    className="bg-white flex flex-col overflow-hidden border-b md:border-b-0 md:border-r border-slate-200 shrink-0 md:shrink"
+                    style={{ width: isMobile ? '100%' : `${instructionWidth}%`, height: isMobile ? '45%' : 'auto' }}
                 >
                     {/* Header */}
-                    <div className="bg-[#4139a8] px-6 py-5 flex flex-col shrink-0 text-white relative overflow-hidden shadow-lg selection:bg-white/20">
+                    <div className="bg-[#4139a8] px-4 md:px-6 py-4 md:py-5 flex flex-col shrink-0 text-white relative overflow-hidden shadow-lg selection:bg-white/20">
                         <div className="flex items-center justify-between mb-2 relative z-10">
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
@@ -217,13 +234,13 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                     {lab.title}
                                 </h2>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <div className="bg-orange-500/20 text-orange-400 border border-orange-500/40 px-3 py-1 rounded-full text-[10px] font-extrabold font-mono shadow-inner flex items-center gap-1.5">
+                            <div className="flex items-center gap-2 md:gap-3">
+                                <div className="bg-orange-500/20 text-orange-400 border border-orange-500/40 px-2 md:px-3 py-1 rounded-full text-[10px] font-extrabold font-mono shadow-inner flex items-center gap-1.5">
                                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div>
-                                    00:45:12
+                                    <span className="hidden md:inline">00:45:12</span>
                                 </div>
                                 <button className="text-white/60 hover:text-white transition-colors"><Maximize2 size={16} /></button>
-                                <button className="text-white/60 hover:text-white transition-colors"><Info size={16} /></button>
+                                <button className="hidden md:block text-white/60 hover:text-white transition-colors"><Info size={16} /></button>
                             </div>
                         </div>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-400/10 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none"></div>
@@ -271,7 +288,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                                         <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
                                                         Test Case #{i + 1}
                                                     </div>
-                                                    <div className="grid grid-cols-2 gap-4">
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                         <div>
                                                             <div className="text-[10px] text-slate-500 mb-1.5 font-bold">INPUT DATA</div>
                                                             <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
@@ -309,7 +326,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
 
                 {/* Vertical Resizer (Instruction/Code) */}
                 <div
-                    className="w-1.5 h-full cursor-col-resize hover:bg-indigo-500/20 transition-colors z-30 bg-slate-100 border-x border-slate-200"
+                    className="hidden md:block w-1.5 h-full cursor-col-resize hover:bg-indigo-500/20 transition-colors z-30 bg-slate-100 border-x border-slate-200"
                     onMouseDown={(e) => {
                         const startX = e.clientX;
                         const startWidth = instructionWidth;
@@ -376,45 +393,45 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
             </div>
 
             {/* BOTTOM FOOTER (Premium Dark Action Bar) */}
-            <div className="h-14 bg-[#1e293b] border-t border-slate-800 flex items-center justify-between px-6 shrink-0 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]">
+            <div className="h-14 bg-[#1e293b] border-t border-slate-800 flex items-center justify-between px-2 md:px-6 shrink-0 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.3)] overflow-x-auto custom-scrollbar">
                 {/* Left Controls */}
-                <div className="flex h-full items-center gap-1">
-                    <button className="h-full px-5 text-[11px] font-extrabold text-slate-100 border-r border-slate-800/50 hover:bg-slate-800/50 flex items-center gap-2 transition-all border-b-2 border-transparent hover:border-indigo-500">
-                        <Terminal size={14} className="text-indigo-400" /> CONSOLE
+                <div className="flex h-full items-center gap-1 shrink-0">
+                    <button className="h-full px-3 md:px-5 text-[10px] md:text-[11px] font-extrabold text-slate-100 border-r border-slate-800/50 hover:bg-slate-800/50 flex items-center gap-2 transition-all border-b-2 border-transparent hover:border-indigo-500">
+                        <Terminal size={14} className="text-indigo-400" /> <span className="hidden md:inline">CONSOLE</span>
                     </button>
-                    <button className="h-full px-5 text-[11px] font-extrabold text-white border-r border-slate-800/50 bg-slate-800/60 flex items-center gap-2 transition-all border-b-2 border-orange-500 shadow-inner">
-                        <Check size={14} className="text-orange-500" /> TEST BENCH
+                    <button className="h-full px-3 md:px-5 text-[10px] md:text-[11px] font-extrabold text-white border-r border-slate-800/50 bg-slate-800/60 flex items-center gap-2 transition-all border-b-2 border-orange-500 shadow-inner">
+                        <Check size={14} className="text-orange-500" /> <span className="hidden md:inline">TEST BENCH</span>
                     </button>
                 </div>
 
                 {/* Right Actions */}
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center bg-slate-900/50 rounded-lg p-1 mr-2 border border-slate-800">
+                <div className="flex items-center gap-2 md:gap-3 shrink-0 py-2">
+                    <div className="flex items-center bg-slate-900/50 rounded-lg p-1 mr-1 md:mr-2 border border-slate-800">
                         <button
                             onClick={() => prevExp && router.push(`/labs/legezttantra/grid/${prevExp.id}`)}
                             disabled={!prevExp}
-                            className="p-2 text-slate-400 hover:text-white disabled:opacity-20 transition-all rounded"
+                            className="p-1.5 md:p-2 text-slate-400 hover:text-white disabled:opacity-20 transition-all rounded"
                             title="Previous Exercise"
                         >
-                            <ChevronLeft size={18} />
+                            <ChevronLeft size={16} />
                         </button>
                         <div className="w-px h-4 bg-slate-800 mx-1"></div>
                         <button
                             onClick={() => nextExp && router.push(`/labs/legezttantra/grid/${nextExp.id}`)}
                             disabled={!nextExp}
-                            className="p-2 text-slate-400 hover:text-white disabled:opacity-20 transition-all rounded"
+                            className="p-1.5 md:p-2 text-slate-400 hover:text-white disabled:opacity-20 transition-all rounded"
                             title="Next Exercise"
                         >
-                            <ChevronRight size={18} />
+                            <ChevronRight size={16} />
                         </button>
                     </div>
 
-                    <button className="bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-[11px] font-bold px-5 py-2 rounded-lg transition-all border border-slate-700 flex items-center gap-2">
+                    <button className="hidden md:flex bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-[11px] font-bold px-5 py-2 rounded-lg transition-all border border-slate-700 items-center gap-2">
                         <RotateCcw size={14} /> RESET
                     </button>
 
-                    <button className="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-extrabold px-6 py-2 rounded-lg transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2 border border-emerald-500 active:scale-95">
-                        <Send size={14} /> SUBMIT WORK
+                    <button className="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] md:text-[11px] font-extrabold px-4 md:px-6 py-2 rounded-lg transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2 border border-emerald-500 active:scale-95">
+                        <Send size={14} /> <span className="hidden md:inline">SUBMIT WORK</span><span className="md:hidden">SUBMIT</span>
                     </button>
                 </div>
             </div>

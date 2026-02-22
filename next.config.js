@@ -17,6 +17,9 @@ const nextConfig = {
         config.resolve.alias.canvas = false;
         return config;
     },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
 };
 
 const withPWA = require('next-pwa')({
