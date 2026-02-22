@@ -75,9 +75,14 @@ export default function CreateExperimentPage({ params }: { params: { courseId: s
 
             await labApi.createExperiment(payload);
             router.push(`/admin/legezttantra/courses/${courseId}`);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert('Failed to save experiment. Check console for details.');
+            const backendError = error.response?.data?.details || error.response?.data?.error || error.message;
+            if (backendError.includes('title already exists')) {
+                alert('An experiment with this title already exists in the course. Please choose a unique name.');
+            } else {
+                alert(`Failed to save experiment: ${backendError}`);
+            }
         } finally {
             setLoading(false);
         }

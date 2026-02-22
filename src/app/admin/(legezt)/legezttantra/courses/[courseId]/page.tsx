@@ -80,6 +80,16 @@ export default function CourseDetailsPage({ params }: { params: { courseId: stri
         }
     };
 
+    const handleDeleteUnit = async (unitId: string) => {
+        if (!confirm('Are you sure you want to delete this entire module and all its experiments? This action cannot be undone.')) return;
+        try {
+            await labApi.deleteUnit(unitId);
+            loadData();
+        } catch (error) {
+            alert('Failed to delete module');
+        }
+    };
+
     const handleBulkUpload = async (e: any) => {
         const files = e.target.files;
         if (!files || files.length === 0) return;
@@ -286,16 +296,25 @@ export default function CourseDetailsPage({ params }: { params: { courseId: stri
                                     </div>
                                     {unit.title}
                                 </h3>
-                                <div className="flex items-center gap-6">
-                                    <div className="flex flex-col items-end">
+                                <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 mt-4 md:mt-0">
+                                    <div className="flex flex-col items-end hidden sm:flex">
                                         <span className="text-[10px] text-gray-600 font-black uppercase tracking-widest">Enrolled Assets</span>
                                         <span className="text-sm text-gray-400 font-bold">{unit.experiments?.length || 0} EXPERIMENTS</span>
                                     </div>
-                                    <Link href={`/admin/legezttantra/courses/${courseId}/experiments/create?unitId=${unit.id}`}>
-                                        <button className="bg-white text-black px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-tighter hover:bg-primary-500 hover:text-white transition-all shadow-xl shadow-white/5 flex items-center gap-2">
-                                            <Plus size={14} /> NEW EXPERIMENT
+                                    <div className="flex items-center gap-2">
+                                        <Link href={`/admin/legezttantra/courses/${courseId}/experiments/create?unitId=${unit.id}`}>
+                                            <button className="bg-white text-black px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-[10px] font-black uppercase tracking-tighter hover:bg-primary-500 hover:text-white transition-all shadow-xl shadow-white/5 flex items-center gap-2">
+                                                <Plus size={14} /> <span className="hidden sm:inline">NEW EXPERIMENT</span><span className="sm:hidden">ADD</span>
+                                            </button>
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDeleteUnit(unit.id)}
+                                            className="bg-red-500/10 text-red-400 border border-red-500/20 px-3 sm:px-4 py-2.5 sm:py-3 rounded-2xl text-[10px] font-black uppercase tracking-tighter hover:bg-red-500 hover:text-white transition-all flex items-center gap-2"
+                                            title="Delete Module"
+                                        >
+                                            <Trash2 size={14} />
                                         </button>
-                                    </Link>
+                                    </div>
                                 </div>
                             </div>
 

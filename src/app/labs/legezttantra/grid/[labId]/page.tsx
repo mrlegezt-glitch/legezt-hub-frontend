@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { labApi } from '@/lib/api';
 import {
     ChevronLeft, Check, Info, Code, FileText,
-    Terminal, Loader2, Maximize2, Lock,
-    Search, ChevronRight, RotateCcw, Send, Folder, CheckCircle2, Server, Clock, Activity
+    Terminal, Loader2, Maximize2, Lock, Share2,
+    Search, ChevronRight, RotateCcw, Send, Folder, CheckCircle2, Server, Clock, Activity, Home
 } from 'lucide-react';
 import LeGeZtHeader from '@/components/labs/LeGeZtHeader';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,6 +24,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
     const [instructionWidth, setInstructionWidth] = useState(45); // percentage
     const [searchQuery, setSearchQuery] = useState('');
     const [isMobile, setIsMobile] = useState(false);
+    const [showResults, setShowResults] = useState(false);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -86,9 +87,42 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
         );
     }
 
-    if (!lab) return <div className="p-10 text-center text-slate-500">Failed to load lab data.</div>;
+    if (!lab) {
+        return (
+            <div className="flex flex-col h-[100dvh] bg-[#f8fafc] items-center justify-center p-6 text-center">
+                <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-slate-200">
+                    <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Folder size={28} />
+                    </div>
+                    <h2 className="text-xl font-bold text-slate-800 mb-2">Experiment Not Found</h2>
+                    <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                        The lab you are looking for does not exist or has been removed. It may not be available on this server.
+                    </p>
+                    <button
+                        onClick={() => router.push('/labs/legezttantra')}
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+                    >
+                        <Home size={18} /> BACK TO HOME
+                    </button>
+                    <button
+                        onClick={() => window.location.reload()}
+                        className="w-full mt-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
+                    >
+                        <RotateCcw size={18} /> RELOAD PAGE
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     const solutionCode = lab.content?.solutionCode || '// No solution code provided yet.';
+
+    const handleShareLab = () => {
+        if (!lab) return;
+        const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+        const message = `Check out this lab experiment on LeGeZt Hub: ${lab.title}. Learn more at: ${shareUrl}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    };
 
     // Flatten experiments for navigation
     const allExperiments: any[] = [];
@@ -112,7 +146,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
     })).filter(u => u.experiments && u.experiments.length > 0);
 
     return (
-        <div className="flex flex-col h-screen bg-white overflow-hidden font-sans selection:bg-indigo-100 selection:text-indigo-900">
+        <div className="flex flex-col h-[100dvh] bg-white overflow-hidden font-sans selection:bg-indigo-100 selection:text-indigo-900">
             <LeGeZtHeader className="shrink-0" />
 
             {/* MAIN WORKSPACE */}
@@ -220,29 +254,29 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
 
                 {/* 2. INSTRUCTION PANEL (Center) */}
                 <div
-                    className="bg-white flex flex-col overflow-hidden border-b md:border-b-0 md:border-r border-slate-200 shrink-0 md:shrink"
-                    style={{ width: isMobile ? '100%' : `${instructionWidth}%`, height: isMobile ? '45%' : 'auto' }}
+                    className="bg-white flex flex-col overflow-hidden border-b md:border-b-0 md:border-r border-slate-200 shrink-0 md:shrink w-full md:w-[var(--instruction-width)] h-[40%] md:h-auto"
+                    style={{ '--instruction-width': `${instructionWidth}%` } as React.CSSProperties}
                 >
                     {/* Header */}
                     <div className="bg-[#4139a8] px-4 md:px-6 py-4 md:py-5 flex flex-col shrink-0 text-white relative overflow-hidden shadow-lg selection:bg-white/20">
-                        <div className="flex items-center justify-between mb-2 relative z-10">
-                            <div>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 relative z-10 gap-3 sm:gap-0">
+                            <div className="flex-1 min-w-0 pr-2">
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-[10px] font-bold bg-white/20 px-1.5 py-0.5 rounded-sm backdrop-blur-md uppercase tracking-widest">Problem Statement</span>
-                                    <span className="text-white/40 text-[10px]">•</span>
-                                    <span className="text-white/60 text-[10px] font-medium">{lab.unitTitle || 'Module 1'}</span>
+                                    <span className="text-[9px] md:text-[10px] font-bold bg-white/20 px-1.5 py-0.5 rounded-sm backdrop-blur-md uppercase tracking-widest whitespace-nowrap">Problem Statement</span>
+                                    <span className="text-white/40 text-[10px] hidden sm:inline">•</span>
+                                    <span className="text-white/60 text-[9px] md:text-[10px] font-medium truncate">{lab.unitTitle || 'Module 1'}</span>
                                 </div>
-                                <h2 className="text-xl font-bold tracking-tight text-white drop-shadow-sm">
+                                <h2 className="text-lg md:text-xl font-bold tracking-tight text-white drop-shadow-sm truncate">
                                     {lab.title}
                                 </h2>
                             </div>
-                            <div className="flex items-center gap-2 md:gap-3">
-                                <div className="bg-orange-500/20 text-orange-400 border border-orange-500/40 px-2 md:px-3 py-1 rounded-full text-[10px] font-extrabold font-mono shadow-inner flex items-center gap-1.5">
+                            <div className="flex items-center gap-2 md:gap-3 shrink-0">
+                                <div className="bg-orange-500/20 text-orange-400 border border-orange-500/40 px-2 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-extrabold font-mono shadow-inner flex items-center gap-1.5">
                                     <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div>
-                                    <span className="hidden md:inline">00:45:12</span>
+                                    <span>00:45:12</span>
                                 </div>
-                                <button className="text-white/60 hover:text-white transition-colors"><Maximize2 size={16} /></button>
-                                <button className="hidden md:block text-white/60 hover:text-white transition-colors"><Info size={16} /></button>
+                                <button className="text-white/60 hover:text-white transition-colors hidden sm:block"><Maximize2 size={16} /></button>
+                                <button className="hidden sm:block text-white/60 hover:text-white transition-colors"><Info size={16} /></button>
                             </div>
                         </div>
                         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-400/10 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none"></div>
@@ -350,85 +384,108 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                 <div className="flex-1 bg-[#0f172a] flex flex-col overflow-hidden">
                     {/* Tab Bar */}
                     <div className="h-11 bg-[#1e293b] border-b border-slate-800 flex items-center px-4 shrink-0 justify-between">
-                        <div className="flex h-full items-center">
-                            <div className="bg-[#0f172a] h-full px-5 border-x border-slate-800 text-[11px] font-bold text-slate-300 flex items-center gap-2 border-t-2 border-t-indigo-500 shadow-md">
-                                <Code size={13} className="text-indigo-400" />
-                                Solution.{lab.content?.language === 'python' ? 'py' : lab.content?.language === 'java' ? 'java' : 'c'}
+                        <div className="flex h-full items-center min-w-0">
+                            <div className="bg-[#0f172a] h-full px-3 md:px-5 border-x border-slate-800 text-[10px] md:text-[11px] font-bold text-slate-300 flex items-center gap-1.5 md:gap-2 border-t-2 border-t-indigo-500 shadow-md whitespace-nowrap truncate">
+                                <Code size={13} className="text-indigo-400 shrink-0" />
+                                <span className="truncate">Solution.{lab.content?.language === 'python' ? 'py' : lab.content?.language === 'java' ? 'java' : 'c'}</span>
                             </div>
-                            <div className="px-4 text-[10px] font-medium text-slate-500 flex items-center gap-2 italic">
+                            <div className="px-2 md:px-4 text-[9px] md:text-[10px] font-medium text-slate-500 hidden sm:flex items-center gap-2 italic whitespace-nowrap">
                                 Read Only Access
                             </div>
                         </div>
-                        <button
-                            onClick={() => navigator.clipboard.writeText(solutionCode)}
-                            className="bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-3 py-1.5 rounded flex items-center gap-2 transition-all shadow-md"
-                        >
-                            <span className="opacity-90">COPY CODE</span>
-                            <Check size={12} />
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={handleShareLab}
+                                className="flex bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 text-[10px] font-bold px-2 md:px-3 py-1.5 rounded items-center gap-1.5 md:gap-2 transition-all shadow-md"
+                            >
+                                <span className="opacity-90 hidden md:inline">SHARE LAB</span>
+                                <span className="opacity-90 md:hidden">SHARE</span>
+                                <Share2 size={12} className="text-green-500" />
+                            </button>
+                            <button
+                                onClick={() => navigator.clipboard.writeText(solutionCode)}
+                                className="flex bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-2 md:px-3 py-1.5 rounded items-center gap-1.5 md:gap-2 transition-all shadow-md"
+                            >
+                                <span className="opacity-90 hidden md:inline">COPY CODE</span>
+                                <span className="opacity-90 md:hidden">COPY</span>
+                                <Check size={12} />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Code Editor Body */}
-                    <div className="flex-1 overflow-auto relative custom-scrollbar bg-[#0f172a]">
-                        <SyntaxHighlighter
-                            language={lab.content?.language || 'javascript'}
-                            style={vscDarkPlus}
-                            customStyle={{
-                                margin: 0,
-                                background: 'transparent',
-                                fontSize: '14px',
-                                padding: '1.5rem',
-                                lineHeight: '1.6',
-                            }}
-                            showLineNumbers={true}
-                            lineNumberStyle={{ minWidth: '3em', paddingRight: '1.5em', color: '#475569', textAlign: 'right', borderRight: '1px solid #1e293b', marginRight: '1.5em' }}
-                        >
-                            {solutionCode}
-                        </SyntaxHighlighter>
-                    </div>
-
-                    {/* Mock Test Results UI */}
-                    <div className="h-1/3 min-h-[260px] bg-[#1a2333] border-t border-slate-800 flex flex-col shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-20">
-                        {/* Header */}
-                        <div className="h-12 bg-[#0f172a] flex items-center justify-between px-6 border-b border-slate-800 shrink-0">
-                            <div className="flex items-center gap-3">
-                                <div className="p-1 px-2 bg-emerald-500/10 border border-emerald-500/20 rounded-md flex items-center gap-2">
-                                    <CheckCircle2 size={13} className="text-emerald-400" />
-                                    <span className="text-emerald-400 text-[10px] font-black tracking-widest uppercase">Executed Successfully</span>
-                                </div>
-                                <span className="text-slate-500 text-[10px] font-bold">Passed all 2 test cases</span>
-                            </div>
-                            <div className="flex items-center gap-4 text-[10px] font-mono text-slate-500">
-                                <span className="flex items-center gap-1.5"><Clock size={12} /> 0.042s</span>
-                                <span className="flex items-center gap-1.5"><Server size={12} /> 14MB Memory</span>
-                            </div>
+                    <div className="flex-1 overflow-hidden relative bg-[#0f172a] flex flex-col">
+                        <div className="flex-1 overflow-auto custom-scrollbar">
+                            <SyntaxHighlighter
+                                language={lab.content?.language || 'javascript'}
+                                style={vscDarkPlus}
+                                customStyle={{
+                                    margin: 0,
+                                    background: 'transparent',
+                                    fontSize: '14px',
+                                    padding: '1.5rem',
+                                    lineHeight: '1.6',
+                                }}
+                                showLineNumbers={true}
+                                lineNumberStyle={{ minWidth: '3em', paddingRight: '1.5em', color: '#475569', textAlign: 'right', borderRight: '1px solid #1e293b', marginRight: '1.5em' }}
+                            >
+                                {solutionCode}
+                            </SyntaxHighlighter>
                         </div>
 
-                        {/* Results Content */}
-                        <div className="flex-1 flex overflow-hidden">
-                            {/* Test Cases Sidebar */}
-                            <div className="w-48 bg-[#1e293b]/50 border-r border-slate-800 flex flex-col shrink-0">
-                                <div className="p-3 text-[10px] font-bold text-slate-500 tracking-widest uppercase border-b border-slate-800">Test Suite</div>
-                                <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
-                                    <button className="w-full text-left px-3 py-2 text-xs rounded bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-between shadow-sm">
-                                        <span className="font-mono">Case 1</span> <Check size={14} className="text-emerald-400" />
-                                    </button>
-                                    <button className="w-full text-left px-3 py-2 text-xs rounded hover:bg-slate-800/50 text-slate-400 flex items-center justify-between transition-colors">
-                                        <span className="font-mono flex items-center gap-2"><Lock size={10} className="text-slate-500" /> Case 2</span> <Check size={14} className="text-emerald-400" />
-                                    </button>
-                                </div>
-                            </div>
-                            {/* Verification Detail */}
-                            <div className="flex-1 p-5 overflow-y-auto custom-scrollbar bg-[#161f2e]">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <Activity size={16} className="text-indigo-400" />
-                                    <h4 className="text-slate-300 text-sm font-bold">Standard Output</h4>
-                                </div>
-                                <pre className="bg-[#0f172a] border border-slate-800 p-4 rounded-xl text-emerald-400 font-mono text-xs leading-relaxed shadow-inner">
-                                    {`Build successful...\nExecuting binary...\n\nOutput matched expected result strictly.\nExit code: 0`}
-                                </pre>
-                            </div>
-                        </div>
+                        {/* Slide-Up Test Results overlay */}
+                        <AnimatePresence>
+                            {showResults && (
+                                <motion.div
+                                    initial={{ y: '100%' }}
+                                    animate={{ y: 0 }}
+                                    exit={{ y: '100%' }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    className="absolute bottom-0 left-0 w-full h-[60%] min-h-[260px] bg-[#1a2333] border-t-2 border-indigo-500/50 flex flex-col shrink-0 shadow-[0_-15px_40px_rgba(0,0,0,0.6)] z-30 overflow-hidden rounded-t-xl"
+                                >
+                                    {/* Header */}
+                                    <div className="h-12 bg-[#0f172a] flex items-center justify-between px-4 md:px-6 border-b border-slate-800 shrink-0">
+                                        <div className="flex items-center gap-2 md:gap-3">
+                                            <div className="p-1 px-1.5 md:px-2 bg-emerald-500/10 border border-emerald-500/20 rounded-md flex items-center gap-1.5 md:gap-2">
+                                                <CheckCircle2 size={13} className="text-emerald-400" />
+                                                <span className="text-emerald-400 text-[9px] md:text-[10px] font-black tracking-widest uppercase">Executed Successfully</span>
+                                            </div>
+                                            <span className="text-slate-500 text-[9px] md:text-[10px] font-bold hidden md:inline">Passed all 2 test cases</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-mono text-slate-500">
+                                            <span className="flex items-center gap-1 md:gap-1.5"><Clock size={12} /> 0.042s</span>
+                                            <span className="flex items-center gap-1 md:gap-1.5"><Server size={12} /> 14MB<span className="hidden md:inline"> Memory</span></span>
+                                        </div>
+                                    </div>
+
+                                    {/* Results Content */}
+                                    <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+                                        {/* Test Cases Sidebar */}
+                                        <div className="w-full md:w-48 bg-[#1e293b]/50 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col shrink-0">
+                                            <div className="p-2 md:p-3 text-[9px] md:text-[10px] font-bold text-slate-500 tracking-widest uppercase border-b border-slate-800 hidden md:block">Test Suite</div>
+                                            <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto custom-scrollbar p-2 gap-1 md:gap-0 md:space-y-1">
+                                                <button className="flex-1 md:w-full text-left px-3 py-2 text-xs rounded bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-between shadow-sm min-w-[100px]">
+                                                    <span className="font-mono">Case 1</span> <Check size={14} className="text-emerald-400" />
+                                                </button>
+                                                <button className="flex-1 md:w-full text-left px-3 py-2 text-xs rounded hover:bg-slate-800/50 text-slate-400 flex items-center justify-between transition-colors min-w-[100px]">
+                                                    <span className="font-mono flex items-center gap-2"><Lock size={10} className="text-slate-500" /> Case 2</span> <Check size={14} className="text-emerald-400" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {/* Verification Detail */}
+                                        <div className="flex-1 p-4 md:p-5 overflow-y-auto custom-scrollbar bg-[#161f2e]">
+                                            <div className="flex items-center gap-2 mb-3 md:mb-4">
+                                                <Activity size={16} className="text-indigo-400" />
+                                                <h4 className="text-slate-300 text-xs md:text-sm font-bold">Standard Output</h4>
+                                            </div>
+                                            <pre className="bg-[#0f172a] border border-slate-800 p-3 md:p-4 rounded-xl text-emerald-400 font-mono text-[10px] md:text-xs leading-relaxed shadow-inner overflow-x-auto">
+                                                {`Build successful...\nExecuting binary...\n\nOutput matched expected result strictly.\nExit code: 0`}
+                                            </pre>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </div>
 
@@ -447,12 +504,12 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                 </div>
 
                 {/* Right Actions */}
-                <div className="flex items-center gap-2 md:gap-3 shrink-0 py-2">
+                <div className="flex items-center gap-1.5 md:gap-3 shrink-0 py-2">
                     <div className="flex items-center bg-slate-900/50 rounded-lg p-1 mr-1 md:mr-2 border border-slate-800">
                         <button
                             onClick={() => prevExp && router.push(`/labs/legezttantra/grid/${prevExp.id}`)}
                             disabled={!prevExp}
-                            className="p-1.5 md:p-2 text-slate-400 hover:text-white disabled:opacity-20 transition-all rounded"
+                            className="p-1 md:p-2 text-slate-400 hover:text-white disabled:opacity-20 transition-all rounded"
                             title="Previous Exercise"
                         >
                             <ChevronLeft size={16} />
@@ -461,15 +518,18 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                         <button
                             onClick={() => nextExp && router.push(`/labs/legezttantra/grid/${nextExp.id}`)}
                             disabled={!nextExp}
-                            className="p-1.5 md:p-2 text-slate-400 hover:text-white disabled:opacity-20 transition-all rounded"
+                            className="p-1 md:p-2 text-slate-400 hover:text-white disabled:opacity-20 transition-all rounded"
                             title="Next Exercise"
                         >
                             <ChevronRight size={16} />
                         </button>
                     </div>
 
-                    <button className="hidden md:flex bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-[11px] font-bold px-5 py-2 rounded-lg transition-all border border-slate-700 items-center gap-2">
-                        <RotateCcw size={14} /> RESET
+                    <button
+                        onClick={() => setShowResults(!showResults)}
+                        className={`text-[10px] md:text-[11px] font-bold px-3 md:px-5 py-2 rounded-lg transition-all border items-center gap-2 flex ${showResults ? 'bg-indigo-600 border-indigo-500 text-white shadow-[0_0_15px_rgba(79,70,229,0.4)]' : 'bg-slate-800/80 hover:bg-slate-700 text-slate-200 border-slate-700'}`}
+                    >
+                        <Activity size={14} /> <span className="hidden md:inline">{showResults ? 'HIDE RESULTS' : 'RESULTS'}</span><span className="md:hidden">RESULTS</span>
                     </button>
                 </div>
             </div>

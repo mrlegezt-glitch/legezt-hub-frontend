@@ -193,6 +193,7 @@ export const labApi = {
     // Content Hierarchy
     getCourseContent: (courseId: string) => api.get(`/labs/courses/${courseId}/content`),
     createUnit: (data: any) => api.post('/labs/units', data),
+    deleteUnit: (id: string) => api.delete(`/labs/units/${id}`),
     createExperiment: (data: any) => api.post('/labs/experiments', data),
     getExperiment: (id: string) => api.get(`/labs/experiments/${id}`),
     updateExperiment: (id: string, data: any) => api.put(`/labs/experiments/${id}`, data),
