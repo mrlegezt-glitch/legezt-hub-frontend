@@ -6,7 +6,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, FileText, Headphones, Gift, User, Sparkles, LogOut, BookOpen, Menu, FlaskConical, Calendar } from 'lucide-react';
+import { Home, FileText, Headphones, Gift, User, Sparkles, LogOut, BookOpen, Menu, FlaskConical, Calendar, PlayCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
@@ -20,6 +20,7 @@ const navItems = [
     { href: '/syllabus', icon: Calendar, label: 'Syllabus' },
     { href: '/subjects', icon: BookOpen, label: 'Subjects' },
     { href: '/labs', icon: FlaskConical, label: 'Labs' },
+    { href: '/explore', icon: PlayCircle, label: 'Watch' },
     { href: '/podcasts', icon: Headphones, label: 'LeGeZtCast' },
     { href: '/offers', icon: Gift, label: 'Courses' },
 ];

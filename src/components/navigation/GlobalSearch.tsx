@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, X, FileText, Music, GraduationCap, ArrowRight, Loader2 } from 'lucide-react';
+import { Search, X, FileText, Music, GraduationCap, ArrowRight, Loader2, PlayCircle } from 'lucide-react';
 import { contentApi } from '@/lib/api';
+import { tmdb } from '@/lib/tmdb';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -13,6 +14,7 @@ export default function GlobalSearch() {
         pdfs: any[];
         podcasts: any[];
         courses: any[];
+        media?: any[];
     } | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -36,8 +38,18 @@ export default function GlobalSearch() {
             }
             setLoading(true);
             try {
-                const res = await contentApi.search(query);
-                setResults(res.data.data);
+                const [res, mediaRes] = await Promise.all([
+                    contentApi.search(query).catch(() => ({ data: { data: { pdfs: [], podcasts: [], courses: [] } } })),
+                    tmdb.searchMulti(query).catch(() => ({ results: [] }))
+                ]);
+
+                // Only take top 4 media results to balance the modal
+                const topMedia = (mediaRes.results || []).filter((m: any) => m.media_type === 'movie' || m.media_type === 'tv').slice(0, 4);
+
+                setResults({
+                    ...res.data.data,
+                    media: topMedia
+                });
             } catch (error) {
                 console.error('Search error', error);
             } finally {
@@ -205,6 +217,7 @@ export default function GlobalSearch() {
                                                         onClick={() => closeAndNavigate(`/offers`)}
                                                         className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 group transition-all text-left"
                                                         role="option"
+                                                        aria-selected="false"
                                                         aria-label={`View course: ${course.title}`}
                                                     >
                                                         <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500" aria-hidden="true">
@@ -212,6 +225,37 @@ export default function GlobalSearch() {
                                                         </div>
                                                         <span className="flex-1 text-sm font-medium text-gray-300 group-hover:text-white truncate">
                                                             {course.title}
+                                                        </span>
+                                                        <ArrowRight size={14} className="text-gray-700 group-hover:text-primary-500 transition-colors" aria-hidden="true" />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </section>
+                                    )}
+
+                                    {/* Movies & TV */}
+                                    {results.media && results.media.length > 0 && (
+                                        <section aria-labelledby="media-heading">
+                                            <h3 id="media-heading" className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 mb-2">Movies & Series</h3>
+                                            <div className="space-y-1" role="group" aria-label="Media items">
+                                                {results.media.map(item => (
+                                                    <button
+                                                        key={item.id}
+                                                        onClick={() => closeAndNavigate(`/watch/${item.media_type || 'movie'}/${item.id}${item.media_type === 'tv' ? '/1/1' : ''}`)}
+                                                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 group transition-all text-left"
+                                                        role="option"
+                                                        aria-selected="false"
+                                                        aria-label={`Watch: ${item.title || item.name}`}
+                                                    >
+                                                        <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500 overflow-hidden relative shrink-0" aria-hidden="true">
+                                                            {item.poster_path ? (
+                                                                <img src={tmdb.getImageUrl(item.poster_path, 'w500')} alt="" className="w-full h-full object-cover opacity-80" />
+                                                            ) : (
+                                                                <PlayCircle size={20} />
+                                                            )}
+                                                        </div>
+                                                        <span className="flex-1 text-sm font-medium text-gray-300 group-hover:text-white truncate">
+                                                            {item.title || item.name}
                                                         </span>
                                                         <ArrowRight size={14} className="text-gray-700 group-hover:text-primary-500 transition-colors" aria-hidden="true" />
                                                     </button>

@@ -276,7 +276,7 @@ export default function StudentCourseContentPage({ params }: { params: { courseI
                                         <Folder size={24} className="text-slate-400" />
                                     </div>
                                     <h3 className="text-sm font-bold text-slate-700 mb-1">No Experiments Yet</h3>
-                                    <p className="text-xs text-slate-500">The curriculum architect hasn't added content to this module.</p>
+                                    <p className="text-xs text-slate-500">The curriculum architect hasn&apos;t added content to this module.</p>
                                 </div>
                             )}
                         </div>

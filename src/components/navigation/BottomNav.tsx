@@ -6,15 +6,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, FileText, Headphones, Gift, User, BookOpen, Calendar } from 'lucide-react';
+import { Home, FileText, Headphones, Gift, User, BookOpen, Calendar, PlayCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 
 const navItems = [
     { href: '/', icon: Home, label: 'Home' },
-    { href: '/syllabus', icon: Calendar, label: 'Syllabus' },
     { href: '/subjects', icon: BookOpen, label: 'Subjects' },
+    { href: '/explore', icon: PlayCircle, label: 'Watch' },
     { href: '/podcasts', icon: Headphones, label: 'LeGeZtCast' },
-    { href: '/offers', icon: Gift, label: 'Offers' },
     { href: '/profile', icon: User, label: 'Profile' },
 ];
 
