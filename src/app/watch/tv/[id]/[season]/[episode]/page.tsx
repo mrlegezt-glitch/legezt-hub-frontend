@@ -1,8 +1,11 @@
 import React from 'react';
 import { tmdb } from '@/lib/tmdb';
 import MediaRow from '@/components/media/MediaRow';
-import { ChevronLeft, ListVideo, Play } from 'lucide-react';
+import VideoPlayer from '@/components/media/VideoPlayer';
+import SeasonEpisodeSelector from '@/components/media/SeasonEpisodeSelector';
+import { ChevronLeft, Star, Calendar } from 'lucide-react';
 import Link from 'next/link';
+import { Metadata } from 'next';
 
 interface TVWatchPageProps {
     params: {
@@ -12,116 +15,130 @@ interface TVWatchPageProps {
     };
 }
 
+export async function generateMetadata({ params }: TVWatchPageProps): Promise<Metadata> {
+    const { id, season, episode } = await params;
+    const details = await tmdb.getTVDetails(id);
+    return {
+        title: `${details?.name || 'Watch'} S${season}:E${episode} | LeGeZt Hub`,
+        description: details?.overview || 'Watch TV series on LeGeZt Hub',
+    };
+}
+
 export default async function TVWatchPage({ params }: TVWatchPageProps) {
     const { id, season, episode } = await params;
 
-    // Fetch details and similar shows
     const [details, similarRes] = await Promise.all([
         tmdb.getTVDetails(id),
-        tmdb.getTrendingTV() // Fallback similar for mock
+        tmdb.getTrendingTV()
     ]);
 
-    const embedUrl = `https://vidsrc.me/embed/tv?tmdb=${id}&season=${season}&ep=${episode}`;
+    const title = details?.name || 'Unknown Series';
+    const posterUrl = tmdb.getImageUrl(details?.poster_path, 'w500');
+    const backdropUrl = tmdb.getImageUrl(details?.backdrop_path || details?.poster_path, 'w500');
+    const totalSeasons = details?.number_of_seasons || 1;
+    const totalEpisodes = details?.number_of_episodes || 10;
+    // Rough estimate: divide total episodes by total seasons
+    const episodesPerSeason = Math.max(Math.ceil(totalEpisodes / totalSeasons), 8);
 
     return (
-        <div className="min-h-screen bg-black text-white pt-20 flex flex-col">
-            {/* Header / Back button */}
-            <div className="px-4 py-4 md:px-12 flex items-center justify-between z-10 border-b border-white/5 bg-black/50 backdrop-blur-md">
-                <Link href="/series" className="text-gray-400 hover:text-white flex items-center gap-2 group transition-colors">
-                    <ChevronLeft className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="font-medium">Back to Series</span>
+        <div className="min-h-screen bg-dark-100 text-white">
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-40 px-4 py-3 md:px-8 flex items-center justify-between bg-black/60 backdrop-blur-xl border-b border-white/5">
+                <Link href="/series" className="text-gray-400 hover:text-white flex items-center gap-2 group transition-colors text-sm">
+                    <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
+                    <span className="font-medium hidden md:inline">Back to Series</span>
+                    <span className="font-medium md:hidden">Back</span>
                 </Link>
-                <div className="text-sm font-semibold text-primary-400 flex flex-col items-end">
-                    <span>{details?.name || 'Unknown Series'}</span>
-                    <span className="text-gray-500 text-xs text-right">Season {season} • Episode {episode}</span>
+                <div className="text-right">
+                    <div className="text-sm font-bold text-white truncate max-w-[180px] md:max-w-none">{title}</div>
+                    <div className="text-[10px] text-gray-500 font-medium">Season {season} • Episode {episode}</div>
                 </div>
             </div>
 
-            <div className="w-full flex flex-col xl:flex-row max-w-[1600px] mx-auto">
-                {/* Video Player Container (Main Content) */}
-                <div className="w-full xl:w-3/4 flex flex-col">
-                    <div className="w-full aspect-video bg-dark-300 relative shadow-2xl xl:rounded-br-xl overflow-hidden">
-                        <iframe
-                            src={embedUrl}
-                            className="w-full h-full absolute top-0 left-0"
-                            allowFullScreen
-                            frameBorder="0"
-                        ></iframe>
+            {/* Player */}
+            <div className="w-full max-w-6xl mx-auto px-4 md:px-8 pt-4 md:pt-6">
+                <VideoPlayer
+                    tmdbId={id}
+                    type="tv"
+                    season={season}
+                    episode={episode}
+                />
+            </div>
+
+            {/* Show Details */}
+            <div className="max-w-6xl mx-auto px-4 md:px-8 py-6">
+                <div className="flex flex-col md:flex-row gap-6">
+                    {/* Poster - hidden on mobile */}
+                    <div className="hidden md:block w-40 shrink-0">
+                        <img
+                            src={posterUrl}
+                            alt={title}
+                            className="w-full rounded-xl shadow-2xl shadow-black/50 border border-white/10"
+                            onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-media.png'; }}
+                        />
                     </div>
 
-                    {/* Series Details metadata */}
-                    <div className="w-full p-6 md:p-8">
-                        <h1 className="text-3xl md:text-4xl font-black mb-2">
-                            {details?.name} <span className="text-gray-500 font-medium text-2xl ml-2">S{season}:E{episode}</span>
+                    <div className="flex-1 min-w-0">
+                        <h1 className="text-xl md:text-3xl font-black mb-1 leading-tight">
+                            {title}
+                            <span className="text-gray-500 font-medium text-lg md:text-xl ml-3">S{season}:E{episode}</span>
                         </h1>
-                        <div className="flex items-center gap-4 text-sm text-gray-400 mb-6 font-medium">
-                            <span className="text-green-400">{(details?.vote_average * 10).toFixed(0)}% Match</span>
-                            <span>{details?.first_air_date?.split('-')[0]}</span>
-                            {details?.genres && (
-                                <span className="flex gap-2 hidden md:flex">
-                                    {details.genres.slice(0, 3).map(g => (
-                                        <span key={g.id} className="border border-white/20 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">
-                                            {g.name}
-                                        </span>
-                                    ))}
+
+                        <div className="flex flex-wrap items-center gap-2 mb-4 mt-2">
+                            {details?.vote_average > 0 && (
+                                <span className="flex items-center gap-1 bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-xs font-bold border border-green-500/20">
+                                    <Star size={12} fill="currentColor" />
+                                    {details.vote_average.toFixed(1)}
                                 </span>
                             )}
+                            {details?.first_air_date && (
+                                <span className="flex items-center gap-1 bg-white/5 text-gray-300 px-3 py-1 rounded-full text-xs font-medium border border-white/10">
+                                    <Calendar size={12} />
+                                    {details.first_air_date.split('-')[0]}
+                                </span>
+                            )}
+                            <span className="bg-primary-600/10 text-primary-400 px-3 py-1 rounded-full text-xs font-bold border border-primary-500/20">
+                                {totalSeasons} Season{totalSeasons > 1 ? 's' : ''}
+                            </span>
                         </div>
-                        <p className="text-gray-300 max-w-3xl leading-relaxed">
+
+                        {details?.genres && details.genres.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-3">
+                                {details.genres.map(g => (
+                                    <span key={g.id} className="bg-white/5 text-gray-400 px-2.5 py-0.5 rounded-full text-[11px] font-medium border border-white/5">
+                                        {g.name}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
+                        <p className="text-gray-400 leading-relaxed text-sm max-w-2xl line-clamp-3">
                             {details?.overview}
                         </p>
                     </div>
                 </div>
-
-                {/* Episode Selector Sidebar */}
-                <div className="w-full xl:w-1/4 bg-dark-200 border-l border-white/5 flex flex-col max-h-[800px] overflow-hidden">
-                    <div className="p-4 border-b border-white/5 flex items-center gap-2 bg-dark-300/50">
-                        <ListVideo size={20} className="text-primary-400" />
-                        <h3 className="font-bold text-lg">Episodes</h3>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        {/* Mocking a list of 10 episodes for the current season */}
-                        {Array.from({ length: 10 }).map((_, i) => {
-                            const epNum = i + 1;
-                            const isActive = epNum.toString() === episode;
-
-                            return (
-                                <Link
-                                    key={epNum}
-                                    href={`/watch/tv/${id}/${season}/${epNum}`}
-                                    className={`flex gap-4 p-3 rounded-xl transition-all ${isActive ? 'bg-primary-600/20 border border-primary-500/30' : 'hover:bg-white/5 border border-transparent'}`}
-                                >
-                                    <div className={`w-32 aspect-video bg-dark-300 rounded overflow-hidden relative shrink-0 ${isActive ? 'ring-2 ring-primary-500' : ''}`}>
-                                        <img
-                                            src={tmdb.getImageUrl(details?.backdrop_path || details?.poster_path, 'w500')}
-                                            alt="Episode thumbnail"
-                                            className="w-full h-full object-cover opacity-70"
-                                        />
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <Play size={24} className={isActive ? 'text-primary-400' : 'text-white/50'} fill="currentColor" />
-                                        </div>
-                                    </div>
-                                    <div className="flex flex-col justify-center">
-                                        <span className={`font-bold text-sm ${isActive ? 'text-primary-400' : 'text-white'}`}>
-                                            Episode {epNum}
-                                        </span>
-                                        <span className="text-xs text-gray-500 mt-1 line-clamp-2">
-                                            The story continues as secrets unfold in the latest installment...
-                                        </span>
-                                    </div>
-                                </Link>
-                            )
-                        })}
-                    </div>
-                </div>
             </div>
 
-            {/* Similar Series Row */}
-            <div className="w-full bg-black mt-auto pb-12 pt-8">
-                <div className="max-w-[1600px] mx-auto">
-                    <MediaRow title="More Like This" items={similarRes.results} />
-                </div>
+            {/* Season & Episode Selector */}
+            <div className="max-w-6xl mx-auto px-4 md:px-8">
+                <SeasonEpisodeSelector
+                    showId={id}
+                    currentSeason={parseInt(season)}
+                    currentEpisode={parseInt(episode)}
+                    totalSeasons={totalSeasons}
+                    totalEpisodes={episodesPerSeason}
+                    backdropUrl={backdropUrl}
+                />
+            </div>
+
+            {/* Divider */}
+            <div className="max-w-6xl mx-auto px-4 md:px-8 mt-6">
+                <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+            </div>
+
+            {/* Similar Series */}
+            <div className="pb-20 pt-4">
+                <MediaRow title="More Like This" items={similarRes.results} />
             </div>
         </div>
     );

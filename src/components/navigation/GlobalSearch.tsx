@@ -152,7 +152,7 @@ export default function GlobalSearch() {
                                 <div className="py-10 text-center text-gray-500 text-sm">
                                     Keep typing to search...
                                 </div>
-                            ) : results && (results.pdfs.length > 0 || results.podcasts.length > 0 || results.courses.length > 0) ? (
+                            ) : results && (results.pdfs.length > 0 || results.podcasts.length > 0 || results.courses.length > 0 || (results.media && results.media.length > 0)) ? (
                                 <div className="space-y-6 p-2">
                                     {/* PDFs */}
                                     {results.pdfs.length > 0 && (
@@ -165,6 +165,7 @@ export default function GlobalSearch() {
                                                         onClick={() => closeAndNavigate(`/pdfs/${pdf.id}`)}
                                                         className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 group transition-all text-left"
                                                         role="option"
+                                                        aria-selected="false"
                                                         aria-label={`Open PDF: ${pdf.title}`}
                                                     >
                                                         <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500" aria-hidden="true">
@@ -191,6 +192,7 @@ export default function GlobalSearch() {
                                                         onClick={() => closeAndNavigate(`/podcasts/${pod.id}`)}
                                                         className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 group transition-all text-left"
                                                         role="option"
+                                                        aria-selected="false"
                                                         aria-label={`Open podcast: ${pod.title}`}
                                                     >
                                                         <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500" aria-hidden="true">
