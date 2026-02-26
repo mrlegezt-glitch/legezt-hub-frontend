@@ -16,14 +16,14 @@ export default function VideoPlayer({ tmdbId, type, season, episode }: VideoPlay
     const [audioTrack, setAudioTrack] = useState('vyse');
     const [isAudioMenuOpen, setIsAudioMenuOpen] = useState(false);
 
-    // Simulated Server/Audio options matching cineby.gd style
+    // Expanded Server options - Curating providers that are more likely to have Hindi/Dual Audio
     type ServerOption = { id: string; name: string; lang: string; code: string; type: string };
     const servers: ServerOption[] = [
-        { id: 'vyse', name: 'Vyse', lang: 'Original audio', code: 'US', type: 'vidking' },
-        { id: 'killjoy', name: 'Killjoy', lang: 'Hindi audio', code: 'IN', type: 'vidsrc' },
-        { id: 'harbor', name: 'Harbor', lang: 'Tamil audio', code: 'IN', type: 'vidlink' },
-        { id: 'chamber', name: 'Chamber', lang: 'Telugu audio', code: 'IN', type: 'superembed' },
-        { id: 'fade', name: 'Fade', lang: 'Spanish audio', code: 'ES', type: 'multiembed' }
+        { id: 'vyse', name: 'Vyse', lang: 'Auto (Best Server)', code: 'US', type: 'vidking' },
+        { id: 'killjoy', name: 'Killjoy', lang: 'Multi-Audio / Hindi', code: 'IN', type: 'vidsrcpro' },
+        { id: 'harbor', name: 'Harbor', lang: 'Dual Audio', code: 'IN', type: 'smashy' },
+        { id: 'chamber', name: 'Chamber', lang: 'Regional / Tamil', code: 'IN', type: 'autoembed' },
+        { id: 'fade', name: 'Fade', lang: 'Backup Server', code: 'UK', type: 'multiembed' }
     ];
 
     const activeServer = servers.find(s => s.id === audioTrack) || servers[0];
@@ -32,14 +32,14 @@ export default function VideoPlayer({ tmdbId, type, season, episode }: VideoPlay
     const getEmbedUrl = (serverType: string) => {
         const isMovie = type === 'movie';
         switch (serverType) {
-            case 'vidsrc':
-                return isMovie ? `https://vidsrc.xyz/embed/movie/${tmdbId}` : `https://vidsrc.xyz/embed/tv/${tmdbId}/${season}/${episode}`;
-            case 'vidlink':
-                return isMovie ? `https://vidlink.pro/movie/${tmdbId}` : `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}`;
-            case 'superembed':
-                return isMovie ? `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`;
+            case 'vidsrcpro': // Often has multi-audio tracks built-in
+                return isMovie ? `https://vidsrc.pro/embed/movie/${tmdbId}` : `https://vidsrc.pro/embed/tv/${tmdbId}/${season}/${episode}`;
+            case 'smashy': // Smashystream is known for indian regional content
+                return isMovie ? `https://player.smashy.stream/movie/${tmdbId}` : `https://player.smashy.stream/tv/${tmdbId}?s=${season}&e=${episode}`;
+            case 'autoembed':
+                return isMovie ? `https://player.autoembed.cc/embed/movie/${tmdbId}` : `https://player.autoembed.cc/embed/tv/${tmdbId}/${season}/${episode}`;
             case 'multiembed':
-                return isMovie ? `https://www.2embed.cc/embed/${tmdbId}` : `https://www.2embed.cc/embedtv/${tmdbId}&s=${season}&e=${episode}`;
+                return isMovie ? `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1` : `https://multiembed.mov/?video_id=${tmdbId}&tmdb=1&s=${season}&e=${episode}`;
             case 'vidking':
             default:
                 return isMovie
