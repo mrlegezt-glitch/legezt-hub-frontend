@@ -14,10 +14,10 @@ export default function VideoPlayer({ tmdbId, type, season, episode }: VideoPlay
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
 
-    // Use vidsrc.xyz — most reliable, plays inline, no external redirects
+    // Use vidking.net — robust, customizable, reliable with Netflix Red theme
     const embedUrl = type === 'movie'
-        ? `https://vidsrc.xyz/embed/movie/${tmdbId}`
-        : `https://vidsrc.xyz/embed/tv/${tmdbId}/${season}/${episode}`;
+        ? `https://www.vidking.net/embed/movie/${tmdbId}?color=e50914&autoPlay=true`
+        : `https://www.vidking.net/embed/tv/${tmdbId}/${season}/${episode}?color=e50914&autoPlay=true&nextEpisode=true&episodeSelector=true`;
 
     return (
         <div className="relative w-full aspect-video bg-black rounded-xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50">
@@ -42,10 +42,11 @@ export default function VideoPlayer({ tmdbId, type, season, episode }: VideoPlay
 
             <iframe
                 src={embedUrl}
-                className="w-full h-full absolute inset-0"
+                className="w-full h-full absolute inset-0 md:rounded-xl"
                 allowFullScreen
                 allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                 referrerPolicy="origin"
+                sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
                 style={{ border: 'none' }}
                 onLoad={() => setIsLoading(false)}
                 onError={() => { setIsLoading(false); setHasError(true); }}

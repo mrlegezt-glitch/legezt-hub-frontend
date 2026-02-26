@@ -31,7 +31,7 @@ export default function MediaCard({ item, isLarge = false }: MediaCardProps) {
         <motion.div
             whileHover={{ scale: 1.08, zIndex: 20 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className={`relative group shrink-0 ${isLarge ? 'w-[140px] md:w-[180px]' : 'w-[220px] md:w-[280px]'} rounded-xl overflow-hidden bg-dark-300 cursor-pointer`}
+            className={`relative group shrink-0 ${isLarge ? 'w-[130px] md:w-[180px]' : 'w-[160px] md:w-[280px]'} rounded-xl overflow-hidden bg-dark-300 cursor-pointer`}
         >
             <Link href={watchLink} className="block w-full h-full">
                 {/* Image */}
@@ -79,10 +79,10 @@ export default function MediaCard({ item, isLarge = false }: MediaCardProps) {
 
                     {/* Hover overlay with actions */}
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3">
-                        <div className="bg-white text-black p-3 rounded-full shadow-xl shadow-white/20 hover:scale-110 transition-transform">
-                            <Play size={20} fill="currentColor" className="ml-0.5" />
+                        <div className="bg-white text-black p-2 md:p-3 rounded-full shadow-xl shadow-white/20 hover:scale-110 transition-transform">
+                            <Play size={16} fill="currentColor" className="md:w-5 md:h-5 ml-0.5" />
                         </div>
-                        <div className="bg-white/10 text-white p-2.5 rounded-full border border-white/30 hover:border-white hover:bg-white/20 transition-all">
+                        <div className="bg-white/10 text-white p-1.5 md:p-2.5 rounded-full border border-white/30 hover:border-white hover:bg-white/20 transition-all hidden md:block">
                             <Plus size={18} />
                         </div>
                     </div>

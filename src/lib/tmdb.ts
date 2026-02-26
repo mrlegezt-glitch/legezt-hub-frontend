@@ -35,9 +35,17 @@ const fetchTMDB = async <T>(endpoint: string, params: Record<string, string> = {
 // ==========================================
 function handleMockRequest<T>(endpoint: string): T {
     // Simulated delay for realism
+    // Simulated delay and dynamic assortment
     if (endpoint.includes('/trending/') || endpoint.includes('/discover/') || endpoint.includes('/movie/popular') || endpoint.includes('/tv/popular')) {
-        // Shuffle mock data slightly to make rows look distinct
-        const shuffled = [...MOCK_TRENDING].sort(() => 0.5 - Math.random());
+        // Shuffle mock data to make rows dynamically fresh, and respect TV/Movie paths
+        const isMoviesOnly = endpoint.includes('/movie') || endpoint.includes('/discover/movie');
+        const isTVOnly = endpoint.includes('/tv') || endpoint.includes('/discover/tv');
+
+        let filtered = [...MOCK_TRENDING];
+        if (isMoviesOnly) filtered = filtered.filter(item => item.media_type === 'movie' || item.release_date);
+        else if (isTVOnly) filtered = filtered.filter(item => item.media_type === 'tv' || item.first_air_date);
+
+        const shuffled = filtered.sort(() => 0.5 - Math.random());
         return getMockResponse<MediaItem>(shuffled) as unknown as T;
     }
 
@@ -46,14 +54,35 @@ function handleMockRequest<T>(endpoint: string): T {
     }
 
     if (endpoint.includes('/search/')) {
-        return getMockResponse<MediaItem>(MOCK_TRENDING.slice(0, 3)) as unknown as T;
+        // Fuzzy search implementation for mock
+        const searchParams = new URLSearchParams(endpoint.split('?')[1] || window?.location?.search || '');
+        const query = (searchParams.get('query') || '').toLowerCase();
+
+        if (!query) return getMockResponse<MediaItem>([]) as unknown as T;
+
+        const results = MOCK_TRENDING.filter(item =>
+            (item.title && item.title.toLowerCase().includes(query)) ||
+            (item.name && item.name.toLowerCase().includes(query)) ||
+            (item.original_title && item.original_title.toLowerCase().includes(query))
+        );
+        return getMockResponse<MediaItem>(results) as unknown as T;
     }
 
     // Default detail fallback
     const idStr = endpoint.split('/')[2];
     const id = parseInt(idStr) || 27205;
     const baseItem = MOCK_TRENDING.find(m => m.id === id) || MOCK_TRENDING[0];
-    return { ...baseItem, ...MOCK_DETAILS_BASE } as unknown as T;
+
+    // Assign generic genres depending on type
+    const mediaGenres = baseItem.media_type === 'tv'
+        ? [{ id: 10765, name: "Sci-Fi & Fantasy" }, { id: 10759, name: "Action & Adventure" }]
+        : [{ id: 28, name: "Action" }, { id: 878, name: "Science Fiction" }];
+
+    return {
+        ...baseItem,
+        ...MOCK_DETAILS_BASE,
+        genres: mediaGenres
+    } as unknown as T;
 }
 
 // ==========================================

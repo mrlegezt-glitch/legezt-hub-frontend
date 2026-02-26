@@ -32,24 +32,32 @@ export default function GlobalSearch() {
 
     useEffect(() => {
         const handleSearch = async () => {
-            if (query.length < 2) {
-                setResults(null);
-                return;
-            }
             setLoading(true);
             try {
-                const [res, mediaRes] = await Promise.all([
-                    contentApi.search(query).catch(() => ({ data: { data: { pdfs: [], podcasts: [], courses: [] } } })),
-                    tmdb.searchMulti(query).catch(() => ({ results: [] }))
-                ]);
+                if (query.length < 2) {
+                    // Show default trending suggestions if query is empty or too short
+                    const trendingRes = await tmdb.getTrending('all', 'week').catch(() => ({ results: [] }));
+                    const topTrending = (trendingRes.results || []).slice(0, 5);
+                    setResults({
+                        pdfs: [],
+                        podcasts: [],
+                        courses: [],
+                        media: topTrending
+                    });
+                } else {
+                    const [res, mediaRes] = await Promise.all([
+                        contentApi.search(query).catch(() => ({ data: { data: { pdfs: [], podcasts: [], courses: [] } } })),
+                        tmdb.searchMulti(query).catch(() => ({ results: [] }))
+                    ]);
 
-                // Only take top 4 media results to balance the modal
-                const topMedia = (mediaRes.results || []).filter((m: any) => m.media_type === 'movie' || m.media_type === 'tv').slice(0, 4);
+                    // Only take top 4 media results to balance the modal
+                    const topMedia = (mediaRes.results || []).filter((m: any) => m.media_type === 'movie' || m.media_type === 'tv').slice(0, 4);
 
-                setResults({
-                    ...res.data.data,
-                    media: topMedia
-                });
+                    setResults({
+                        ...res.data.data,
+                        media: topMedia
+                    });
+                }
             } catch (error) {
                 console.error('Search error', error);
             } finally {
@@ -238,7 +246,9 @@ export default function GlobalSearch() {
                                     {/* Movies & TV */}
                                     {results.media && results.media.length > 0 && (
                                         <section aria-labelledby="media-heading">
-                                            <h3 id="media-heading" className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 mb-2">Movies & Series</h3>
+                                            <h3 id="media-heading" className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 mb-2">
+                                                {query.length < 2 ? "Trending Suggestions" : "Movies & Series"}
+                                            </h3>
                                             <div className="space-y-1" role="group" aria-label="Media items">
                                                 {results.media.map(item => (
                                                     <button

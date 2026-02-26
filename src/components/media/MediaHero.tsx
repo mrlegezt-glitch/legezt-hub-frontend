@@ -29,7 +29,7 @@ export default function MediaHero({ featured }: MediaHeroProps) {
     const year = featured.release_date?.split('-')[0] || featured.first_air_date?.split('-')[0] || '';
 
     return (
-        <div className="relative w-full h-[65vh] md:h-[85vh] text-white overflow-hidden">
+        <div className="relative w-full h-[55vh] md:h-[85vh] text-white overflow-hidden">
             {/* Background Image */}
             <div className="absolute inset-0">
                 <img
@@ -80,17 +80,17 @@ export default function MediaHero({ featured }: MediaHeroProps) {
                     </p>
 
                     {/* Action Buttons */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3">
                         <Link
                             href={watchLink}
-                            className="flex items-center gap-2 px-6 py-2.5 md:px-8 md:py-3 bg-white text-black rounded-lg font-bold text-sm md:text-base hover:bg-gray-200 transition-all hover:scale-105 shadow-xl shadow-white/10 active:scale-95"
+                            className="flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-8 md:py-3 bg-white text-black rounded-lg font-bold text-xs md:text-base hover:bg-gray-200 transition-all hover:scale-105 shadow-xl shadow-white/10 active:scale-95"
                         >
-                            <Play size={20} fill="currentColor" />
+                            <Play size={16} fill="currentColor" className="md:w-5 md:h-5" />
                             <span>Play Now</span>
                         </Link>
 
-                        <button className="flex items-center gap-2 px-5 py-2.5 md:px-7 md:py-3 bg-white/10 text-white rounded-lg font-bold text-sm md:text-base hover:bg-white/20 transition-all hover:scale-105 backdrop-blur-md border border-white/10 active:scale-95">
-                            <Info size={20} />
+                        <button className="flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-7 md:py-3 bg-white/10 text-white rounded-lg font-bold text-xs md:text-base hover:bg-white/20 transition-all hover:scale-105 backdrop-blur-md border border-white/10 active:scale-95">
+                            <Info size={16} className="md:w-5 md:h-5" />
                             <span>More Info</span>
                         </button>
                     </div>
