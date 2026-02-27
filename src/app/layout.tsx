@@ -70,7 +70,7 @@ export default function RootLayout({
                             <SideMenu />
                             <DesktopNav />
                             <MobileHeader />
-                            <main id="main-content">
+                            <main id="main-content" className="pt-16 md:pt-[60px]">
                                 {children}
                             </main>
                             <InstallPrompt />
