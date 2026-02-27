@@ -53,8 +53,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" suppressHydrationWarning className="dark">
-            <body className="antialiased">
+        <html lang="en" suppressHydrationWarning className="light scroll-smooth">
+            <body className="antialiased selection:bg-primary-500/20 selection:text-primary-900">
                 {/* Skip to main content link for accessibility */}
                 <a
                     href="#main-content"
@@ -77,7 +77,7 @@ export default function RootLayout({
                             <Footer />
                         </SocketProvider>
                     </QueryProvider>
-                    <Toaster position="top-right" theme="dark" />
+                    <Toaster position="top-right" theme="light" />
                 </ThemeProvider>
             </body>
         </html>

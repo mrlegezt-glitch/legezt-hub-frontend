@@ -38,9 +38,13 @@ export default function AdminDashboardPage() {
     if (!user) return null;
 
     return (
-        <div className="p-8 max-w-7xl mx-auto">
+        <div className="p-8 max-w-7xl mx-auto animate-page-enter">
             {/* Page Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
                     <p className="text-gray-400">Welcome back, {user.name}</p>
@@ -49,12 +53,15 @@ export default function AdminDashboardPage() {
                     <span className="text-xs font-mono text-gray-500 bg-dark-200 px-3 py-1 rounded-full border border-dark-border">
                         v1.2.0-beta
                     </span>
-                    <button className="btn-primary text-sm px-4 py-2 flex items-center gap-2">
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="btn-primary text-sm px-4 py-2 flex items-center gap-2 ripple-effect">
                         <Sparkles size={16} />
                         What&apos;s New
-                    </button>
+                    </motion.button>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -64,21 +71,35 @@ export default function AdminDashboardPage() {
                     { label: 'Total Downloads', value: stats?.downloads || 0, icon: BarChart3, color: 'text-green-400', bg: 'bg-green-500/10' },
                     { label: 'Colleges', value: stats?.colleges || 0, icon: Database, color: 'text-orange-400', bg: 'bg-orange-500/10' },
                 ].map((stat, i) => (
-                    <div key={i} className="card hover:translate-y-[-4px] transition-transform duration-300">
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{ delay: 0.1 + i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                        whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                        className="card card-tilt">
                         <div className="flex items-start justify-between mb-4">
-                            <div className={`p-4 rounded-2xl ${stat.bg}`}>
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.3 + i * 0.1, type: 'spring', stiffness: 300, damping: 15 }}
+                                className={`p-4 rounded-2xl ${stat.bg}`}>
                                 {loading ? (
                                     <Loader2 className={`animate-spin ${stat.color}`} size={24} />
                                 ) : (
                                     <stat.icon size={24} className={stat.color} />
                                 )}
-                            </div>
+                            </motion.div>
                         </div>
-                        <h3 className="text-3xl font-bold text-white mb-1">
+                        <motion.h3
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 + i * 0.1, duration: 0.4 }}
+                            className="text-3xl font-bold text-white mb-1">
                             {loading ? '...' : stat.value}
-                        </h3>
+                        </motion.h3>
                         <p className="text-sm text-gray-400 font-medium">{stat.label}</p>
-                    </div>
+                    </motion.div>
                 ))}
             </div>
 
@@ -131,23 +152,33 @@ export default function AdminDashboardPage() {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-6 h-fit">
+                <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex flex-col gap-6 h-fit">
                     <div className="card">
                         <h2 className="text-xl font-bold text-white mb-6">Quick Actions</h2>
                         <div className="space-y-3">
-                            <button onClick={() => router.push('/admin/colleges')} className="w-full p-4 text-left hover:bg-dark-bg rounded-2xl transition-all border border-transparent hover:border-dark-border flex items-center justify-between group">
+                            <motion.button
+                                whileHover={{ x: 4 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => router.push('/admin/colleges')} className="w-full p-4 text-left hover:bg-dark-bg rounded-2xl transition-all border border-transparent hover:border-dark-border flex items-center justify-between group ripple-effect">
                                 <span className="text-gray-300 font-medium group-hover:text-white">Add New College</span>
                                 <span className="w-8 h-8 rounded-full bg-dark-bg flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-primary transition-all">+</span>
-                            </button>
-                            <button onClick={() => router.push('/admin/pdfs')} className="w-full p-4 text-left hover:bg-dark-bg rounded-2xl transition-all border border-transparent hover:border-dark-border flex items-center justify-between group">
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ x: 4 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => router.push('/admin/pdfs')} className="w-full p-4 text-left hover:bg-dark-bg rounded-2xl transition-all border border-transparent hover:border-dark-border flex items-center justify-between group ripple-effect">
                                 <span className="text-gray-300 font-medium group-hover:text-white">Upload Bulk PDFs</span>
                                 <span className="w-8 h-8 rounded-full bg-dark-bg flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-primary transition-all">↑</span>
-                            </button>
+                            </motion.button>
                         </div>
                     </div>
 
                     <StorageStats />
-                </div>
+                </motion.div>
             </div>
         </div>
     );

@@ -10,9 +10,32 @@ import BottomNav from '@/components/navigation/BottomNav';
 import { useAuthStore } from '@/stores/authStore';
 import MeteorShower from '@/components/effects/MeteorShower';
 import RecentlyViewed from '@/components/dashboard/RecentlyViewed';
+import { motion } from 'framer-motion';
 
 import { useState } from 'react';
 import BecomeAdminModal from '@/components/admin/BecomeAdminModal';
+
+// Animation variants
+const fadeUp = {
+    hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
+    visible: (i: number) => ({
+        opacity: 1, y: 0, filter: 'blur(0px)',
+        transition: { delay: i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    }),
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 40, scale: 0.95 },
+    visible: (i: number) => ({
+        opacity: 1, y: 0, scale: 1,
+        transition: { delay: 0.15 + i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    }),
+};
+
+const scaleIn = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: [0.34, 1.56, 0.64, 1] } },
+};
 
 export default function ExplorePage() {
     const { isAuthenticated, user } = useAuthStore();
@@ -28,58 +51,62 @@ export default function ExplorePage() {
                 <div className="max-w-4xl mx-auto text-center">
                     {isAuthenticated && user?.role === 'SUPER_ADMIN' ? (
                         <>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs md:text-sm font-medium mb-6 border border-purple-500/20" role="status" aria-label="System privileges active">
+                            <motion.div
+                                variants={fadeUp} initial="hidden" animate="visible" custom={0}
+                                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-xs md:text-sm font-medium mb-6 border border-purple-500/20" role="status" aria-label="System privileges active">
                                 <Sparkles size={14} aria-hidden="true" />
                                 System Privileges Active
-                            </div>
-                            <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                            </motion.div>
+                            <motion.h1 variants={fadeUp} initial="hidden" animate="visible" custom={1} id="hero-heading" className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
                                 Welcome, <span className="gradient-text">Super Admin</span>
-                            </h1>
-                            <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+                            </motion.h1>
+                            <motion.p variants={fadeUp} initial="hidden" animate="visible" custom={2} className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
                                 Monitor platform activity, manage users, and control content distribution from your command center.
-                            </p>
-                            <div className="flex items-center justify-center gap-4">
+                            </motion.p>
+                            <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={3} className="flex items-center justify-center gap-4">
                                 <Link href="/admin/dashboard" className="btn-primary px-8 py-3 rounded-xl text-lg flex items-center gap-2 shadow-xl shadow-primary-600/20 hover:scale-105 transition-transform" aria-label="Go to admin dashboard">
                                     Admin Dashboard <ArrowRight size={20} aria-hidden="true" />
                                 </Link>
                                 <Link href="/subjects" className="px-8 py-3 rounded-xl text-lg font-medium bg-dark-100 hover:bg-dark-200 transition-colors border border-white/5" aria-label="View available subjects">
                                     View Subjects
                                 </Link>
-                            </div>
+                            </motion.div>
                         </>
                     ) : (
                         <>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 text-primary-400 text-xs md:text-sm font-medium mb-6 border border-primary-500/20" role="status" aria-label="New semantic search feature available">
+                            <motion.div
+                                variants={scaleIn} initial="hidden" animate="visible"
+                                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 text-primary-400 text-xs md:text-sm font-medium mb-6 border border-primary-500/20" role="status" aria-label="New semantic search feature available">
                                 <span className="relative flex h-2 w-2" aria-hidden="true">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
                                 </span>
                                 New Semantic Search Available
-                            </div>
+                            </motion.div>
 
-                            <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                            <motion.h1 variants={fadeUp} initial="hidden" animate="visible" custom={1} id="hero-heading" className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
                                 Your Ultimate <br className="hidden md:block" />
-                                <span className="gradient-text">Engineering Hub</span>
-                            </h1>
-                            <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+                                <span className="gradient-text animate-gradient-shift bg-[length:200%_auto]">Engineering Hub</span>
+                            </motion.h1>
+                            <motion.p variants={fadeUp} initial="hidden" animate="visible" custom={2} className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
                                 Access university notes, listen to concept podcasts, and enroll in premium courses.
                                 Curated for success.
-                            </p>
+                            </motion.p>
 
-                            <div className="flex items-center justify-center gap-4">
+                            <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={3} className="flex items-center justify-center gap-4">
                                 {isAuthenticated ? (
-                                    <Link href="/subjects" className="btn-primary px-8 py-3 rounded-xl text-lg flex items-center gap-2" aria-label="Go to my subjects">
+                                    <Link href="/subjects" className="btn-primary px-8 py-3 rounded-xl text-lg flex items-center gap-2 animate-subtle-bounce" aria-label="Go to my subjects">
                                         My Subjects <ArrowRight size={20} aria-hidden="true" />
                                     </Link>
                                 ) : (
-                                    <Link href="/login" className="btn-primary px-8 py-3 rounded-xl text-lg flex items-center gap-2 shadow-xl shadow-primary-600/20 hover:scale-105 transition-transform" aria-label="Get started with LeGeZt">
+                                    <Link href="/login" className="btn-primary px-8 py-3 rounded-xl text-lg flex items-center gap-2 shadow-xl shadow-primary-600/20 hover:scale-105 transition-transform animate-subtle-bounce" aria-label="Get started with LeGeZt">
                                         Get Started <ArrowRight size={20} aria-hidden="true" />
                                     </Link>
                                 )}
-                                <Link href="/podcasts" className="px-8 py-3 rounded-xl text-lg font-medium bg-dark-100 hover:bg-dark-200 transition-colors border border-white/5" aria-label="Browse available content">
+                                <Link href="/podcasts" className="px-8 py-3 rounded-xl text-lg font-medium bg-dark-100 hover:bg-dark-200 transition-colors border border-white/5 ripple-effect" aria-label="Browse available content">
                                     Browse
                                 </Link>
-                            </div>
+                            </motion.div>
                         </>
                     )}
                 </div>
@@ -88,13 +115,18 @@ export default function ExplorePage() {
             {/* Become Admin Highlight - Only for Students */}
             {
                 isAuthenticated && user?.role === 'USER' && (
-                    <section className="max-w-4xl mx-auto px-5 mb-12" aria-labelledby="admin-application-heading">
+                    <motion.section
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                        className="max-w-4xl mx-auto px-5 mb-12" aria-labelledby="admin-application-heading">
                         <div className="bg-gradient-to-r from-primary/10 via-transparent to-transparent border border-primary/20 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full" />
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-[60px] rounded-full animate-blob-1" />
 
                             <div className="relative z-10">
                                 <h2 id="admin-application-heading" className="text-xl md:text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                                    <ShieldCheck className="text-primary" aria-hidden="true" />
+                                    <ShieldCheck className="text-primary magnetic-hover" aria-hidden="true" />
                                     Want to become an Admin?
                                 </h2>
                                 <p className="text-gray-400 text-sm md:text-base max-w-md">
@@ -105,13 +137,13 @@ export default function ExplorePage() {
                             <button
                                 type="button"
                                 onClick={() => setIsAdminModalOpen(true)}
-                                className="relative z-10 px-6 py-3 bg-primary text-black font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 whitespace-nowrap"
+                                className="relative z-10 px-6 py-3 bg-primary text-black font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 whitespace-nowrap ripple-effect hover:scale-105 active:scale-95"
                                 aria-label="Apply to become an admin"
                             >
                                 Apply Now
                             </button>
                         </div>
-                    </section>
+                    </motion.section>
                 )
             }
 
@@ -135,7 +167,8 @@ export default function ExplorePage() {
                 <h2 id="features-heading" className="sr-only">Platform Features</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {/* Subjects Library */}
-                    <Link href="/subjects" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col" aria-label="Explore subject library with organized notes and study materials">
+                    <motion.div variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} custom={0}>
+                    <Link href="/subjects" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col card-tilt" aria-label="Explore subject library with organized notes and study materials">
                         <div className="flex items-center gap-2 mb-6">
                             <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-black uppercase tracking-widest text-blue-400">
                                 Library
@@ -148,14 +181,16 @@ export default function ExplorePage() {
                         <div className="flex-1">
                             <h3 className="text-xl font-black mb-3 tracking-tight">Your <span className="text-blue-400 italic">Subjects</span></h3>
                             <p className="text-gray-400 mb-6 text-sm leading-relaxed">Subject-wise organized notes, question papers, and syllabus material.</p>
-                            <div className="text-blue-400 font-bold flex items-center gap-2 group-hover:translate-x-1 transition-transform mt-auto">
-                                View Subjects <ArrowRight size={16} aria-hidden="true" />
+                            <div className="text-blue-400 font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform duration-300 mt-auto">
+                                View Subjects <ArrowRight size={16} className="group-hover:animate-subtle-bounce" aria-hidden="true" />
                             </div>
                         </div>
                     </Link>
+                    </motion.div>
 
                     {/* Backlogs & Archives */}
-                    <Link href="/backlogs" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col" aria-label="Browse backlog materials and archives from past semesters">
+                    <motion.div variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} custom={1}>
+                    <Link href="/backlogs" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col card-tilt" aria-label="Browse backlog materials and archives from past semesters">
                         <div className="flex items-center gap-2 mb-6">
                             <span className="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-[10px] font-black uppercase tracking-widest text-red-400">
                                 Repository
@@ -168,14 +203,16 @@ export default function ExplorePage() {
                         <div className="flex-1">
                             <h3 className="text-xl font-black mb-3 tracking-tight">Backlogs & <span className="text-red-400 italic">Archives</span></h3>
                             <p className="text-gray-400 mb-6 text-sm leading-relaxed">Access materials from any semester, organized and year-wise filtered.</p>
-                            <div className="text-red-400 font-bold flex items-center gap-2 group-hover:translate-x-1 transition-transform mt-auto">
-                                Browse Archives <ArrowRight size={16} aria-hidden="true" />
+                            <div className="text-red-400 font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform duration-300 mt-auto">
+                                Browse Archives <ArrowRight size={16} className="group-hover:animate-subtle-bounce" aria-hidden="true" />
                             </div>
                         </div>
                     </Link>
+                    </motion.div>
 
                     {/* Podcasts */}
-                    <Link href="/podcasts" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col" aria-label="Listen to LeGeZtCast podcasts and audio lectures">
+                    <motion.div variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} custom={2}>
+                    <Link href="/podcasts" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col card-tilt" aria-label="Listen to LeGeZtCast podcasts and audio lectures">
                         <div className="flex items-center gap-2 mb-6">
                             <span className="px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-[10px] font-black uppercase tracking-widest text-green-400">
                                 Audio Hub
@@ -188,14 +225,16 @@ export default function ExplorePage() {
                         <div className="flex-1">
                             <h3 className="text-xl font-black mb-3 tracking-tight">LeGeZt<span className="text-green-400 italic">Cast</span></h3>
                             <p className="text-gray-400 mb-6 text-sm leading-relaxed">Listen to summaries and lectures on the go with our AI-powered audio hub.</p>
-                            <div className="text-green-400 font-bold flex items-center gap-2 group-hover:translate-x-1 transition-transform mt-auto">
-                                Listen Now <ArrowRight size={16} aria-hidden="true" />
+                            <div className="text-green-400 font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform duration-300 mt-auto">
+                                Listen Now <ArrowRight size={16} className="group-hover:animate-subtle-bounce" aria-hidden="true" />
                             </div>
                         </div>
                     </Link>
+                    </motion.div>
 
                     {/* Courses */}
-                    <Link href="/offers" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col" aria-label="View premium courses and certification offers">
+                    <motion.div variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} custom={3}>
+                    <Link href="/offers" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col card-tilt" aria-label="View premium courses and certification offers">
                         <div className="flex items-center gap-2 mb-6">
                             <span className="px-3 py-1 rounded-full bg-orange-500/10 border border-orange-500/20 text-[10px] font-black uppercase tracking-widest text-orange-400">
                                 Certification
@@ -208,14 +247,16 @@ export default function ExplorePage() {
                         <div className="flex-1">
                             <h3 className="text-xl font-black mb-3 tracking-tight">Premium <span className="text-orange-400 italic">Courses</span></h3>
                             <p className="text-gray-400 mb-6 text-sm leading-relaxed">Structured learning paths and expert-led certifications to boost your career.</p>
-                            <div className="text-orange-400 font-bold flex items-center gap-2 group-hover:translate-x-1 transition-transform mt-auto">
-                                View Offers <ArrowRight size={16} aria-hidden="true" />
+                            <div className="text-orange-400 font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform duration-300 mt-auto">
+                                View Offers <ArrowRight size={16} className="group-hover:animate-subtle-bounce" aria-hidden="true" />
                             </div>
                         </div>
                     </Link>
+                    </motion.div>
 
                     {/* Assignments & Tests */}
-                    <Link href="/assessments" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col" aria-label="Access assignments, tests, and assessments">
+                    <motion.div variants={cardVariants} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} custom={4}>
+                    <Link href="/assessments" className="card md:p-8 p-6 group relative overflow-hidden flex flex-col card-tilt" aria-label="Access assignments, tests, and assessments">
                         <div className="flex items-center gap-2 mb-6">
                             <span className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-[10px] font-black uppercase tracking-widest text-purple-400">
                                 Evaluation
@@ -228,29 +269,42 @@ export default function ExplorePage() {
                         <div className="flex-1">
                             <h3 className="text-xl font-black mb-3 tracking-tight">Assignments & <span className="text-purple-400 italic">Tests</span></h3>
                             <p className="text-gray-400 mb-6 text-sm leading-relaxed">Personalized academic tasks and surprise evaluations in a unified dashboard.</p>
-                            <div className="text-purple-400 font-bold flex items-center gap-2 group-hover:translate-x-1 transition-transform mt-auto">
-                                Explore Assessments <ArrowRight size={16} aria-hidden="true" />
+                            <div className="text-purple-400 font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform duration-300 mt-auto">
+                                Explore Assessments <ArrowRight size={16} className="group-hover:animate-subtle-bounce" aria-hidden="true" />
                             </div>
                         </div>
                     </Link>
+                    </motion.div>
                 </div>
             </section>
 
             {/* Authenticated Preview Notice */}
             {
                 !isAuthenticated && (
-                    <section className="max-w-4xl mx-auto px-5 text-center pb-12" aria-labelledby="login-notice-heading">
+                    <motion.section
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                        className="max-w-4xl mx-auto px-5 text-center pb-12" aria-labelledby="login-notice-heading">
                         <div className="p-8 rounded-3xl bg-gradient-to-b from-dark-100 to-transparent border border-white/5">
-                            <Lock className="mx-auto text-gray-500 mb-4" size={32} aria-hidden="true" />
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                whileInView={{ scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 15 }}
+                            >
+                                <Lock className="mx-auto text-gray-500 mb-4" size={32} aria-hidden="true" />
+                            </motion.div>
                             <h2 id="login-notice-heading" className="text-2xl font-bold mb-2">Member Exclusive Content</h2>
                             <p className="text-gray-400 mb-6">
                                 Browse freely, but you&apos;ll need to login to open documents, play full podcasts, or enroll.
                             </p>
-                            <Link href="/login" className="text-primary-400 hover:text-primary-300 font-semibold" aria-label="Login or sign up to access content">
+                            <Link href="/login" className="text-primary-400 hover:text-primary-300 font-semibold underline-slide" aria-label="Login or sign up to access content">
                                 Login / Sign Up
                             </Link>
                         </div>
-                    </section>
+                    </motion.section>
                 )
             }
 

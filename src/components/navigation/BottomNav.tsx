@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, FileText, Headphones, Gift, User, BookOpen, Calendar, PlayCircle } from 'lucide-react';
 import { clsx } from 'clsx';
+import { motion } from 'framer-motion';
 
 const navItems = [
     { href: '/', icon: Home, label: 'Home' },
@@ -37,7 +38,11 @@ export default function BottomNav() {
     };
 
     return (
-        <nav className="bottom-nav md:hidden pb-safe" role="navigation" aria-label="Main navigation">
+        <motion.nav
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="bottom-nav md:hidden pb-safe" role="navigation" aria-label="Main navigation">
             <div className="flex justify-around items-center max-w-lg mx-auto h-full">
                 {navItems.map(({ href, icon: Icon, label }) => {
                     const isActive = pathname === href ||
@@ -49,19 +54,33 @@ export default function BottomNav() {
                             href={href}
                             onClick={handleNavClick}
                             className={clsx(
-                                'bottom-nav-item',
+                                'bottom-nav-item relative',
                                 isActive && 'active',
-                                'active:scale-90 transition-transform duration-200'
                             )}
                             aria-label={label}
                             aria-current={isActive ? 'page' : undefined}
                         >
-                            <Icon size={24} strokeWidth={isActive ? 2.5 : 2} aria-hidden="true" />
-                            <span className="text-[10px] font-medium mt-1">{label}</span>
+                            <motion.div
+                                whileTap={{ scale: 0.8 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                                className="flex flex-col items-center"
+                            >
+                                <div className="relative">
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="bottom-nav-indicator"
+                                            className="absolute -inset-2 bg-primary-500/15 rounded-xl"
+                                            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                                        />
+                                    )}
+                                    <Icon size={24} strokeWidth={isActive ? 2.5 : 2} className="relative z-10" aria-hidden="true" />
+                                </div>
+                                <span className="text-[10px] font-medium mt-1">{label}</span>
+                            </motion.div>
                         </Link>
                     );
                 })}
             </div>
-        </nav>
+        </motion.nav>
     );
 }

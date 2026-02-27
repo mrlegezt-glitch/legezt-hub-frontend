@@ -31,16 +31,16 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
     const { logout, user } = useAuthStore();
 
     return (
-        <aside className={`${isMobile ? 'flex w-full' : 'hidden md:flex w-72'} bg-dark-card border-r border-dark-border/50 h-full flex-col z-20`}>
+        <aside className={`${isMobile ? 'flex w-full' : 'hidden md:flex w-72'} bg-white border-r border-slate-200 h-full flex-col z-20`}>
             {/* Logo Area */}
             <div className="p-8 pb-4 flex items-center gap-3">
                 <img src="/logo.png" alt="Admin Logo" className="w-8 h-8 object-contain" />
-                <span className="font-bold text-lg tracking-tight text-white">Admin Console</span>
+                <span className="font-bold text-lg tracking-tight text-slate-900">Admin Console</span>
             </div>
 
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto px-4 space-y-1.5 py-4">
-                <div className="px-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <div className="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     Main Menu
                 </div>
                 {menuItems.map((item) => {
@@ -55,35 +55,35 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
                             onClick={onItemClick}
                             className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 group ${isActive
                                 ? 'bg-primary/10 text-primary'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                                 }`}
                         >
                             <item.icon
                                 size={20}
-                                className={`transition-colors ${isActive ? 'text-primary' : 'text-gray-500 group-hover:text-white'}`}
+                                className={`transition-colors ${isActive ? 'text-primary' : 'text-slate-500 group-hover:text-slate-900'}`}
                             />
                             {item.label}
                         </Link>
                     );
                 })}
 
-                <div className="mt-8 px-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <div className="mt-8 px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                     System
                 </div>
                 <Link
                     href="/admin/settings"
                     className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 group ${pathname === '/admin/settings'
                         ? 'bg-primary/10 text-primary'
-                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                         }`}
                 >
-                    <Settings size={20} className="text-gray-500 group-hover:text-white" />
+                    <Settings size={20} className="text-slate-500 group-hover:text-slate-900" />
                     Settings
                 </Link>
             </nav>
 
             {/* Footer / User Profile */}
-            <div className="p-4 mx-4 mb-4 rounded-2xl bg-dark-bg border border-dark-border/50">
+            <div className="p-4 mx-4 mb-4 rounded-2xl bg-slate-50 border border-slate-200">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <img
@@ -94,17 +94,17 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
                         />
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1">
-                                <span className="text-sm font-semibold text-white">{user?.name || 'Admin'}</span>
+                                <span className="text-sm font-semibold text-slate-900">{user?.name || 'Admin'}</span>
                                 {user?.badges?.includes('VERIFIED_ADMIN') && (
                                     <BadgeCheck className="w-4 h-4 text-blue-400" fill="currentColor" size={12} />
                                 )}
                             </div>
-                            <span className="text-[10px] text-gray-500 truncate max-w-[100px]">{user?.email}</span>
+                            <span className="text-[10px] text-slate-500 truncate max-w-[100px]">{user?.email}</span>
                         </div>
                     </div>
                     <button
                         onClick={() => logout()}
-                        className="text-gray-400 hover:text-accent transition-colors p-2 hover:bg-white/5 rounded-full"
+                        className="text-slate-500 hover:text-accent transition-colors p-2 hover:bg-slate-100 rounded-full"
                         title="Logout"
                     >
                         <LogOut size={18} />

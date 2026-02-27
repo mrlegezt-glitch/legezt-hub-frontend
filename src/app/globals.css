@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,6 +6,8 @@
 
 :root,
 :root.dark {
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   --primary: #60A5FA;
   /* Pastel Blue */
   --primary-dark: #3B82F6;
@@ -24,6 +26,8 @@
 }
 
 :root.light {
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   --primary: #3B82F6;
   --primary-dark: #2563EB;
   --accent: #EF4444;
@@ -79,13 +83,50 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-body);
   background: var(--dark-bg);
   color: var(--text-primary);
   min-height: 100vh;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+p,
+span,
+li,
+label,
+input,
+textarea,
+select,
+button,
+a {
+  font-family: var(--font-body);
+}
+
+button,
+a {
+  letter-spacing: 0.01em;
+}
+
+.gradient-text,
+.brand-title,
+.creative-title {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
 }
 
 /* Scrollbar */
@@ -114,7 +155,7 @@ body {
   }
 
   .btn-secondary {
-    @apply bg-dark-card border border-dark-border text-gray-50 border-white/5 px-6 py-3 rounded-2xl font-medium transition-all hover:bg-dark-border active:scale-[0.98];
+    @apply bg-dark-card border border-dark-border text-gray-50 px-6 py-3 rounded-2xl font-medium transition-all hover:bg-dark-border active:scale-[0.98];
   }
 
   .card {
@@ -171,10 +212,43 @@ body {
   color: #6b7280;
 }
 
+:root.light .text-gray-300 {
+  color: #475569;
+}
+
+:root.light .text-gray-500,
+:root.light .text-gray-600 {
+  color: #64748b;
+}
+
 :root.light .bg-dark-100,
 :root.light .bg-dark-200,
 :root.light .bg-dark-300 {
   background: #ffffff;
+}
+
+:root.light .bg-dark-bg {
+  background: #f8fafc;
+}
+
+:root.light .bg-dark-card {
+  background: #ffffff;
+}
+
+:root.light .border-white\/5,
+:root.light .border-white\/10 {
+  border-color: #e2e8f0;
+}
+
+:root.light .hover\:bg-white\/5:hover,
+:root.light .hover\:bg-white\/10:hover {
+  background: #f1f5f9;
+}
+
+:root.light .bg-black\/60,
+:root.light .bg-black\/40,
+:root.light .bg-black\/20 {
+  background: rgba(15, 23, 42, 0.06);
 }
 
 :root.light .hover\\:bg-dark-100:hover,
@@ -342,4 +416,233 @@ body {
 
 .animate-heartbeat {
   animation: heartbeat 2s infinite ease-in-out;
+}
+
+/* =============================================
+   CREATIVE ANIMATION SYSTEM
+   ============================================= */
+
+/* --- Stagger Fade-In for lists/grids --- */
+@keyframes staggerFadeUp {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+.animate-stagger-in > * {
+  opacity: 0;
+  animation: staggerFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-stagger-in > *:nth-child(1) { animation-delay: 0.05s; }
+.animate-stagger-in > *:nth-child(2) { animation-delay: 0.12s; }
+.animate-stagger-in > *:nth-child(3) { animation-delay: 0.19s; }
+.animate-stagger-in > *:nth-child(4) { animation-delay: 0.26s; }
+.animate-stagger-in > *:nth-child(5) { animation-delay: 0.33s; }
+.animate-stagger-in > *:nth-child(6) { animation-delay: 0.40s; }
+.animate-stagger-in > *:nth-child(7) { animation-delay: 0.47s; }
+.animate-stagger-in > *:nth-child(8) { animation-delay: 0.54s; }
+
+/* --- Slide In from Left --- */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-left {
+  animation: slideInLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Slide In from Right --- */
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Scale Pop (for buttons, badges) --- */
+@keyframes scalePop {
+  0%   { transform: scale(0.7); opacity: 0; }
+  70%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-scale-pop {
+  animation: scalePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* --- Float / Levitate (for hero elements) --- */
+@keyframes levitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-levitate {
+  animation: levitate 3s ease-in-out infinite;
+}
+
+/* --- Glow Pulse (for special badges/icons) --- */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.3); }
+  50%      { box-shadow: 0 0 24px rgba(59, 130, 246, 0.7), 0 0 48px rgba(59, 130, 246, 0.2); }
+}
+.animate-glow-pulse {
+  animation: glowPulse 2.5s ease-in-out infinite;
+}
+
+/* --- Gradient Shift (for backgrounds) --- */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease infinite;
+}
+
+/* --- Subtle Bounce for CTA --- */
+@keyframes subtleBounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+  50% { transform: translateY(-2px); }
+  70% { transform: translateY(-4px); }
+}
+.animate-subtle-bounce {
+  animation: subtleBounce 2s ease-in-out infinite;
+}
+
+/* --- Text Reveal (typewriter-like) --- */
+@keyframes textReveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+.animate-text-reveal {
+  animation: textReveal 0.8s cubic-bezier(0.77, 0, 0.175, 1) both;
+}
+
+/* --- Spin Slow (for loading icons/decorations) --- */
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spinSlow 8s linear infinite;
+}
+
+/* --- Ripple Effect on Click --- */
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.5; }
+  100% { transform: scale(4); opacity: 0; }
+}
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+}
+.ripple-effect:active::after {
+  animation: ripple 0.5s ease-out;
+}
+
+/* --- Card 3D Tilt on Hover --- */
+.card-tilt {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+.card-tilt:hover {
+  transform: perspective(800px) rotateY(-2deg) rotateX(2deg) translateY(-6px);
+  box-shadow: 12px 16px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* --- Magnetic Hover (icons move toward cursor) --- */
+.magnetic-hover {
+  transition: transform 0.2s ease;
+}
+.magnetic-hover:hover {
+  transform: scale(1.15) rotate(-3deg);
+}
+
+/* --- Underline Slide (for links) --- */
+.underline-slide {
+  position: relative;
+}
+.underline-slide::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.underline-slide:hover::after {
+  width: 100%;
+}
+
+/* --- Blur-In animation --- */
+@keyframes blurIn {
+  from { opacity: 0; filter: blur(12px); transform: scale(0.95); }
+  to   { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+.animate-blur-in {
+  animation: blurIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Counter animation (number rollup helper) --- */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-count-up {
+  animation: countUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Smooth page transition feel --- */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(20px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-page-enter {
+  animation: pageEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- Floating blobs for backgrounds --- */
+@keyframes blobFloat1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25%      { transform: translate(30px, -20px) scale(1.05); }
+  50%      { transform: translate(-10px, 20px) scale(0.95); }
+  75%      { transform: translate(-30px, -10px) scale(1.02); }
+}
+@keyframes blobFloat2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(-20px, 30px) scale(1.08); }
+  66%      { transform: translate(20px, -30px) scale(0.92); }
+}
+.animate-blob-1 { animation: blobFloat1 8s ease-in-out infinite; }
+.animate-blob-2 { animation: blobFloat2 10s ease-in-out infinite; }
+
+/* --- Light theme improved skeleton --- */
+:root.light .skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* --- Creative scrollbar for light theme --- */
+:root.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+:root.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

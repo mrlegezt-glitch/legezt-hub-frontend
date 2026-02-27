@@ -14,7 +14,7 @@ export default function MobileHeader() {
     if (pathname?.startsWith('/admin') || pathname?.startsWith('/subjects') || pathname?.startsWith('/pdfs/') || pathname?.startsWith('/labs/legezttantra')) return null;
 
     return (
-        <header className="md:hidden sticky top-0 z-40 bg-dark-200/80 backdrop-blur-md border-b border-dark-border h-16 px-4 flex items-center justify-between animate-fade-in">
+        <header className="md:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 h-16 px-4 flex items-center justify-between animate-fade-in">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
                 <img src="/logo.png" alt="LeGeZt" className="w-8 h-8 object-contain animate-heartbeat" />
@@ -26,10 +26,8 @@ export default function MobileHeader() {
                 {/* Menu Trigger */}
                 <button
                     onClick={openSideMenu}
-                    className="p-2 -mr-2 text-gray-300 hover:text-white active:scale-95 transition-transform"
+                    className="p-2 -mr-2 text-slate-600 hover:text-slate-900 active:scale-95 transition-transform"
                     aria-label="Open main menu"
-                    aria-expanded={isSideMenuOpen}
-                    aria-controls="main-menu"
                 >
                     <Menu size={24} aria-hidden="true" />
                 </button>
