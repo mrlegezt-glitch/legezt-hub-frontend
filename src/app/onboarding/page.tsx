@@ -48,9 +48,10 @@ export default function OnboardingPage() {
 
             if (response.data.success) {
                 // Update local user state
-                if (user && accessToken && refreshToken) {
+                if (user) {
                     const updatedUser = { ...user, isOnboardingComplete: true };
-                    setAuth(updatedUser, accessToken, refreshToken);
+                    const currentState = useAuthStore.getState();
+                    setAuth(updatedUser, currentState.accessToken, currentState.refreshToken);
                 }
                 router.push('/');
             }

@@ -50,5 +50,33 @@ export default function AuthInitializer() {
         validateSession();
     }, [isAuthenticated, accessToken, setAuth]);
 
+    // Cross-tab synchronization
+    useEffect(() => {
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'legezt-auth' && e.newValue) {
+                try {
+                    const newState = JSON.parse(e.newValue);
+                    const isNowAuth = newState.state?.isAuthenticated;
+                    const wasAuth = useAuthStore.getState().isAuthenticated;
+
+                    // If another tab logged out, log this tab out too
+                    if (!isNowAuth && wasAuth) {
+                        useAuthStore.getState().logout();
+
+                        // Optionally redirect to login or show notice
+                        if (window.location.pathname !== '/login') {
+                            window.location.href = '/login?error=session_expired';
+                        }
+                    }
+                } catch (err) {
+                    console.error('Error parsing sync state', err);
+                }
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
     return null; // This component doesn't render anything
 }

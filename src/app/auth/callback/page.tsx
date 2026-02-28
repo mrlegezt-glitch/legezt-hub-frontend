@@ -21,8 +21,9 @@ export default function AuthCallbackPage() {
                 const response = await authApi.me();
                 const user = response.data.data;
 
-                // Set auth state (tokens are in HttpOnly cookies)
-                setAuth(user, null, null);
+                // Set auth state (preserve fallback tokens if they exist)
+                const currentState = useAuthStore.getState();
+                setAuth(user, currentState.accessToken, currentState.refreshToken);
 
                 // Redirect based on onboarding status
                 if (user.isOnboardingComplete) {
