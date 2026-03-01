@@ -346,9 +346,12 @@ export default function HomePage() {
                             CodeTantra Hack
                         </div>
 
-                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1]">
-                            Unlock the Editor with <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 animate-gradient-shift">LegeztTantra</span>
+                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1] flex flex-col items-start gap-3">
+                            <span>Unlock the Editor with</span>
+                            <Link href="/labs/legezttantra" className="group/logo relative inline-flex items-center">
+                                <span className="absolute -inset-2 bg-cyan-500/20 blur-xl rounded-full opacity-0 group-hover/logo:opacity-100 transition-opacity duration-500"></span>
+                                <img src="/assets/legezttantra/header_logo_v2.png" alt="LegeztTantra" className="h-10 md:h-14 lg:h-16 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:scale-105 transition-transform duration-300" />
+                            </Link>
                         </h2>
 
                         <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-xl">
