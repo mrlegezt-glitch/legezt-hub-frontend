@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { labApi } from '@/lib/api';
 import {
     ChevronLeft, Check, Info, Code, FileText,
-    Terminal, Loader2, Maximize2, Lock, Share2,
+    Terminal, Loader2, Maximize2, Minimize2, Lock, Share2, Sparkles,
     Search, ChevronRight, RotateCcw, Send, Folder, CheckCircle2, Server, Clock, Activity, Home
 } from 'lucide-react';
 import LeGeZtHeader from '@/components/labs/LeGeZtHeader';
@@ -25,6 +25,8 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
     const [searchQuery, setSearchQuery] = useState('');
     const [isMobile, setIsMobile] = useState(false);
     const [showResults, setShowResults] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [mobileTab, setMobileTab] = useState<'instructions' | 'code'>('instructions');
     const sidebarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -150,343 +152,381 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
             <LeGeZtHeader className="shrink-0" />
 
             {/* MAIN WORKSPACE */}
-            <div className="flex-1 flex flex-col md:flex-row overflow-hidden pt-16 relative">
-
-                {/* 1. EXPLORER SIDEBAR */}
-                <AnimatePresence initial={false}>
-                    {isSidebarOpen && (
-                        <motion.aside
-                            initial={{ width: 0, opacity: 0 }}
-                            animate={{ width: isMobile ? '100%' : sidebarWidth, opacity: 1 }}
-                            exit={{ width: 0, opacity: 0 }}
-                            className="bg-[#fcfcfd] border-r border-slate-200 flex flex-col shrink-0 z-50 overflow-hidden absolute inset-0 md:relative h-full"
+            <div className="flex-1 flex flex-col overflow-hidden pt-16 relative">
+                {/* Mobile Tab Switcher */}
+                {isMobile && !isFullscreen && (
+                    <div className="md:hidden flex h-14 shrink-0 bg-[#0f172a] px-3 py-2 gap-2 z-40 relative border-b border-slate-800 shadow-md">
+                        <button
+                            onClick={() => setMobileTab('instructions')}
+                            className={`flex-1 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${mobileTab === 'instructions' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'bg-[#1e293b] text-slate-400 hover:text-slate-300 border border-slate-800'}`}
                         >
-                            <div className="p-4 flex flex-col h-full min-w-[300px] w-full">
-                                <div className="mb-4 flex items-center justify-between">
-                                    <div className="flex-1 min-w-0 pr-4">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <h2 className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Explorer</h2>
-                                            <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">Lab v2.0</span>
-                                        </div>
-                                        <h1 className="text-sm font-bold text-slate-800 truncate" title={lab.unit?.course?.title}>
-                                            {lab.unit?.course?.title}
-                                        </h1>
-                                    </div>
-                                    <button onClick={() => setSidebarOpen(false)} className="md:hidden shrink-0 text-slate-400 p-2 bg-slate-100 rounded-lg">
-                                        <ChevronLeft size={16} />
-                                    </button>
-                                </div>
+                            <FileText size={14} /> Problem
+                        </button>
+                        <button
+                            onClick={() => setMobileTab('code')}
+                            className={`flex-1 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${mobileTab === 'code' ? 'bg-cyan-600 text-white shadow-lg shadow-cyan-500/20' : 'bg-[#1e293b] text-slate-400 hover:text-slate-300 border border-slate-800'}`}
+                        >
+                            <Code size={14} /> Solution Code
+                        </button>
+                    </div>
+                )}
 
-                                {/* Search Field */}
-                                <div className="relative mb-6 group">
-                                    <input
-                                        ref={searchInputRef}
-                                        type="text"
-                                        placeholder="Search topics (Ctrl+K)"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="w-full text-xs bg-white border border-slate-200 rounded-md py-2.5 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700"
-                                    />
-                                    <Search size={14} className="absolute left-3 top-3 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
-                                </div>
+                <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 
-                                {/* Tree View */}
-                                <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4">
-                                    {filteredUnits.map((unit, uIdx) => (
-                                        <div key={unit.id} className="space-y-1">
-                                            <div className="flex items-center gap-2 py-1 px-1">
-                                                <div className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold shadow-sm">
-                                                    {uIdx + 1}
-                                                </div>
-                                                <span className="text-[11px] font-bold text-slate-700 truncate uppercase tracking-tight">{unit.title}</span>
+                    {/* 1. EXPLORER SIDEBAR */}
+                    <AnimatePresence initial={false}>
+                        {isSidebarOpen && !isFullscreen && (
+                            <motion.aside
+                                initial={{ width: 0, opacity: 0 }}
+                                animate={{ width: isMobile ? '100%' : sidebarWidth, opacity: 1 }}
+                                exit={{ width: 0, opacity: 0 }}
+                                className="bg-[#fcfcfd] border-r border-slate-200 flex flex-col shrink-0 z-50 overflow-hidden absolute inset-0 md:relative h-full"
+                            >
+                                <div className="p-4 flex flex-col h-full min-w-[300px] w-full">
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <div className="flex-1 min-w-0 pr-4">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h2 className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest">Explorer</h2>
+                                                <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-bold">Lab v2.0</span>
                                             </div>
-                                            <div className="space-y-[2px] ml-1 border-l-2 border-slate-100 pl-4">
-                                                {unit.experiments.map((exp: any, eIdx: number) => (
-                                                    <button
-                                                        key={exp.id}
-                                                        onClick={() => router.push(`/labs/legezttantra/grid/${exp.id}`)}
-                                                        className={`w-full text-left px-3 py-2 text-xs rounded transition-all flex items-center gap-2 group ${exp.id === labId
-                                                            ? 'bg-indigo-50 text-indigo-700 font-bold border-r-2 border-indigo-600 shadow-sm'
-                                                            : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                                                            }`}
-                                                    >
-                                                        <Code size={12} className={exp.id === labId ? 'text-indigo-600' : 'text-slate-300 group-hover:text-slate-400'} />
-                                                        <span className="truncate">{uIdx + 1}.{eIdx + 1}. {exp.title}</span>
-                                                    </button>
+                                            <h1 className="text-sm font-bold text-slate-800 truncate" title={lab.unit?.course?.title}>
+                                                {lab.unit?.course?.title}
+                                            </h1>
+                                        </div>
+                                        <button onClick={() => setSidebarOpen(false)} className="md:hidden shrink-0 text-slate-400 p-2 bg-slate-100 rounded-lg">
+                                            <ChevronLeft size={16} />
+                                        </button>
+                                    </div>
+
+                                    {/* Search Field */}
+                                    <div className="relative mb-6 group">
+                                        <input
+                                            ref={searchInputRef}
+                                            type="text"
+                                            placeholder="Search topics (Ctrl+K)"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            className="w-full text-xs bg-white border border-slate-200 rounded-md py-2.5 pl-9 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all text-slate-700"
+                                        />
+                                        <Search size={14} className="absolute left-3 top-3 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+                                    </div>
+
+                                    {/* Tree View */}
+                                    <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4">
+                                        {filteredUnits.map((unit, uIdx) => (
+                                            <div key={unit.id} className="space-y-1">
+                                                <div className="flex items-center gap-2 py-1 px-1">
+                                                    <div className="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold shadow-sm">
+                                                        {uIdx + 1}
+                                                    </div>
+                                                    <span className="text-[11px] font-bold text-slate-700 truncate uppercase tracking-tight">{unit.title}</span>
+                                                </div>
+                                                <div className="space-y-[2px] ml-1 border-l-2 border-slate-100 pl-4">
+                                                    {unit.experiments.map((exp: any, eIdx: number) => (
+                                                        <button
+                                                            key={exp.id}
+                                                            onClick={() => router.push(`/labs/legezttantra/grid/${exp.id}`)}
+                                                            className={`w-full text-left px-3 py-2 text-xs rounded transition-all flex items-center gap-2 group ${exp.id === labId
+                                                                ? 'bg-indigo-50 text-indigo-700 font-bold border-r-2 border-indigo-600 shadow-sm'
+                                                                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                                                }`}
+                                                        >
+                                                            <Code size={12} className={exp.id === labId ? 'text-indigo-600' : 'text-slate-300 group-hover:text-slate-400'} />
+                                                            <span className="truncate">{uIdx + 1}.{eIdx + 1}. {exp.title}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {filteredUnits.length === 0 && (
+                                            <div className="text-center py-8 text-slate-400 text-xs">No topics found matching your search.</div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Sidebar Resizer */}
+                                <div
+                                    className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-indigo-500/30 transition-colors z-30"
+                                    onMouseDown={(e) => {
+                                        const handleMouseMove = (mmE: MouseEvent) => {
+                                            const newWidth = mmE.clientX;
+                                            if (newWidth > 200 && newWidth < 500) setSidebarWidth(newWidth);
+                                        };
+                                        const handleMouseUp = () => {
+                                            document.removeEventListener('mousemove', handleMouseMove);
+                                            document.removeEventListener('mouseup', handleMouseUp);
+                                        };
+                                        document.addEventListener('mousemove', handleMouseMove);
+                                        document.addEventListener('mouseup', handleMouseUp);
+                                    }}
+                                />
+                            </motion.aside>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Sidebar Toggle (Floating) */}
+                    <button
+                        onClick={() => setSidebarOpen(!isSidebarOpen)}
+                        className="absolute top-1/2 left-0 z-40 w-5 h-10 md:w-5 md:h-10 bg-white border border-slate-200 border-l-0 rounded-r-md flex items-center justify-center shadow-md hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-all -translate-y-1/2"
+                        style={{ left: isMobile ? (isSidebarOpen ? '100%' : 0) : (isSidebarOpen ? sidebarWidth : 0), display: isMobile && isSidebarOpen ? 'none' : 'flex' }}
+                    >
+                        {isSidebarOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
+                    </button>
+
+                    {/* 2. INSTRUCTION PANEL (Center) */}
+                    <div
+                        className={`${isFullscreen ? 'hidden' : 'flex'} ${isMobile && mobileTab !== 'instructions' ? 'hidden' : 'flex'} bg-white flex-col overflow-hidden border-b md:border-b-0 md:border-r border-slate-200 shrink-0 md:shrink w-full md:w-[var(--instruction-width)] md:h-auto`}
+                        style={{ '--instruction-width': `${instructionWidth}%` } as React.CSSProperties}
+                    >
+                        {/* Header */}
+                        <div className="bg-[#4139a8] px-4 md:px-6 py-4 md:py-5 flex flex-col shrink-0 text-white relative overflow-hidden shadow-lg selection:bg-white/20">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 relative z-10 gap-3 sm:gap-0">
+                                <div className="flex-1 min-w-0 pr-2">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-[9px] md:text-[10px] font-bold bg-white/20 px-1.5 py-0.5 rounded-sm backdrop-blur-md uppercase tracking-widest whitespace-nowrap">Problem Statement</span>
+                                        <span className="text-white/40 text-[10px] hidden sm:inline">•</span>
+                                        <span className="text-white/60 text-[9px] md:text-[10px] font-medium truncate">{lab.unitTitle || 'Module 1'}</span>
+                                    </div>
+                                    <h2 className="text-lg md:text-xl font-bold tracking-tight text-white drop-shadow-sm truncate">
+                                        {lab.title}
+                                    </h2>
+                                </div>
+                                <div className="flex items-center gap-2 md:gap-3 shrink-0">
+                                    <div className="bg-orange-500/20 text-orange-400 border border-orange-500/40 px-2 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-extrabold font-mono shadow-inner flex items-center gap-1.5">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div>
+                                        <span>00:45:12</span>
+                                    </div>
+                                    <button className="text-white/60 hover:text-white transition-colors hidden sm:block"><Maximize2 size={16} /></button>
+                                    <button className="hidden sm:block text-white/60 hover:text-white transition-colors"><Info size={16} /></button>
+                                </div>
+                            </div>
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-400/10 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none"></div>
+                        </div>
+
+                        {/* Content Scroll Area */}
+                        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-white">
+                            <div className="max-w-3xl">
+                                {/* Aim */}
+                                <div className="mb-10">
+                                    <h3 className="text-[11px] font-extrabold text-[#4139a8] mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
+                                        Outcome & Objective
+                                    </h3>
+                                    <p className="text-slate-700 text-base leading-relaxed font-medium bg-slate-50/80 p-5 rounded-2xl border border-slate-100">
+                                        {lab.description}
+                                    </p>
+                                </div>
+
+                                {/* Procedure / Content */}
+                                {lab.content?.procedure && (
+                                    <div className="mb-10">
+                                        <h3 className="text-[11px] font-extrabold text-[#4139a8] mb-4 uppercase tracking-[0.2em]">Step-by-Step Instructions</h3>
+                                        <div className="prose prose-slate prose-sm max-w-none text-slate-600 leading-7">
+                                            <div dangerouslySetInnerHTML={{ __html: lab.content.procedure.replace(/\n/g, '<br/>') }} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Sample Test Cases (Expandable Card) */}
+                                {lab.content?.testCases?.length > 0 && (
+                                    <div className="mb-10">
+                                        <h3 className="text-[11px] font-extrabold text-[#4139a8] mb-4 uppercase tracking-[0.2em]">Data Verification</h3>
+                                        <div className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50 shadow-sm">
+                                            <div className="px-6 py-4 bg-white border-b border-slate-200 flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <FileText size={16} className="text-orange-500" />
+                                                    <span className="text-sm font-bold text-slate-800">Sample Test Cases</span>
+                                                </div>
+                                                <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{lab.content.testCases.length} Cases</span>
+                                            </div>
+                                            <div className="divide-y divide-slate-200">
+                                                {lab.content.testCases.map((tc: any, i: number) => (
+                                                    <div key={i} className="p-6">
+                                                        <div className="text-[10px] font-bold text-slate-400 uppercase mb-3 flex items-center gap-2">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
+                                                            Test Case #{i + 1}
+                                                        </div>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div>
+                                                                <div className="text-[10px] text-slate-500 mb-1.5 font-bold">INPUT DATA</div>
+                                                                <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
+                                                                    <pre className="whitespace-pre-wrap">{tc.input}</pre>
+                                                                    <button
+                                                                        onClick={() => navigator.clipboard.writeText(tc.input)}
+                                                                        className="absolute top-2 right-2 p-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-600 hover:border-indigo-100"
+                                                                    >
+                                                                        <Check size={10} />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-[10px] text-slate-500 mb-1.5 font-bold">EXPECTED OUTPUT</div>
+                                                                <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
+                                                                    <pre className="whitespace-pre-wrap">{tc.output}</pre>
+                                                                    <button
+                                                                        onClick={() => navigator.clipboard.writeText(tc.output)}
+                                                                        className="absolute top-2 right-2 p-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-600 hover:border-indigo-100"
+                                                                    >
+                                                                        <Check size={10} />
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
-                                    ))}
-                                    {filteredUnits.length === 0 && (
-                                        <div className="text-center py-8 text-slate-400 text-xs">No topics found matching your search.</div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Sidebar Resizer */}
-                            <div
-                                className="absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-indigo-500/30 transition-colors z-30"
-                                onMouseDown={(e) => {
-                                    const handleMouseMove = (mmE: MouseEvent) => {
-                                        const newWidth = mmE.clientX;
-                                        if (newWidth > 200 && newWidth < 500) setSidebarWidth(newWidth);
-                                    };
-                                    const handleMouseUp = () => {
-                                        document.removeEventListener('mousemove', handleMouseMove);
-                                        document.removeEventListener('mouseup', handleMouseUp);
-                                    };
-                                    document.addEventListener('mousemove', handleMouseMove);
-                                    document.addEventListener('mouseup', handleMouseUp);
-                                }}
-                            />
-                        </motion.aside>
-                    )}
-                </AnimatePresence>
-
-                {/* Sidebar Toggle (Floating) */}
-                <button
-                    onClick={() => setSidebarOpen(!isSidebarOpen)}
-                    className="absolute top-1/2 left-0 z-40 w-5 h-10 md:w-5 md:h-10 bg-white border border-slate-200 border-l-0 rounded-r-md flex items-center justify-center shadow-md hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 transition-all -translate-y-1/2"
-                    style={{ left: isMobile ? (isSidebarOpen ? '100%' : 0) : (isSidebarOpen ? sidebarWidth : 0), display: isMobile && isSidebarOpen ? 'none' : 'flex' }}
-                >
-                    {isSidebarOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
-                </button>
-
-                {/* 2. INSTRUCTION PANEL (Center) */}
-                <div
-                    className="bg-white flex flex-col overflow-hidden border-b md:border-b-0 md:border-r border-slate-200 shrink-0 md:shrink w-full md:w-[var(--instruction-width)] h-[40%] md:h-auto"
-                    style={{ '--instruction-width': `${instructionWidth}%` } as React.CSSProperties}
-                >
-                    {/* Header */}
-                    <div className="bg-[#4139a8] px-4 md:px-6 py-4 md:py-5 flex flex-col shrink-0 text-white relative overflow-hidden shadow-lg selection:bg-white/20">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 relative z-10 gap-3 sm:gap-0">
-                            <div className="flex-1 min-w-0 pr-2">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-[9px] md:text-[10px] font-bold bg-white/20 px-1.5 py-0.5 rounded-sm backdrop-blur-md uppercase tracking-widest whitespace-nowrap">Problem Statement</span>
-                                    <span className="text-white/40 text-[10px] hidden sm:inline">•</span>
-                                    <span className="text-white/60 text-[9px] md:text-[10px] font-medium truncate">{lab.unitTitle || 'Module 1'}</span>
-                                </div>
-                                <h2 className="text-lg md:text-xl font-bold tracking-tight text-white drop-shadow-sm truncate">
-                                    {lab.title}
-                                </h2>
-                            </div>
-                            <div className="flex items-center gap-2 md:gap-3 shrink-0">
-                                <div className="bg-orange-500/20 text-orange-400 border border-orange-500/40 px-2 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-extrabold font-mono shadow-inner flex items-center gap-1.5">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></div>
-                                    <span>00:45:12</span>
-                                </div>
-                                <button className="text-white/60 hover:text-white transition-colors hidden sm:block"><Maximize2 size={16} /></button>
-                                <button className="hidden sm:block text-white/60 hover:text-white transition-colors"><Info size={16} /></button>
-                            </div>
-                        </div>
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-400/10 rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none"></div>
-                    </div>
-
-                    {/* Content Scroll Area */}
-                    <div className="flex-1 overflow-y-auto p-8 custom-scrollbar bg-white">
-                        <div className="max-w-3xl">
-                            {/* Aim */}
-                            <div className="mb-10">
-                                <h3 className="text-[11px] font-extrabold text-[#4139a8] mb-4 uppercase tracking-[0.2em] flex items-center gap-2">
-                                    Outcome & Objective
-                                </h3>
-                                <p className="text-slate-700 text-base leading-relaxed font-medium bg-slate-50/80 p-5 rounded-2xl border border-slate-100">
-                                    {lab.description}
-                                </p>
-                            </div>
-
-                            {/* Procedure / Content */}
-                            {lab.content?.procedure && (
-                                <div className="mb-10">
-                                    <h3 className="text-[11px] font-extrabold text-[#4139a8] mb-4 uppercase tracking-[0.2em]">Step-by-Step Instructions</h3>
-                                    <div className="prose prose-slate prose-sm max-w-none text-slate-600 leading-7">
-                                        <div dangerouslySetInnerHTML={{ __html: lab.content.procedure.replace(/\n/g, '<br/>') }} />
                                     </div>
-                                </div>
-                            )}
-
-                            {/* Sample Test Cases (Expandable Card) */}
-                            {lab.content?.testCases?.length > 0 && (
-                                <div className="mb-10">
-                                    <h3 className="text-[11px] font-extrabold text-[#4139a8] mb-4 uppercase tracking-[0.2em]">Data Verification</h3>
-                                    <div className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50 shadow-sm">
-                                        <div className="px-6 py-4 bg-white border-b border-slate-200 flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <FileText size={16} className="text-orange-500" />
-                                                <span className="text-sm font-bold text-slate-800">Sample Test Cases</span>
-                                            </div>
-                                            <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">{lab.content.testCases.length} Cases</span>
-                                        </div>
-                                        <div className="divide-y divide-slate-200">
-                                            {lab.content.testCases.map((tc: any, i: number) => (
-                                                <div key={i} className="p-6">
-                                                    <div className="text-[10px] font-bold text-slate-400 uppercase mb-3 flex items-center gap-2">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
-                                                        Test Case #{i + 1}
-                                                    </div>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                        <div>
-                                                            <div className="text-[10px] text-slate-500 mb-1.5 font-bold">INPUT DATA</div>
-                                                            <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
-                                                                <pre className="whitespace-pre-wrap">{tc.input}</pre>
-                                                                <button
-                                                                    onClick={() => navigator.clipboard.writeText(tc.input)}
-                                                                    className="absolute top-2 right-2 p-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-600 hover:border-indigo-100"
-                                                                >
-                                                                    <Check size={10} />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-[10px] text-slate-500 mb-1.5 font-bold">EXPECTED OUTPUT</div>
-                                                            <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
-                                                                <pre className="whitespace-pre-wrap">{tc.output}</pre>
-                                                                <button
-                                                                    onClick={() => navigator.clipboard.writeText(tc.output)}
-                                                                    className="absolute top-2 right-2 p-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-600 hover:border-indigo-100"
-                                                                >
-                                                                    <Check size={10} />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Vertical Resizer (Instruction/Code) */}
-                <div
-                    className="hidden md:block w-1.5 h-full cursor-col-resize hover:bg-indigo-500/20 transition-colors z-30 bg-slate-100 border-x border-slate-200"
-                    onMouseDown={(e) => {
-                        const startX = e.clientX;
-                        const startWidth = instructionWidth;
-                        const handleMouseMove = (mmE: MouseEvent) => {
-                            const deltaX = ((mmE.clientX - startX) / window.innerWidth) * 100;
-                            const newWidth = Math.min(Math.max(startWidth + deltaX, 20), 80);
-                            setInstructionWidth(newWidth);
-                        };
-                        const handleMouseUp = () => {
-                            document.removeEventListener('mousemove', handleMouseMove);
-                            document.removeEventListener('mouseup', handleMouseUp);
-                        };
-                        document.addEventListener('mousemove', handleMouseMove);
-                        document.addEventListener('mouseup', handleMouseUp);
-                    }}
-                />
-
-                {/* 3. SOLUTION PANEL (Right) */}
-                <div className="flex-1 bg-[#0f172a] flex flex-col overflow-hidden">
-                    {/* Tab Bar */}
-                    <div className="h-11 bg-[#1e293b] border-b border-slate-800 flex items-center px-4 shrink-0 justify-between">
-                        <div className="flex h-full items-center min-w-0">
-                            <div className="bg-[#0f172a] h-full px-3 md:px-5 border-x border-slate-800 text-[10px] md:text-[11px] font-bold text-slate-300 flex items-center gap-1.5 md:gap-2 border-t-2 border-t-indigo-500 shadow-md whitespace-nowrap truncate">
-                                <Code size={13} className="text-indigo-400 shrink-0" />
-                                <span className="truncate">Solution.{lab.content?.language === 'python' ? 'py' : lab.content?.language === 'java' ? 'java' : 'c'}</span>
+                                )}
                             </div>
-                            <div className="px-2 md:px-4 text-[9px] md:text-[10px] font-medium text-slate-500 hidden sm:flex items-center gap-2 italic whitespace-nowrap">
-                                Read Only Access
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={handleShareLab}
-                                className="flex bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 text-[10px] font-bold px-2 md:px-3 py-1.5 rounded items-center gap-1.5 md:gap-2 transition-all shadow-md"
-                            >
-                                <span className="opacity-90 hidden md:inline">SHARE LAB</span>
-                                <span className="opacity-90 md:hidden">SHARE</span>
-                                <Share2 size={12} className="text-green-500" />
-                            </button>
-                            <button
-                                onClick={() => navigator.clipboard.writeText(solutionCode)}
-                                className="flex bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-2 md:px-3 py-1.5 rounded items-center gap-1.5 md:gap-2 transition-all shadow-md"
-                            >
-                                <span className="opacity-90 hidden md:inline">COPY CODE</span>
-                                <span className="opacity-90 md:hidden">COPY</span>
-                                <Check size={12} />
-                            </button>
                         </div>
                     </div>
 
-                    {/* Code Editor Body */}
-                    <div className="flex-1 overflow-hidden relative bg-[#0f172a] flex flex-col">
-                        <div className="flex-1 overflow-auto custom-scrollbar">
-                            <SyntaxHighlighter
-                                language={lab.content?.language || 'javascript'}
-                                style={vscDarkPlus}
-                                customStyle={{
-                                    margin: 0,
-                                    background: 'transparent',
-                                    fontSize: '14px',
-                                    padding: '1.5rem',
-                                    lineHeight: '1.6',
-                                }}
-                                showLineNumbers={true}
-                                lineNumberStyle={{ minWidth: '3em', paddingRight: '1.5em', color: '#475569', textAlign: 'right', borderRight: '1px solid #1e293b', marginRight: '1.5em' }}
-                            >
-                                {solutionCode}
-                            </SyntaxHighlighter>
-                        </div>
+                    {/* Vertical Resizer (Instruction/Code) */}
+                    <div
+                        className={`${isFullscreen ? 'hidden' : 'hidden md:block'} w-1.5 h-full cursor-col-resize hover:bg-indigo-500/20 transition-colors z-30 bg-slate-100 border-x border-slate-200`}
+                        onMouseDown={(e) => {
+                            const startX = e.clientX;
+                            const startWidth = instructionWidth;
+                            const handleMouseMove = (mmE: MouseEvent) => {
+                                const deltaX = ((mmE.clientX - startX) / window.innerWidth) * 100;
+                                const newWidth = Math.min(Math.max(startWidth + deltaX, 20), 80);
+                                setInstructionWidth(newWidth);
+                            };
+                            const handleMouseUp = () => {
+                                document.removeEventListener('mousemove', handleMouseMove);
+                                document.removeEventListener('mouseup', handleMouseUp);
+                            };
+                            document.addEventListener('mousemove', handleMouseMove);
+                            document.addEventListener('mouseup', handleMouseUp);
+                        }}
+                    />
 
-                        {/* Slide-Up Test Results overlay */}
-                        <AnimatePresence>
-                            {showResults && (
-                                <motion.div
-                                    initial={{ y: '100%' }}
-                                    animate={{ y: 0 }}
-                                    exit={{ y: '100%' }}
-                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                    className="absolute bottom-0 left-0 w-full h-[60%] min-h-[260px] bg-[#1a2333] border-t-2 border-indigo-500/50 flex flex-col shrink-0 shadow-[0_-15px_40px_rgba(0,0,0,0.6)] z-30 overflow-hidden rounded-t-xl"
+                    {/* 3. SOLUTION PANEL (Right) */}
+                    <div className={`${isMobile && mobileTab !== 'code' && !isFullscreen ? 'hidden' : 'flex'} flex-1 bg-[#0f172a] flex-col overflow-hidden ${isFullscreen ? 'fixed inset-0 z-[100] pt-0' : ''}`}>
+                        {/* Tab Bar */}
+                        <div className="h-11 bg-[#1e293b] border-b border-slate-800 flex items-center px-4 shrink-0 justify-between">
+                            <div className="flex h-full items-center min-w-0">
+                                <div className="bg-[#0f172a] h-full px-3 md:px-5 border-x border-slate-800 text-[10px] md:text-[11px] font-bold text-slate-300 flex items-center gap-1.5 md:gap-2 border-t-2 border-t-indigo-500 shadow-md whitespace-nowrap truncate">
+                                    <Code size={13} className="text-indigo-400 shrink-0" />
+                                    <span className="truncate">Solution.{lab.content?.language === 'python' ? 'py' : lab.content?.language === 'java' ? 'java' : 'c'}</span>
+                                </div>
+                                <div className="px-2 md:px-4 text-[9px] md:text-[10px] font-medium text-slate-500 hidden sm:flex items-center gap-2 italic whitespace-nowrap">
+                                    Read Only Access
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setIsFullscreen(!isFullscreen)}
+                                    className="flex bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 font-bold p-1.5 md:p-2 rounded items-center transition-all shadow-md mr-1 md:mr-2"
+                                    title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Editor"}
                                 >
-                                    {/* Header */}
-                                    <div className="h-12 bg-[#0f172a] flex items-center justify-between px-4 md:px-6 border-b border-slate-800 shrink-0">
-                                        <div className="flex items-center gap-2 md:gap-3">
-                                            <div className="p-1 px-1.5 md:px-2 bg-emerald-500/10 border border-emerald-500/20 rounded-md flex items-center gap-1.5 md:gap-2">
-                                                <CheckCircle2 size={13} className="text-emerald-400" />
-                                                <span className="text-emerald-400 text-[9px] md:text-[10px] font-black tracking-widest uppercase">Executed Successfully</span>
-                                            </div>
-                                            <span className="text-slate-500 text-[9px] md:text-[10px] font-bold hidden md:inline">Passed all 2 test cases</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-mono text-slate-500">
-                                            <span className="flex items-center gap-1 md:gap-1.5"><Clock size={12} /> 0.042s</span>
-                                            <span className="flex items-center gap-1 md:gap-1.5"><Server size={12} /> 14MB<span className="hidden md:inline"> Memory</span></span>
-                                        </div>
-                                    </div>
+                                    {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                                </button>
+                                <button
+                                    onClick={handleShareLab}
+                                    className="flex bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 text-[10px] font-bold px-2 md:px-3 py-1.5 rounded items-center gap-1.5 md:gap-2 transition-all shadow-md"
+                                >
+                                    <span className="opacity-90 hidden md:inline">SHARE</span>
+                                    <Share2 size={12} className="text-green-500" />
+                                </button>
+                                <button
+                                    onClick={() => navigator.clipboard.writeText(solutionCode)}
+                                    className="flex bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-2 md:px-3 py-1.5 rounded items-center gap-1.5 md:gap-2 transition-all shadow-md"
+                                >
+                                    <span className="opacity-90 hidden md:inline">COPY</span>
+                                    <Check size={12} />
+                                </button>
+                            </div>
+                        </div>
 
-                                    {/* Results Content */}
-                                    <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-                                        {/* Test Cases Sidebar */}
-                                        <div className="w-full md:w-48 bg-[#1e293b]/50 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col shrink-0">
-                                            <div className="p-2 md:p-3 text-[9px] md:text-[10px] font-bold text-slate-500 tracking-widest uppercase border-b border-slate-800 hidden md:block">Test Suite</div>
-                                            <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto custom-scrollbar p-2 gap-1 md:gap-0 md:space-y-1">
-                                                <button className="flex-1 md:w-full text-left px-3 py-2 text-xs rounded bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-between shadow-sm min-w-[100px]">
-                                                    <span className="font-mono">Case 1</span> <Check size={14} className="text-emerald-400" />
-                                                </button>
-                                                <button className="flex-1 md:w-full text-left px-3 py-2 text-xs rounded hover:bg-slate-800/50 text-slate-400 flex items-center justify-between transition-colors min-w-[100px]">
-                                                    <span className="font-mono flex items-center gap-2"><Lock size={10} className="text-slate-500" /> Case 2</span> <Check size={14} className="text-emerald-400" />
-                                                </button>
+                        {/* LegeztTantra Hack Banner */}
+                        <div className="bg-gradient-to-r from-[#0a192f] to-[#112240] border-b border-cyan-500/20 p-3 md:p-4 shrink-0 flex items-start gap-3 relative overflow-hidden">
+                            <div className="absolute top-0 right-1/4 w-32 h-32 bg-cyan-700/20 blur-[50px] rounded-full pointer-events-none"></div>
+                            <div className="p-2 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 text-cyan-400 rounded-lg shrink-0 border border-cyan-500/30">
+                                <Sparkles size={16} />
+                            </div>
+                            <div className="text-gray-300 text-[11px] md:text-xs leading-relaxed font-medium">
+                                <strong className="text-cyan-400 mr-1">CodeTantra Hack:</strong>
+                                Press <kbd className="bg-white/10 px-1 py-0.5 rounded text-cyan-300 border border-white/10 font-mono shadow-sm mx-0.5">Ctrl</kbd>+<kbd className="bg-white/10 px-1 py-0.5 rounded text-cyan-300 border border-white/10 font-mono shadow-sm mx-0.5">Shift</kbd>+<kbd className="bg-white/10 px-1 py-0.5 rounded text-cyan-300 border border-white/10 font-mono shadow-sm mx-0.5">C</kbd> to open DevTools, select the locked CodeTantra editor, delete the <code className="text-purple-400 bg-purple-400/10 px-1 rounded mx-0.5">disabled</code> attribute, and paste this code!
+                            </div>
+                        </div>
+
+                        {/* Code Editor Body */}
+                        <div className="flex-1 overflow-hidden relative bg-[#0f172a] flex flex-col">
+                            <div className="flex-1 overflow-auto custom-scrollbar">
+                                <SyntaxHighlighter
+                                    language={lab.content?.language || 'javascript'}
+                                    style={vscDarkPlus}
+                                    customStyle={{
+                                        margin: 0,
+                                        background: 'transparent',
+                                        fontSize: '14px',
+                                        padding: '1.5rem',
+                                        lineHeight: '1.6',
+                                    }}
+                                    showLineNumbers={true}
+                                    lineNumberStyle={{ minWidth: '3em', paddingRight: '1.5em', color: '#475569', textAlign: 'right', borderRight: '1px solid #1e293b', marginRight: '1.5em' }}
+                                >
+                                    {solutionCode}
+                                </SyntaxHighlighter>
+                            </div>
+
+                            {/* Slide-Up Test Results overlay */}
+                            <AnimatePresence>
+                                {showResults && (
+                                    <motion.div
+                                        initial={{ y: '100%' }}
+                                        animate={{ y: 0 }}
+                                        exit={{ y: '100%' }}
+                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                        className="absolute bottom-0 left-0 w-full h-[60%] min-h-[260px] bg-[#1a2333] border-t-2 border-indigo-500/50 flex flex-col shrink-0 shadow-[0_-15px_40px_rgba(0,0,0,0.6)] z-30 overflow-hidden rounded-t-xl"
+                                    >
+                                        {/* Header */}
+                                        <div className="h-12 bg-[#0f172a] flex items-center justify-between px-4 md:px-6 border-b border-slate-800 shrink-0">
+                                            <div className="flex items-center gap-2 md:gap-3">
+                                                <div className="p-1 px-1.5 md:px-2 bg-emerald-500/10 border border-emerald-500/20 rounded-md flex items-center gap-1.5 md:gap-2">
+                                                    <CheckCircle2 size={13} className="text-emerald-400" />
+                                                    <span className="text-emerald-400 text-[9px] md:text-[10px] font-black tracking-widest uppercase">Executed Successfully</span>
+                                                </div>
+                                                <span className="text-slate-500 text-[9px] md:text-[10px] font-bold hidden md:inline">Passed all 2 test cases</span>
+                                            </div>
+                                            <div className="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-mono text-slate-500">
+                                                <span className="flex items-center gap-1 md:gap-1.5"><Clock size={12} /> 0.042s</span>
+                                                <span className="flex items-center gap-1 md:gap-1.5"><Server size={12} /> 14MB<span className="hidden md:inline"> Memory</span></span>
                                             </div>
                                         </div>
-                                        {/* Verification Detail */}
-                                        <div className="flex-1 p-4 md:p-5 overflow-y-auto custom-scrollbar bg-[#161f2e]">
-                                            <div className="flex items-center gap-2 mb-3 md:mb-4">
-                                                <Activity size={16} className="text-indigo-400" />
-                                                <h4 className="text-slate-300 text-xs md:text-sm font-bold">Standard Output</h4>
+
+                                        {/* Results Content */}
+                                        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+                                            {/* Test Cases Sidebar */}
+                                            <div className="w-full md:w-48 bg-[#1e293b]/50 border-b md:border-b-0 md:border-r border-slate-800 flex flex-col shrink-0">
+                                                <div className="p-2 md:p-3 text-[9px] md:text-[10px] font-bold text-slate-500 tracking-widest uppercase border-b border-slate-800 hidden md:block">Test Suite</div>
+                                                <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto custom-scrollbar p-2 gap-1 md:gap-0 md:space-y-1">
+                                                    <button className="flex-1 md:w-full text-left px-3 py-2 text-xs rounded bg-slate-800/80 border border-slate-700 text-slate-200 flex items-center justify-between shadow-sm min-w-[100px]">
+                                                        <span className="font-mono">Case 1</span> <Check size={14} className="text-emerald-400" />
+                                                    </button>
+                                                    <button className="flex-1 md:w-full text-left px-3 py-2 text-xs rounded hover:bg-slate-800/50 text-slate-400 flex items-center justify-between transition-colors min-w-[100px]">
+                                                        <span className="font-mono flex items-center gap-2"><Lock size={10} className="text-slate-500" /> Case 2</span> <Check size={14} className="text-emerald-400" />
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <pre className="bg-[#0f172a] border border-slate-800 p-3 md:p-4 rounded-xl text-emerald-400 font-mono text-[10px] md:text-xs leading-relaxed shadow-inner overflow-x-auto">
-                                                {`Build successful...\nExecuting binary...\n\nOutput matched expected result strictly.\nExit code: 0`}
-                                            </pre>
+                                            {/* Verification Detail */}
+                                            <div className="flex-1 p-4 md:p-5 overflow-y-auto custom-scrollbar bg-[#161f2e]">
+                                                <div className="flex items-center gap-2 mb-3 md:mb-4">
+                                                    <Activity size={16} className="text-indigo-400" />
+                                                    <h4 className="text-slate-300 text-xs md:text-sm font-bold">Standard Output</h4>
+                                                </div>
+                                                <pre className="bg-[#0f172a] border border-slate-800 p-3 md:p-4 rounded-xl text-emerald-400 font-mono text-[10px] md:text-xs leading-relaxed shadow-inner overflow-x-auto">
+                                                    {`Build successful...\nExecuting binary...\n\nOutput matched expected result strictly.\nExit code: 0`}
+                                                </pre>
+                                            </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
                     </div>
+
                 </div>
 
             </div>
