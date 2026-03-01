@@ -85,6 +85,17 @@ export default function StudentRecordsPage() {
         return () => clearTimeout(timer);
     }, [search, branchId, yearId, semesterId]);
 
+    // Handle incoming share links
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const viewId = searchParams.get('view');
+        if (viewId) {
+            handleView(viewId);
+            // Optional: Remove 'view' from URL after opening to prevent repeated opens on refresh
+            window.history.replaceState({}, '', '/labs/records');
+        }
+    }, []);
+
     const handleView = async (id: string) => {
         try {
             const res = await api.get(`/records/${id}/view`);
@@ -112,19 +123,15 @@ export default function StudentRecordsPage() {
 
     const handleShare = async (id: string, title: string) => {
         try {
-            const toastId = toast.loading('Generating share link...');
-            const res = await api.get(`/records/${id}/view`);
-            const url = res.data.data.url;
-            toast.dismiss(toastId);
-
-            const shareText = `Check out this Lab Record on Legezt Hub:\n*${title}*\n\n${url}`;
+            const shareUrl = `${window.location.origin}/labs/records?view=${id}`;
+            const shareText = `Check out this Lab Record on Legezt Hub:\n*${title}*\n\n${shareUrl}`;
 
             if (navigator.share) {
                 try {
                     await navigator.share({
                         title: title,
                         text: 'Check out this Lab Record:',
-                        url: url
+                        url: shareUrl
                     });
                 } catch (e) {
                     // Ignore abort errors from user cancelling share sheet
