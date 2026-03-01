@@ -1,12 +1,8 @@
 'use client';
 
-// ==================================
-// Login Page
-// ==================================
-
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Sparkles, Mail, Lock, Loader2 } from 'lucide-react';
+import { Sparkles, Mail, Lock, User, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { authApi } from '@/lib/api';
 import { toast } from 'sonner';
@@ -16,11 +12,12 @@ const API_URL = process.env.NODE_ENV === 'development'
     ? 'http://localhost:5000'
     : (process.env.NEXT_PUBLIC_API_URL || 'https://legezt-hub-api-prod.azurewebsites.net');
 
-export default function LoginPage() {
+export default function SignupPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { isAuthenticated, setTokens } = useAuthStore();
 
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -39,16 +36,22 @@ export default function LoginPage() {
         window.location.href = `${API_URL}/api/auth/google`;
     };
 
-    const handleEmailLogin = async (e: React.FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!email || !password) {
+
+        if (!name || !email || !password) {
             toast.error('Please fill in all fields');
+            return;
+        }
+
+        if (password.length < 6) {
+            toast.error('Password must be at least 6 characters');
             return;
         }
 
         setIsLoading(true);
         try {
-            const res = await authApi.loginWithEmail({ email, password });
+            const res = await authApi.register({ name, email, password });
             const { tokens } = res.data.data;
             setTokens(tokens.accessToken, tokens.refreshToken);
 
@@ -58,14 +61,10 @@ export default function LoginPage() {
             } else {
                 router.push('/');
             }
-            toast.success('Welcome back!');
+            toast.success('Account created successfully!');
         } catch (error: any) {
-            const message = error.response?.data?.message || 'Failed to login';
-            if (message === 'ACCOUNT_BANNED') {
-                router.replace(`/login?error=banned&email=${email}`);
-            } else {
-                toast.error(message);
-            }
+            const message = error.response?.data?.message || 'Failed to create account';
+            toast.error(message);
         } finally {
             setIsLoading(false);
         }
@@ -89,14 +88,31 @@ export default function LoginPage() {
                             <Sparkles size={32} className="text-primary-600" />
                         </div>
                     </Link>
-                    <h1 className="text-3xl font-bold text-white mt-6 tracking-tight">Welcome Back</h1>
-                    <p className="text-blue-100/80 mt-2 font-medium">Log in to your LeGeZt account</p>
+                    <h1 className="text-3xl font-bold text-white mt-6 tracking-tight">Create an Account</h1>
+                    <p className="text-blue-100/80 mt-2 font-medium">Join LeGeZt to unlock your study hub</p>
                 </div>
 
-                {/* Login Card */}
-                <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 mhw-full relative z-10">
+                {/* Signup Card */}
+                <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-200/50 border border-slate-100 w-full relative z-10">
 
-                    <form onSubmit={handleEmailLogin} className="space-y-4">
+                    <form onSubmit={handleSignup} className="space-y-4">
+                        <div className="space-y-1.5">
+                            <label className="text-sm font-semibold text-slate-700 ml-1">Full Name</label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <User size={18} className="text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder:font-normal placeholder:text-slate-400"
+                                    placeholder="John Doe"
+                                    required
+                                />
+                            </div>
+                        </div>
+
                         <div className="space-y-1.5">
                             <label className="text-sm font-semibold text-slate-700 ml-1">Email Address</label>
                             <div className="relative group">
@@ -115,12 +131,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="space-y-1.5 pt-2">
-                            <div className="flex items-center justify-between ml-1">
-                                <label className="text-sm font-semibold text-slate-700">Password</label>
-                                <Link href="/forgot-password" className="text-xs font-semibold text-primary-600 hover:text-primary-700 transition-colors">
-                                    Forgot password?
-                                </Link>
-                            </div>
+                            <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <Lock size={18} className="text-slate-400 group-focus-within:text-primary-500 transition-colors" />
@@ -141,7 +152,7 @@ export default function LoginPage() {
                             disabled={isLoading}
                             className="w-full mt-6 py-3.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold shadow-lg shadow-primary-600/20 transition-all active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100 flex items-center justify-center gap-2"
                         >
-                            {isLoading ? <Loader2 size={20} className="animate-spin" /> : 'Sign In'}
+                            {isLoading ? <Loader2 size={20} className="animate-spin" /> : 'Sign Up'}
                         </button>
                     </form>
 
@@ -164,106 +175,18 @@ export default function LoginPage() {
                     </button>
 
                     <p className="text-center text-sm text-slate-500 mt-8 font-medium">
-                        Don't have an account?{' '}
-                        <Link href="/signup" className="text-primary-600 hover:text-primary-700 font-bold hover:underline transition-all">
-                            Create one
+                        Already have an account?{' '}
+                        <Link href="/login" className="text-primary-600 hover:text-primary-700 font-bold hover:underline transition-all">
+                            Sign In
                         </Link>
                     </p>
                 </div>
 
                 {/* Footer */}
                 <p className="text-sm text-center text-slate-400 font-medium mt-10">
-                    By signing in, you agree to our <Link href="/privacy" className="hover:text-slate-600 underline decoration-slate-300 underline-offset-2 transition-colors">Privacy Policy</Link>
+                    By signing up, you agree to our <Link href="/privacy" className="hover:text-slate-600 underline decoration-slate-300 underline-offset-2 transition-colors">Privacy Policy</Link>
                 </p>
-                <BannedModal />
             </div>
         </main>
     );
-
-    function BannedModal() {
-        const error = searchParams.get('error');
-        const [feedback, setFeedback] = useState('');
-        const [show, setShow] = useState(false);
-        const [loading, setLoading] = useState(false);
-        const [sent, setSent] = useState(false);
-
-        useEffect(() => {
-            if (error === 'banned' || error === 'ACCOUNT_BANNED') {
-                setShow(true);
-            }
-        }, [error]);
-
-        const handleSubmit = async (e: React.FormEvent) => {
-            e.preventDefault();
-            setLoading(true);
-            try {
-                await fetch(`${API_URL}/api/auth/banned-feedback`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: searchParams.get('email') || 'User from Login Page',
-                        message: feedback
-                    })
-                });
-                setSent(true);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (!show) return null;
-
-        return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-                <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl relative border border-slate-100">
-                    <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-inner ring-1 ring-red-100">
-                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                    </div>
-
-                    <h2 className="text-2xl font-bold text-center text-slate-800 mb-2">Account Suspended</h2>
-                    <p className="text-slate-500 text-center mb-8 font-medium">
-                        Sorry, you do not have permission to access this account. Contact the administrator if you believe this is a mistake.
-                    </p>
-
-                    {sent ? (
-                        <div className="bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-2xl p-6 text-center shadow-inner">
-                            <p className="font-bold mb-1">Feedback Sent!</p>
-                            <p className="text-sm opacity-90">Our team will review your message soon.</p>
-                            <button onClick={() => setShow(false)} className="mt-6 font-semibold bg-emerald-100 hover:bg-emerald-200 py-2.5 px-6 rounded-xl transition-colors">Dismiss</button>
-                        </div>
-                    ) : (
-                        <form onSubmit={handleSubmit}>
-                            <textarea
-                                value={feedback}
-                                onChange={(e) => setFeedback(e.target.value)}
-                                placeholder="Explain why you should be unbanned..."
-                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-slate-800 placeholder-slate-400 mb-6 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all min-h-[120px] font-medium resize-none shadow-inner"
-                                required
-                            />
-                            <div className="flex gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => { setShow(false); router.replace('/login'); }}
-                                    className="flex-1 py-3.5 rounded-xl bg-white border border-slate-200 shadow-sm text-slate-600 hover:bg-slate-50 font-bold transition-all active:scale-[0.98]"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={loading}
-                                    className="flex-1 py-3.5 rounded-xl bg-red-600 shadow-lg shadow-red-600/20 hover:bg-red-700 text-white font-bold transition-all disabled:opacity-70 active:scale-[0.98] disabled:active:scale-100 flex items-center justify-center"
-                                >
-                                    {loading ? <Loader2 size={20} className="animate-spin" /> : 'Contact Admin'}
-                                </button>
-                            </div>
-                        </form>
-                    )}
-                </div>
-            </div>
-        );
-    }
 }

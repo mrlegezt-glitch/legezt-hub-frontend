@@ -6,7 +6,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, FileText, Headphones, Gift, User, Sparkles, LogOut, BookOpen, Menu, FlaskConical, Calendar, PlayCircle, Bell } from 'lucide-react';
+import { Home, FileText, Headphones, Gift, User, Sparkles, LogOut, BookOpen, Menu, FlaskConical, Bell } from 'lucide-react';
 import { clsx } from 'clsx';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useAuthStore } from '@/stores/authStore';
@@ -18,10 +18,8 @@ import { useState, useEffect } from 'react';
 
 const navItems = [
     { href: '/', icon: Home, label: 'Home' },
-    { href: '/syllabus', icon: Calendar, label: 'Syllabus' },
     { href: '/subjects', icon: BookOpen, label: 'Subjects' },
     { href: '/labs', icon: FlaskConical, label: 'Labs' },
-    { href: '/explore', icon: PlayCircle, label: 'Watch' },
     { href: '/podcasts', icon: Headphones, label: 'Podcast' },
     { href: '/offers', icon: Gift, label: 'Courses' },
 ];
@@ -176,10 +174,10 @@ export default function DesktopNav() {
                     </Link>
                 )}
 
-                {/* Side Menu Trigger (mobile/md fallback) */}
+                {/* Side Menu Trigger */}
                 <button
                     onClick={openSideMenu}
-                    className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all active:scale-95 lg:hidden"
+                    className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all active:scale-95"
                     aria-label="Open side menu"
                 >
                     <Menu size={22} />

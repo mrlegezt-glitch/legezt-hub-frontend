@@ -69,7 +69,7 @@ export default function BacklogPage() {
                             placeholder="Search subjects..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full bg-dark-100 border border-dark-border rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:border-primary-500 transition-colors placeholder:text-gray-600"
+                            className="w-full bg-white dark:bg-dark-100 border border-gray-300 dark:border-dark-border rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:border-primary-500 transition-colors placeholder:text-gray-400 dark:placeholder:text-gray-600 text-gray-800 dark:text-white"
                         />
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
                     </div>

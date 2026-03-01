@@ -5,7 +5,9 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/stores/authStore';
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://legezt-hub-api-prod.azurewebsites.net';
+export const API_URL = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:5000'
+    : (process.env.NEXT_PUBLIC_API_URL || 'https://legezt-hub-api-prod.azurewebsites.net');
 
 export const api = axios.create({
     baseURL: `${API_URL}/api`,
@@ -125,6 +127,11 @@ api.interceptors.response.use(
 // API methods
 export const authApi = {
     loginWithGoogle: () => `${API_URL}/api/auth/google`,
+    register: (data: any) => api.post('/auth/register', data),
+    loginWithEmail: (data: any) => api.post('/auth/login/email', data),
+    forgotPassword: (data: { email: string }) => api.post('/auth/forgot-password', data),
+    verifyOtp: (data: { email: string, otp: string }) => api.post('/auth/verify-otp', data),
+    resetPassword: (data: any) => api.post('/auth/reset-password', data),
     me: () => api.get('/auth/me'),
     logout: (refreshToken: string) => api.post('/auth/logout', { refreshToken }),
 };

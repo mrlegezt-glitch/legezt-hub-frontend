@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, X, FileText, Music, GraduationCap, ArrowRight, Loader2, PlayCircle } from 'lucide-react';
 import { contentApi } from '@/lib/api';
-import { tmdb } from '@/lib/tmdb';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -14,7 +13,6 @@ export default function GlobalSearch() {
         pdfs: any[];
         podcasts: any[];
         courses: any[];
-        media?: any[];
     } | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -35,28 +33,16 @@ export default function GlobalSearch() {
             setLoading(true);
             try {
                 if (query.length < 2) {
-                    // Show default trending suggestions if query is empty or too short
-                    const trendingRes = await tmdb.getTrending('all', 'week').catch(() => ({ results: [] }));
-                    const topTrending = (trendingRes.results || []).slice(0, 5);
+                    // Show empty if length < 2
                     setResults({
                         pdfs: [],
                         podcasts: [],
-                        courses: [],
-                        media: topTrending
+                        courses: []
                     });
                 } else {
-                    const [res, mediaRes] = await Promise.all([
-                        contentApi.search(query).catch(() => ({ data: { data: { pdfs: [], podcasts: [], courses: [] } } })),
-                        tmdb.searchMulti(query).catch(() => ({ results: [] }))
-                    ]);
+                    const res = await contentApi.search(query).catch(() => ({ data: { data: { pdfs: [], podcasts: [], courses: [] } } }));
 
-                    // Only take top 4 media results to balance the modal
-                    const topMedia = (mediaRes.results || []).filter((m: any) => m.media_type === 'movie' || m.media_type === 'tv').slice(0, 4);
-
-                    setResults({
-                        ...res.data.data,
-                        media: topMedia
-                    });
+                    setResults(res.data.data);
                 }
             } catch (error) {
                 console.error('Search error', error);
@@ -160,7 +146,7 @@ export default function GlobalSearch() {
                                 <div className="py-10 text-center text-gray-500 text-sm">
                                     Keep typing to search...
                                 </div>
-                            ) : results && (results.pdfs.length > 0 || results.podcasts.length > 0 || results.courses.length > 0 || (results.media && results.media.length > 0)) ? (
+                            ) : results && (results.pdfs.length > 0 || results.podcasts.length > 0 || results.courses.length > 0) ? (
                                 <div className="space-y-6 p-2">
                                     {/* PDFs */}
                                     {results.pdfs.length > 0 && (
@@ -243,38 +229,6 @@ export default function GlobalSearch() {
                                         </section>
                                     )}
 
-                                    {/* Movies & TV */}
-                                    {results.media && results.media.length > 0 && (
-                                        <section aria-labelledby="media-heading">
-                                            <h3 id="media-heading" className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-3 mb-2">
-                                                {query.length < 2 ? "Trending Suggestions" : "Movies & Series"}
-                                            </h3>
-                                            <div className="space-y-1" role="group" aria-label="Media items">
-                                                {results.media.map(item => (
-                                                    <button
-                                                        key={item.id}
-                                                        onClick={() => closeAndNavigate(`/watch/${item.media_type || 'movie'}/${item.id}${item.media_type === 'tv' ? '/1/1' : ''}`)}
-                                                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 group transition-all text-left"
-                                                        role="option"
-                                                        aria-selected="false"
-                                                        aria-label={`Watch: ${item.title || item.name}`}
-                                                    >
-                                                        <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500 overflow-hidden relative shrink-0" aria-hidden="true">
-                                                            {item.poster_path ? (
-                                                                <img src={tmdb.getImageUrl(item.poster_path, 'w500')} alt="" className="w-full h-full object-cover opacity-80" />
-                                                            ) : (
-                                                                <PlayCircle size={20} />
-                                                            )}
-                                                        </div>
-                                                        <span className="flex-1 text-sm font-medium text-gray-300 group-hover:text-white truncate">
-                                                            {item.title || item.name}
-                                                        </span>
-                                                        <ArrowRight size={14} className="text-gray-700 group-hover:text-primary-500 transition-colors" aria-hidden="true" />
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </section>
-                                    )}
                                 </div>
                             ) : query.length >= 2 ? (
                                 <div className="py-20 text-center">

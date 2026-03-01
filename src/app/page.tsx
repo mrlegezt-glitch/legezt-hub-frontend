@@ -167,9 +167,9 @@ export default function HomePage() {
 
                             {/* Hero Title */}
                             <motion.h1 variants={fadeUp} initial="hidden" animate="visible" custom={1} id="hero-heading"
-                                className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[1.02] tracking-tight text-white">
-                                Your Ultimate<br />
-                                <span className="gradient-text animate-gradient-shift bg-[length:200%_auto]">Engineering Hub</span>
+                                className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[1.02] tracking-tight">
+                                <span className="gradient-text animate-gradient-shift bg-[length:200%_auto]">Your Ultimate</span><br />
+                                <span className="text-white">Engineering Hub</span>
                             </motion.h1>
 
                             <motion.p variants={fadeUp} initial="hidden" animate="visible" custom={2}
@@ -190,9 +190,6 @@ export default function HomePage() {
                                         Get Started Free <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                     </Link>
                                 )}
-                                <Link href="/explore" className="px-8 py-4 rounded-2xl text-lg font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/15 backdrop-blur-sm transition-all flex items-center gap-2">
-                                    <PlayCircle size={20} /> Watch Content
-                                </Link>
                             </motion.div>
                         </>
                     )}

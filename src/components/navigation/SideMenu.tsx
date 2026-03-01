@@ -7,7 +7,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
 import {
     Home, X, LogOut, User, BookOpen, Headphones, Gift,
-    Settings, HelpCircle, FileText, LayoutDashboard, ShieldCheck, Mail, History, FlaskConical, Film, Tv, PlayCircle
+    Settings, HelpCircle, FileText, LayoutDashboard, ShieldCheck, Mail, History, FlaskConical
 } from 'lucide-react';
 
 export default function SideMenu() {
@@ -47,14 +47,7 @@ export default function SideMenu() {
                 { icon: Gift, label: 'Courses & Offers', href: '/offers' },
             ]
         },
-        {
-            title: 'Entertainment',
-            items: [
-                { icon: PlayCircle, label: 'Explore Media', href: '/explore' },
-                { icon: Film, label: 'Movies', href: '/movies' },
-                { icon: Tv, label: 'TV Series', href: '/series' },
-            ]
-        },
+
         {
             title: 'Account',
             items: [

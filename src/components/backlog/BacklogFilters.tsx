@@ -71,7 +71,7 @@ export default function BacklogFilters({
     }, [yearId]);
 
     return (
-        <div className="bg-dark-100/50 backdrop-blur-lg border border-white/5 rounded-2xl p-4 md:p-6 mb-8 space-y-4">
+        <div className="bg-white/80 dark:bg-dark-100/50 backdrop-blur-lg border border-gray-200 dark:border-white/5 rounded-2xl p-4 md:p-6 mb-8 space-y-4">
             <h2 className="text-lg font-semibold flex items-center gap-2">
                 <span className="text-primary-400">⚡</span> Filter Backlogs
             </h2>
@@ -82,12 +82,12 @@ export default function BacklogFilters({
                     <select
                         value={yearId || ''}
                         onChange={(e) => onYearChange(e.target.value || undefined)}
-                        className="w-full appearance-none bg-dark-200 text-white border border-dark-border rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-primary-500 transition-colors"
+                        className="w-full appearance-none bg-white dark:bg-dark-200 text-gray-800 dark:text-white border border-gray-300 dark:border-dark-border rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-primary-500 transition-colors"
                         disabled={loadingYears}
                     >
-                        <option value="" className="bg-dark-200 text-white">All Years</option>
+                        <option value="" className="bg-white dark:bg-dark-200 text-gray-800 dark:text-white">All Years</option>
                         {years.map((y) => (
-                            <option key={y.id} value={y.id} className="bg-dark-200 text-white">
+                            <option key={y.id} value={y.id} className="bg-white dark:bg-dark-200 text-gray-800 dark:text-white">
                                 {y.displayName}
                             </option>
                         ))}
@@ -100,12 +100,12 @@ export default function BacklogFilters({
                     <select
                         value={semesterId || ''}
                         onChange={(e) => onSemesterChange(e.target.value || undefined)}
-                        className="w-full appearance-none bg-dark-200 text-white border border-dark-border rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full appearance-none bg-white dark:bg-dark-200 text-gray-800 dark:text-white border border-gray-300 dark:border-dark-border rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-primary-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={!yearId || loadingSemesters}
                     >
-                        <option value="" className="bg-dark-200 text-white">All Semesters</option>
+                        <option value="" className="bg-white dark:bg-dark-200 text-gray-800 dark:text-white">All Semesters</option>
                         {semesters.map((s) => (
-                            <option key={s.id} value={s.id} className="bg-dark-200 text-white">
+                            <option key={s.id} value={s.id} className="bg-white dark:bg-dark-200 text-gray-800 dark:text-white">
                                 {s.displayName}
                             </option>
                         ))}
@@ -114,22 +114,22 @@ export default function BacklogFilters({
                 </div>
 
                 {/* Type Toggle */}
-                <div className="flex bg-dark-bg border border-dark-border rounded-xl p-1">
+                <div className="flex bg-gray-100 dark:bg-dark-bg border border-gray-200 dark:border-dark-border rounded-xl p-1">
                     <button
                         onClick={() => onTypeChange(undefined)}
-                        className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${!type ? 'bg-dark-100 text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+                        className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${!type ? 'bg-white dark:bg-dark-100 text-gray-800 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white'}`}
                     >
                         All
                     </button>
                     <button
                         onClick={() => onTypeChange('theory')}
-                        className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${type === 'theory' ? 'bg-primary-500 text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+                        className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${type === 'theory' ? 'bg-primary-500 text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white'}`}
                     >
                         Theory
                     </button>
                     <button
                         onClick={() => onTypeChange('lab')}
-                        className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${type === 'lab' ? 'bg-pink-500 text-white shadow-sm' : 'text-gray-400 hover:text-white'}`}
+                        className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors ${type === 'lab' ? 'bg-pink-500 text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white'}`}
                     >
                         Lab
                     </button>
