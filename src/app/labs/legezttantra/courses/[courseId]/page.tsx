@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight, ArrowLeft, Folder, Code, ChevronDown, Play, FileText, CheckCircle2, Clock, Lock, Share2 } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Folder, Code, ChevronDown, Play, FileText, CheckCircle2, Clock, Lock, Share2, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { labApi } from '@/lib/api';
 import LeGeZtHeader from '@/components/labs/LeGeZtHeader';
 
@@ -106,17 +107,14 @@ export default function StudentCourseContentPage({ params }: { params: { courseI
 
     return (
         <div className="flex flex-col md:flex-row h-screen bg-[#f8fafc] font-sans overflow-hidden">
-            {/* LEFT SIDEBAR - COURSE TREE */}
-            <aside className={`w-full md:w-[320px] bg-white border-r border-slate-200 flex-col shrink-0 z-20 ${showMobileSidebar ? 'flex h-full fixed md:relative' : 'hidden md:flex'}`}>
+            {/* LEFT SIDEBAR - COURSE TREE (DESKTOP) */}
+            <aside className="w-[320px] bg-white border-r border-slate-200 flex-col shrink-0 z-20 hidden md:flex">
                 {/* Sidebar Header */}
                 <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                     <div className="font-bold text-slate-700 truncate" title={course?.title}>
                         {course?.title || 'Loading...'}
                     </div>
                     <div className="flex items-center gap-4">
-                        <button onClick={() => setShowMobileSidebar(false)} className="md:hidden text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">
-                            Close
-                        </button>
                         <button onClick={handleShareCourse} className="text-slate-400 hover:text-green-500 transition-colors" title="Share Course">
                             <Share2 size={16} />
                         </button>
@@ -199,8 +197,87 @@ export default function StudentCourseContentPage({ params }: { params: { courseI
                 </div>
             </aside>
 
+            {/* MOBILE SYLLABUS BOTTOM SHEET */}
+            <AnimatePresence>
+                {showMobileSidebar && (
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowMobileSidebar(false)}
+                            className="fixed inset-0 bg-slate-900/40 z-40 md:hidden backdrop-blur-sm"
+                        />
+                        <motion.div
+                            initial={{ y: '100%' }}
+                            animate={{ y: 0 }}
+                            exit={{ y: '100%' }}
+                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-white rounded-t-3xl z-50 md:hidden flex flex-col shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
+                        >
+                            <div className="flex justify-center pt-3 pb-2 shrink-0">
+                                <div className="w-12 h-1.5 bg-slate-200 rounded-full" />
+                            </div>
+                            <div className="px-6 pb-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+                                <h2 className="text-lg font-bold text-slate-800 truncate pr-4">{course?.title || 'Syllabus'}</h2>
+                                <button onClick={() => setShowMobileSidebar(false)} className="p-2 bg-slate-100 hover:bg-slate-200 transition-colors text-slate-500 rounded-full shrink-0">
+                                    <X size={18} />
+                                </button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto custom-scrollbar">
+                                {loading ? (
+                                    <div className="p-4 text-center text-xs text-slate-400">Loading structure...</div>
+                                ) : (
+                                    <div className="space-y-1 pb-6 pt-2">
+                                        {units.map((unit, index) => {
+                                            const isActive = activeUnitId === unit.id;
+                                            return (
+                                                <div key={unit.id}>
+                                                    <button
+                                                        onClick={() => { setActiveUnitId(unit.id); }}
+                                                        className={`w-full flex items-center gap-3 px-5 py-3.5 text-left transition-colors border-l-4 ${isActive
+                                                            ? 'bg-indigo-50 border-indigo-600 text-indigo-700'
+                                                            : 'bg-transparent border-transparent text-slate-600 hover:bg-slate-50'
+                                                            }`}
+                                                    >
+                                                        <div className={`shrink-0 text-[10px] font-bold px-2 py-1 rounded-md ${isActive ? 'bg-indigo-200/50 text-indigo-800' : 'bg-slate-200 text-slate-600'}`}>
+                                                            {index + 1}
+                                                        </div>
+                                                        <span className="text-sm font-semibold line-clamp-2 leading-snug">
+                                                            {unit.title}
+                                                        </span>
+                                                        {isActive && <ChevronDown size={14} className="ml-auto shrink-0" />}
+                                                    </button>
+                                                    {isActive && (
+                                                        <div className="bg-slate-50/50 py-2">
+                                                            {unit.experiments?.map((exp: any, i: number) => (
+                                                                <Link
+                                                                    key={exp.id}
+                                                                    href={`/labs/legezttantra/grid/${exp.id}`}
+                                                                    className="flex items-center gap-3 px-5 py-2.5 pl-14 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50/50 text-xs font-medium transition-colors"
+                                                                >
+                                                                    <Code size={14} className="opacity-50 shrink-0" />
+                                                                    <span className="truncate">{i + 1}. {exp.title}</span>
+                                                                </Link>
+                                                            ))}
+                                                            {(!unit.experiments || unit.experiments.length === 0) && (
+                                                                <div className="pl-14 py-3 text-[11px] text-slate-400 italic">No experiments</div>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+
             {/* MAIN CONTENT AREA */}
-            <main className={`flex-1 overflow-y-auto bg-[#f8fafc] w-full ${showMobileSidebar ? 'hidden md:block' : 'block'}`}>
+            <main className="flex-1 overflow-y-auto bg-[#f8fafc] w-full block">
                 <LeGeZtHeader />
 
                 {/* Mobile Toggle Bar */}

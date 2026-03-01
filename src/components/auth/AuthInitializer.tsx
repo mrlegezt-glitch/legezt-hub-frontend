@@ -15,6 +15,9 @@ export default function AuthInitializer() {
                     // Validate token / Get fresh user data
                     const res = await api.get('/auth/me');
                     useAuthStore.getState().updateUser(res.data.data);
+
+                    // Acknowledge Ping-Back successfully
+                    api.post('/auth/ping-ack').catch(() => { });
                 } catch (error: any) {
                     console.error('Session validation failed:', error);
                     // If 401, mostly token expired. Try silent refresh before giving up.
@@ -41,6 +44,8 @@ export default function AuthInitializer() {
                 // Update store (Re-login the user)
                 setAuth(user, accessToken, refreshToken);
 
+                // Acknowledge Ping-Back successfully
+                api.post('/auth/ping-ack').catch(() => { });
             } catch (error) {
                 // Fail silently - user is truly logged out
 
