@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-    FolderOpen, Search, Download, Eye, Loader2, FileText, ChevronRight, BookOpen
+    FolderOpen, Search, Download, Eye, Loader2, FileText, ChevronRight, BookOpen, Share2
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -107,6 +107,35 @@ export default function StudentRecordsPage() {
             document.body.removeChild(a);
         } catch (error) {
             toast.error('Failed to download record');
+        }
+    };
+
+    const handleShare = async (id: string, title: string) => {
+        try {
+            const toastId = toast.loading('Generating share link...');
+            const res = await api.get(`/records/${id}/view`);
+            const url = res.data.data.url;
+            toast.dismiss(toastId);
+
+            const shareText = `Check out this Lab Record on Legezt Hub:\n*${title}*\n\n${url}`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: title,
+                        text: 'Check out this Lab Record:',
+                        url: url
+                    });
+                } catch (e) {
+                    // Ignore abort errors from user cancelling share sheet
+                }
+            } else {
+                // Fallback to WhatsApp Web/App redirect
+                window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+            }
+        } catch (error) {
+            toast.dismiss();
+            toast.error('Failed to generate share link');
         }
     };
 
@@ -237,6 +266,13 @@ export default function StudentRecordsPage() {
                                             <FileText size={24} />
                                         </div>
                                         <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleShare(record.id, record.title)}
+                                                className="w-10 h-10 rounded-xl bg-dark-100 flex items-center justify-center text-gray-400 hover:bg-green-500 hover:text-white transition-colors border border-dark-border hover:border-green-400"
+                                                title="Share Record"
+                                            >
+                                                <Share2 size={18} />
+                                            </button>
                                             <button
                                                 onClick={() => handleView(record.id)}
                                                 className="w-10 h-10 rounded-xl bg-dark-100 flex items-center justify-center text-gray-400 hover:bg-purple-500 hover:text-white transition-colors border border-dark-border hover:border-purple-400"
