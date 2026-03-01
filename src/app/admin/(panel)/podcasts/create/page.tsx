@@ -38,17 +38,17 @@ export default function CreatePodcastPage() {
     const [versions, setVersions] = useState<{
         language: string;
         file: File | null;
-        duration: number;
+        duration: number | string;
         captions: string;
         autoCaption: boolean;
         isHinglish: boolean;
     }[]>([
-        { language: 'English', file: null, duration: 0, captions: '', autoCaption: false, isHinglish: false }
+        { language: 'English', file: null, duration: '', captions: '', autoCaption: false, isHinglish: false }
     ]);
 
     const [slides, setSlides] = useState<{
         file: File | null;
-        startTime: number;
+        startTime: number | string;
         notes: string;
     }[]>([]);
 
@@ -81,7 +81,7 @@ export default function CreatePodcastPage() {
         const formData = new FormData();
         formData.append('audio', v.file);
         formData.append('language', v.language);
-        formData.append('durationSeconds', v.duration.toString());
+        formData.append('durationSeconds', v.duration.toString() || '0');
         if (v.captions) formData.append('captionsJson', v.captions);
         if (v.autoCaption) formData.append('autoCaption', 'true');
         if (v.isHinglish) formData.append('isHinglish', 'true');
@@ -120,7 +120,7 @@ export default function CreatePodcastPage() {
 
         const formData = new FormData();
         formData.append('image', s.file);
-        formData.append('startTimeSeconds', s.startTime.toString());
+        formData.append('startTimeSeconds', s.startTime.toString() || '0');
         formData.append('speakerNotes', s.notes);
         formData.append('order', index.toString());
 
@@ -220,7 +220,7 @@ export default function CreatePodcastPage() {
                                 <p className="text-sm text-gray-400">Add languages and enable AI transcription if needed.</p>
                             </div>
                             <button
-                                onClick={() => setVersions([...versions, { language: '', file: null, duration: 0, captions: '', autoCaption: false, isHinglish: false }])}
+                                onClick={() => setVersions([...versions, { language: '', file: null, duration: '', captions: '', autoCaption: false, isHinglish: false }])}
                                 className="text-primary-400 hover:text-white text-sm font-bold flex items-center gap-1"
                             >
                                 <Plus size={16} /> Add Language
@@ -247,7 +247,7 @@ export default function CreatePodcastPage() {
                                             value={v.duration}
                                             onChange={e => {
                                                 const newV = [...versions];
-                                                newV[i].duration = parseInt(e.target.value);
+                                                newV[i].duration = e.target.value === '' ? '' : parseInt(e.target.value);
                                                 setVersions(newV);
                                             }}
                                             className="bg-dark-100 border border-dark-border rounded-lg px-3 py-2 outline-none"
@@ -324,7 +324,7 @@ export default function CreatePodcastPage() {
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-bold">Presentation Slides</h2>
                             <button
-                                onClick={() => setSlides([...slides, { file: null, startTime: 0, notes: '' }])}
+                                onClick={() => setSlides([...slides, { file: null, startTime: '', notes: '' }])}
                                 className="text-primary-400 hover:text-white text-sm font-bold flex items-center gap-1"
                             >
                                 <Plus size={16} /> Add Slide
@@ -357,7 +357,7 @@ export default function CreatePodcastPage() {
                                                     value={s.startTime}
                                                     onChange={e => {
                                                         const newS = [...slides];
-                                                        newS[i].startTime = parseInt(e.target.value);
+                                                        newS[i].startTime = e.target.value === '' ? '' : parseInt(e.target.value);
                                                         setSlides(newS);
                                                     }}
                                                     className="bg-transparent outline-none w-20 text-sm"
