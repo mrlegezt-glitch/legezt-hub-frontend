@@ -138,6 +138,18 @@ export default function AdminPodcastsPage() {
         }
     };
 
+    const handleDeletePodcast = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!confirm('Are you sure you want to delete this podcast?')) return;
+        try {
+            await podcastApi.deletePodcast(id);
+            toast.success('Podcast deleted successfully');
+            setPodcasts(podcasts.filter(p => p.id !== id));
+        } catch (error) {
+            toast.error('Failed to delete podcast');
+        }
+    };
+
     const handleBreadcrumbClick = (index: number) => {
         // Implementation simplified for now: just reset to subject if clicking first item
         if (index === 0 && activeSubject) {
@@ -291,7 +303,7 @@ export default function AdminPodcastsPage() {
                                             <button className="p-2 hover:bg-dark-200 rounded-lg text-gray-400 hover:text-white transition-colors">
                                                 <ImageIcon size={18} />
                                             </button>
-                                            <button className="p-2 hover:bg-red-500/10 rounded-lg text-gray-400 hover:text-red-500 transition-colors">
+                                            <button onClick={(e) => handleDeletePodcast(podcast.id, e)} className="p-2 hover:bg-red-500/10 rounded-lg text-gray-400 hover:text-red-500 transition-colors">
                                                 <Trash2 size={18} />
                                             </button>
                                         </div>

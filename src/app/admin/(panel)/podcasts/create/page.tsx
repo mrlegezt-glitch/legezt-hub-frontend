@@ -242,15 +242,11 @@ export default function CreatePodcastPage() {
                                             className="bg-dark-100 border border-dark-border rounded-lg px-3 py-2 outline-none"
                                         />
                                         <input
-                                            placeholder="Duration (Seconds)"
-                                            type="number"
-                                            value={v.duration}
-                                            onChange={e => {
-                                                const newV = [...versions];
-                                                newV[i].duration = e.target.value === '' ? '' : parseInt(e.target.value);
-                                                setVersions(newV);
-                                            }}
-                                            className="bg-dark-100 border border-dark-border rounded-lg px-3 py-2 outline-none"
+                                            placeholder="Duration (Auto computed)"
+                                            type="text"
+                                            value={v.duration ? `${v.duration} Seconds` : ''}
+                                            readOnly
+                                            className="bg-dark-100 border border-dark-border rounded-lg px-3 py-2 outline-none opacity-50 cursor-not-allowed"
                                         />
                                     </div>
                                     <div className="flex flex-col gap-4">
@@ -259,8 +255,24 @@ export default function CreatePodcastPage() {
                                                 type="file"
                                                 accept="audio/*"
                                                 onChange={e => {
+                                                    const file = e.target.files?.[0] || null;
                                                     const newV = [...versions];
-                                                    newV[i].file = e.target.files?.[0] || null;
+                                                    newV[i].file = file;
+
+                                                    if (file) {
+                                                        const url = URL.createObjectURL(file);
+                                                        const audio = new window.Audio(url);
+                                                        audio.addEventListener('loadedmetadata', () => {
+                                                            setVersions(prev => {
+                                                                const updated = [...prev];
+                                                                updated[i].duration = Math.round(audio.duration);
+                                                                return updated;
+                                                            });
+                                                        });
+                                                    } else {
+                                                        newV[i].duration = '';
+                                                    }
+
                                                     setVersions(newV);
                                                 }}
                                                 className="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-500/10 file:text-primary-400 hover:file:bg-primary-500/20"

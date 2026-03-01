@@ -174,6 +174,7 @@ export const podcastApi = {
     // Admin
     createFolder: (data: { name: string; subjectId: string; parentId?: string | null }) => api.post('/podcasts/folders', data),
     createPodcast: (data: { title: string; folderId: string; description?: string; thumbnailUrl?: string }) => api.post('/podcasts', data),
+    deletePodcast: (id: string) => api.delete(`/podcasts/${id}`),
     addVersion: (id: string, data: FormData) => api.post(`/podcasts/${id}/versions`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
     }),
