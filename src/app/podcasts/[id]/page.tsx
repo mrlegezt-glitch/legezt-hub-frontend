@@ -148,15 +148,30 @@ export default function PodcastPlayerPage() {
     };
 
     if (loading && !podcast) {
-        return <div className="min-h-screen bg-dark-400 flex items-center justify-center">
+        return <div className="min-h-screen bg-[#0F0F12] flex items-center justify-center">
             <div className="text-primary-400 text-xl font-bold animate-pulse">Initializing LeGeZtCast Player...</div>
         </div>;
+    }
+
+    if (podcast && podcast.versions.length === 0) {
+        return (
+            <div className="min-h-[calc(100vh-60px)] bg-[#0F0F12] flex flex-col items-center justify-center text-white">
+                <div className="w-20 h-20 mb-6 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-500">
+                    <Volume2 size={32} />
+                </div>
+                <h2 className="text-2xl font-bold mb-2">No Audio Track Available</h2>
+                <p className="text-gray-500 mb-8 max-w-sm text-center">This podcast doesn't have an audio track uploaded yet. Please check back later.</p>
+                <button onClick={() => router.back()} className="px-6 py-3 rounded-xl bg-primary-500 text-white font-bold hover:bg-primary-600 transition-colors">
+                    Go Back
+                </button>
+            </div>
+        );
     }
 
     const currentSlide = podcast?.slides[activeSlideIndex];
 
     return (
-        <main className="min-h-screen bg-[#0F0F12] text-white flex flex-col h-screen overflow-hidden">
+        <main className="h-[calc(100vh-64px)] md:h-[calc(100vh-60px)] w-full bg-[#0F0F12] text-white flex flex-col overflow-hidden relative z-0">
             {/* Top Bar */}
             <header className="h-16 px-6 border-b border-white/5 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-4">
@@ -227,7 +242,7 @@ export default function PodcastPlayerPage() {
                 </div>
 
                 {/* Right Pane: Slide Viewer */}
-                <div className="hidden lg:flex flex-1 bg-[#09090B] flex-col p-8 overflow-y-auto">
+                <div className="hidden lg:flex flex-1 bg-[#09090B] flex-col p-8 overflow-y-auto min-h-0">
                     <div className="grow relative min-h-[400px] flex items-center justify-center">
                         <AnimatePresence mode="wait">
                             <motion.div

@@ -40,8 +40,10 @@ export default function CreatePodcastPage() {
         file: File | null;
         duration: number;
         captions: string;
+        autoCaption: boolean;
+        isHinglish: boolean;
     }[]>([
-        { language: 'English', file: null, duration: 0, captions: '' }
+        { language: 'English', file: null, duration: 0, captions: '', autoCaption: false, isHinglish: false }
     ]);
 
     const [slides, setSlides] = useState<{
@@ -72,33 +74,50 @@ export default function CreatePodcastPage() {
     };
 
     // Step 2: Upload Audio Versions
-    const handleUploadVersion = async (index: number) => {
+    const handleUploadVersion = async (index: number, hideToast: boolean = false) => {
         const v = versions[index];
         if (!v.file || !podcastId) return;
 
-        setLoading(true);
         const formData = new FormData();
         formData.append('audio', v.file);
         formData.append('language', v.language);
         formData.append('durationSeconds', v.duration.toString());
         if (v.captions) formData.append('captionsJson', v.captions);
+        if (v.autoCaption) formData.append('autoCaption', 'true');
+        if (v.isHinglish) formData.append('isHinglish', 'true');
 
         try {
             await podcastApi.addVersion(podcastId, formData);
-            toast.success(`${v.language} version uploaded`);
+            if (!hideToast) toast.success(`${v.language} version uploaded`);
         } catch (error) {
-            toast.error(`Failed to upload ${v.language} version`);
+            if (!hideToast) toast.error(`Failed to upload ${v.language} version`);
+            throw error;
+        }
+    };
+
+    const handleNextStep2 = async () => {
+        setLoading(true);
+        try {
+            // Sequential upload to avoid overwhelming the network
+            for (let i = 0; i < versions.length; i++) {
+                if (versions[i].file) {
+                    await handleUploadVersion(i, true);
+                }
+            }
+            toast.success('All audio versions processed successfully');
+            setCurrentStep(3);
+        } catch (error) {
+            toast.error('Failed processing some audio versions');
         } finally {
             setLoading(false);
         }
     };
 
     // Step 3: Upload Slides
-    const handleUploadSlide = async (index: number) => {
+    const handleUploadSlide = async (index: number, hideToast: boolean = false) => {
         const s = slides[index];
         if (!s.file || !podcastId) return;
 
-        setLoading(true);
         const formData = new FormData();
         formData.append('image', s.file);
         formData.append('startTimeSeconds', s.startTime.toString());
@@ -107,9 +126,27 @@ export default function CreatePodcastPage() {
 
         try {
             await podcastApi.addSlide(podcastId, formData);
-            toast.success(`Slide ${index + 1} added`);
+            if (!hideToast) toast.success(`Slide ${index + 1} added`);
         } catch (error) {
-            toast.error(`Failed to upload slide ${index + 1}`);
+            if (!hideToast) toast.error(`Failed to upload slide ${index + 1}`);
+            throw error; // Rethrow to catch in bulk upload
+        }
+    };
+
+    const handleCompleteAll = async () => {
+        setLoading(true);
+        try {
+            // Only upload slides that have files
+            for (let i = 0; i < slides.length; i++) {
+                if (slides[i].file) {
+                    await handleUploadSlide(i, true);
+                }
+            }
+            toast.success('Podcast fully published!');
+            router.push('/admin/podcasts');
+        } catch (error) {
+            toast.error('Failed to upload some slides. You can add them later.');
+            router.push('/admin/podcasts');
         } finally {
             setLoading(false);
         }
@@ -178,9 +215,12 @@ export default function CreatePodcastPage() {
                 {currentStep === 2 && (
                     <div className="card p-8 animate-in fade-in slide-in-from-bottom-4">
                         <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold">Audio Versions</h2>
+                            <div>
+                                <h2 className="text-xl font-bold mb-1">Audio Versions</h2>
+                                <p className="text-sm text-gray-400">Add languages and enable AI transcription if needed.</p>
+                            </div>
                             <button
-                                onClick={() => setVersions([...versions, { language: '', file: null, duration: 0, captions: '' }])}
+                                onClick={() => setVersions([...versions, { language: '', file: null, duration: 0, captions: '', autoCaption: false, isHinglish: false }])}
                                 className="text-primary-400 hover:text-white text-sm font-bold flex items-center gap-1"
                             >
                                 <Plus size={16} /> Add Language
@@ -213,34 +253,66 @@ export default function CreatePodcastPage() {
                                             className="bg-dark-100 border border-dark-border rounded-lg px-3 py-2 outline-none"
                                         />
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <input
-                                            type="file"
-                                            accept="audio/*"
-                                            onChange={e => {
-                                                const newV = [...versions];
-                                                newV[i].file = e.target.files?.[0] || null;
-                                                setVersions(newV);
-                                            }}
-                                            className="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-500/10 file:text-primary-400 hover:file:bg-primary-500/20"
-                                        />
-                                        <button
-                                            onClick={() => handleUploadVersion(i)}
-                                            disabled={loading || !v.file}
-                                            className="ml-auto px-4 py-2 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 text-sm font-bold"
-                                        >
-                                            Upload
-                                        </button>
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex items-center gap-4">
+                                            <input
+                                                type="file"
+                                                accept="audio/*"
+                                                onChange={e => {
+                                                    const newV = [...versions];
+                                                    newV[i].file = e.target.files?.[0] || null;
+                                                    setVersions(newV);
+                                                }}
+                                                className="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-500/10 file:text-primary-400 hover:file:bg-primary-500/20"
+                                            />
+                                            {/* We keep individual upload for manual control if needed, but hide it initially for clean UI */}
+                                        </div>
+
+                                        {/* AI Subtitle Toggles */}
+                                        <div className="flex items-center gap-6 mt-2 pt-4 border-t border-dark-border/50">
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={v.autoCaption}
+                                                    onChange={e => {
+                                                        const newV = [...versions];
+                                                        newV[i].autoCaption = e.target.checked;
+                                                        if (!e.target.checked) newV[i].isHinglish = false;
+                                                        setVersions(newV);
+                                                    }}
+                                                    className="w-4 h-4 rounded text-primary-500 bg-dark-100 border-dark-border focus:ring-primary-500 focus:ring-offset-dark-400"
+                                                />
+                                                <span className="text-sm font-medium text-primary-200">Auto-Generate Subtitles (AI)</span>
+                                            </label>
+
+                                            {v.autoCaption && (
+                                                <label className="flex items-center gap-2 cursor-pointer animate-in fade-in slide-in-from-left-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={v.isHinglish}
+                                                        onChange={e => {
+                                                            const newV = [...versions];
+                                                            newV[i].isHinglish = e.target.checked;
+                                                            setVersions(newV);
+                                                        }}
+                                                        className="w-4 h-4 rounded text-orange-500 bg-dark-100 border-dark-border focus:ring-orange-500 focus:ring-offset-dark-400"
+                                                    />
+                                                    <span className="text-sm font-bold text-orange-400">Is Hinglish Mix?</span>
+                                                </label>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="flex justify-end mt-8">
+                        <div className="flex justify-between items-center mt-8 pt-6 border-t border-dark-200">
+                            <span className="text-sm text-gray-500">Note: Audio uploads may take up to 2 minutes with AI subtitles enabled.</span>
                             <button
-                                onClick={() => setCurrentStep(3)}
-                                className="btn-primary px-8 py-3 rounded-xl flex items-center gap-2"
+                                onClick={handleNextStep2}
+                                disabled={loading}
+                                className="btn-primary px-8 py-3 rounded-xl flex items-center gap-2 disabled:opacity-50"
                             >
-                                Next: Add Slides <ChevronRight size={18} />
+                                {loading ? 'Processing & Uploading AI...' : 'Next: Add Slides'} <ChevronRight size={18} />
                             </button>
                         </div>
                     </div>
@@ -304,29 +376,36 @@ export default function CreatePodcastPage() {
                                         />
                                     </div>
                                     <button
-                                        onClick={() => handleUploadSlide(i)}
-                                        disabled={loading || !s.file}
-                                        className="h-10 px-4 bg-emerald-500/10 text-emerald-400 rounded-lg hover:bg-emerald-500/20 text-sm font-bold flex items-center justify-center"
+                                        onClick={() => {
+                                            const newS = slides.filter((_, idx) => idx !== i);
+                                            setSlides(newS);
+                                        }}
+                                        className="h-10 px-4 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500/20 text-sm font-bold flex items-center justify-center"
                                     >
-                                        <Save size={18} />
+                                        <Trash2 size={18} />
                                     </button>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="flex justify-end mt-8 gap-4">
-                            <button
-                                onClick={() => router.push('/admin/podcasts')}
-                                className="px-6 py-3 text-gray-400 hover:text-white font-medium"
-                            >
-                                Finish Later
-                            </button>
-                            <button
-                                onClick={() => router.push('/admin/podcasts')}
-                                className="btn-primary px-8 py-3 rounded-xl flex items-center gap-2"
-                            >
-                                <CheckCircle size={18} /> Complete All
-                            </button>
+                        <div className="flex justify-between items-center mt-8 pt-6 border-t border-dark-200">
+                            <span className="text-sm text-gray-500">Files will be bulk uploaded upon saving.</span>
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={() => router.push('/admin/podcasts')}
+                                    className="px-6 py-3 text-gray-400 hover:text-white font-medium disabled:opacity-50"
+                                    disabled={loading}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleCompleteAll}
+                                    disabled={loading}
+                                    className="btn-primary px-8 py-3 rounded-xl flex items-center gap-2 disabled:opacity-50"
+                                >
+                                    <CheckCircle size={18} /> {loading ? 'Saving Final Slides...' : 'Complete & Publish'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}

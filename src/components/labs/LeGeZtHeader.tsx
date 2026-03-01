@@ -15,8 +15,8 @@ export default function LeGeZtHeader({ className = '' }: LeGeZtHeaderProps) {
 
     return (
         <header
-            className={`h-16 flex items-center justify-between px-6 shadow-xl fixed w-full top-0 z-50 ${className}`}
-            style={{ backgroundColor: '#1e293b' }}
+            className={`h-16 flex items-center justify-between px-6 fixed w-full top-0 z-[999] ${className}`}
+            style={{ backgroundColor: '#0a0f1e', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
         >
             <div className="flex items-center gap-4">
                 <button

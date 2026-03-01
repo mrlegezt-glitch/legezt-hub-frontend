@@ -20,7 +20,8 @@ export default function Footer() {
     if (
         pathname?.startsWith('/admin') ||
         pathname?.startsWith('/pdfs/') ||
-        pathname?.startsWith('/labs/legezttantra')
+        pathname?.startsWith('/labs/legezttantra') ||
+        pathname?.startsWith('/podcasts/')
     ) return null;
 
     return (
