@@ -75,7 +75,6 @@ export default function LoginPage() {
         <main className="min-h-screen flex flex-col items-center justify-center p-6 sm:p-12 relative overflow-hidden bg-slate-50">
             {/* Background Decorations */}
             <div className="absolute top-0 left-0 w-full h-[400px] bg-gradient-to-br from-primary-900 via-slate-900 to-purple-900 rounded-b-[40px] sm:rounded-b-[80px] -z-10 overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
                 <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-primary-500/30 blur-[100px] rounded-full"></div>
                 <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500/30 blur-[80px] rounded-full"></div>
             </div>
