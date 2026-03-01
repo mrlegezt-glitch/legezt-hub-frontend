@@ -330,6 +330,77 @@ export default function HomePage() {
             </section>
 
             {/* ============================
+                LEGEZTTANTRA HIGHLIGHT
+            ============================ */}
+            <section className="max-w-7xl mx-auto px-5 md:px-6 py-10 md:py-16 relative z-10">
+                <div className="relative overflow-hidden rounded-3xl border border-cyan-500/20 bg-gradient-to-br from-[#0a192f] via-[#112240] to-purple-900/30 p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row items-center gap-12 lg:gap-20 shadow-2xl shadow-cyan-900/20">
+
+                    {/* Abstract Grid and Glows */}
+                    <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-700/20 blur-[120px] rounded-full pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-700/20 blur-[120px] rounded-full pointer-events-none"></div>
+
+                    {/* Text Content */}
+                    <div className="relative z-10 flex-1 space-y-6">
+                        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-bold uppercase tracking-widest border border-cyan-500/20 shadow-lg shadow-cyan-500/10">
+                            <Sparkles size={14} />
+                            CodeTantra Hack
+                        </div>
+
+                        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-[1.1]">
+                            Unlock the Editor with <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 animate-gradient-shift">LegeztTantra</span>
+                        </h2>
+
+                        <p className="text-gray-300 text-base md:text-lg leading-relaxed max-w-xl">
+                            Stuck on a locked code panel in CodeTantra? You can bypass the restriction directly from your browser (laptop or window) and paste solutions from LeGeZt.
+                        </p>
+
+                        <div className="bg-[#020c1b]/60 border border-cyan-500/15 rounded-2xl p-6 backdrop-blur-md">
+                            <h3 className="text-cyan-400 font-bold mb-3 flex items-center gap-2">
+                                <span className="bg-cyan-500/20 text-cyan-300 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
+                                How to use it:
+                            </h3>
+                            <ul className="space-y-3 text-gray-300 text-sm md:text-base">
+                                <li className="flex gap-3">
+                                    <span className="text-cyan-500 mt-1">✓</span>
+                                    <span>Press <kbd className="px-2 py-1 bg-white/10 rounded-md text-cyan-300 border border-white/10 font-mono text-xs shadow-sm">Ctrl</kbd> + <kbd className="px-2 py-1 bg-white/10 rounded-md text-cyan-300 border border-white/10 font-mono text-xs shadow-sm">Shift</kbd> + <kbd className="px-2 py-1 bg-white/10 rounded-md text-cyan-300 border border-white/10 font-mono text-xs shadow-sm">C</kbd> to open Developer Tools.</span>
+                                </li>
+                                <li className="flex gap-3">
+                                    <span className="text-cyan-500 mt-1">✓</span>
+                                    <span>Click on the <strong>locked code editor panel</strong> in CodeTantra.</span>
+                                </li>
+                                <li className="flex gap-3">
+                                    <span className="text-cyan-500 mt-1">✓</span>
+                                    <span>Find the <code>disabled</code> or <code>readonly</code> attribute in the HTML and delete it.</span>
+                                </li>
+                                <li className="flex gap-3">
+                                    <span className="text-cyan-500 mt-1">✓</span>
+                                    <span>Copy the correct program code from LeGeZt and simply paste it in!</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    {/* Image / Graphic */}
+                    <div className="relative w-full lg:w-1/2 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-black/50 group">
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#020c1b]/80 via-transparent to-transparent z-10"></div>
+                        <img
+                            src="/assets/codetantra_guide.png"
+                            alt="CodeTantra DevTools Guide"
+                            className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700"
+                        />
+                        {/* Overlay Tooltip */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-md border border-cyan-500/30 px-6 py-3 rounded-xl shadow-[0_0_30px_rgba(34,211,238,0.3)] animate-pulse">
+                            <span className="text-white font-mono font-bold tracking-widest text-lg">
+                                <span className="text-cyan-400">Ctrl</span> + <span className="text-cyan-400">Shift</span> + <span className="text-cyan-400">C</span>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            {/* ============================
                 CTA / LOGIN NOTICE
             ============================ */}
             {!isAuthenticated && (
