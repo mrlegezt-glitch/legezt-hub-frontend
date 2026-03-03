@@ -167,18 +167,18 @@ export default function AdminPodcastsPage() {
         <div className="p-8 max-w-7xl mx-auto min-h-screen">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
+                    <h1 className="text-3xl font-display font-bold text-white mb-2 flex items-center gap-2 drop-shadow-md">
                         {activeSubject ? (
                             <>
-                                <button onClick={() => { setActiveSubject(null); setView('subjects'); }} className="hover:bg-dark-200 p-1 rounded-lg transition-colors">
-                                    <ArrowLeft size={24} />
+                                <button onClick={() => { setActiveSubject(null); setView('subjects'); }} className="hover:bg-dark-surface p-2 rounded-xl border border-transparent hover:border-silver-dark/20 text-silver-400 hover:text-white transition-all shadow-inner">
+                                    <ArrowLeft size={20} />
                                 </button>
                                 {activeSubject.name}
-                                {activeFolder && <span className="text-gray-500 font-normal text-xl">/ {activeFolder.name}</span>}
+                                {activeFolder && <span className="text-silver-500 font-bold text-xl drop-shadow-sm">/ {activeFolder.name}</span>}
                             </>
                         ) : 'Podcast Management'}
                     </h1>
-                    <p className="text-gray-400">Organize and manage academic audio content</p>
+                    <p className="text-silver-400">Organize and manage academic audio content</p>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -186,7 +186,7 @@ export default function AdminPodcastsPage() {
                         <>
                             <button
                                 onClick={() => setShowCreateFolder(true)}
-                                className="btn bg-dark-200 hover:bg-dark-100 text-white flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all border border-dark-border"
+                                className="bg-dark-android hover:bg-silver-dark/10 text-silver-300 font-bold flex items-center gap-2 px-4 py-2.5 rounded-xl border border-silver-dark/20 shadow-inner hover:text-white transition-all"
                             >
                                 <Folder size={18} />
                                 New Folder
@@ -194,10 +194,11 @@ export default function AdminPodcastsPage() {
                             {activeFolder && (
                                 <Link
                                     href={`/admin/podcasts/create?folderId=${activeFolder.id}`}
-                                    className="btn-primary flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all hover:scale-105"
+                                    className="bg-silver-gradient text-dark-android font-bold flex items-center gap-2 px-5 py-2.5 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all overflow-hidden relative group"
                                 >
-                                    <Plus size={18} />
-                                    Upload Podcast
+                                    <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/10 rounded-t-xl" />
+                                    <Plus size={18} className="relative z-10" />
+                                    <span className="relative z-10">Upload Podcast</span>
                                 </Link>
                             )}
                         </>
@@ -223,7 +224,7 @@ export default function AdminPodcastsPage() {
             {/* Content Area */}
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[1, 2, 3].map(i => <div key={i} className="skeleton h-32 rounded-2xl" />)}
+                    {[1, 2, 3].map(i => <div key={i} className="animate-pulse bg-dark-surface border border-silver-dark/10 shadow-android-card h-32 rounded-3xl" />)}
                 </div>
             ) : view === 'subjects' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -231,14 +232,15 @@ export default function AdminPodcastsPage() {
                         <button
                             key={subject.id}
                             onClick={() => enterSubject(subject)}
-                            className="card p-6 flex items-center gap-4 hover:border-primary-500/50 text-left group transition-all"
+                            className="p-6 rounded-3xl bg-dark-surface shadow-android-card border border-silver-dark/10 relative overflow-hidden flex items-center gap-4 hover:border-silver-metallic/40 text-left group transition-all"
                         >
-                            <div className="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30" />
+                            <div className="w-14 h-14 rounded-2xl bg-dark-android border border-silver-dark/20 shadow-inner flex items-center justify-center text-silver-300 group-hover:bg-silver-metallic/10 group-hover:text-white transition-all">
                                 <BookOpen size={24} />
                             </div>
-                            <div>
-                                <h3 className="font-bold text-lg">{subject.name}</h3>
-                                <p className="text-sm text-gray-500">{subject.code} • {subject._count?.podcastFolders || 0} Folders</p>
+                            <div className="relative z-10">
+                                <h3 className="font-display font-bold text-lg text-white drop-shadow-md">{subject.name}</h3>
+                                <p className="text-sm font-bold text-silver-500">{subject.code} • {subject._count?.podcastFolders || 0} Folders</p>
                             </div>
                         </button>
                     ))}
@@ -248,17 +250,18 @@ export default function AdminPodcastsPage() {
                     {/* Folders */}
                     {folders.length > 0 && (
                         <section>
-                            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Folders</h3>
+                            <h3 className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-4 ml-2">Folders</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {folders.map(folder => (
                                     <button
                                         key={folder.id}
                                         onClick={() => enterFolder(folder)}
-                                        className="card p-4 flex items-center gap-3 hover:border-emerald-500/50 text-left group transition-all"
+                                        className="p-5 rounded-2xl bg-dark-surface shadow-android-card border border-silver-dark/10 relative overflow-hidden flex items-center gap-3 hover:border-silver-metallic/40 text-left group transition-all"
                                     >
-                                        <Folder size={20} className="text-emerald-500" fill="currentColor" fillOpacity={0.2} />
-                                        <span className="font-medium truncate flex-1">{folder.name}</span>
-                                        <span className="text-xs text-gray-500 bg-dark-300 px-2 py-0.5 rounded-full">{folder._count.podcasts}</span>
+                                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-20" />
+                                        <Folder size={20} className="text-silver-400 group-hover:text-silver-200 transition-colors" fill="currentColor" fillOpacity={0.2} />
+                                        <span className="font-bold text-silver-200 truncate flex-1">{folder.name}</span>
+                                        <span className="text-xs font-bold text-silver-300 bg-dark-android border border-silver-dark/20 shadow-inner px-2 py-0.5 rounded-lg">{folder._count.podcasts}</span>
                                     </button>
                                 ))}
                             </div>
@@ -267,43 +270,44 @@ export default function AdminPodcastsPage() {
 
                     {/* Podcasts */}
                     <section>
-                        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Podcasts</h3>
+                        <h3 className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-4 ml-2">Podcasts</h3>
                         {podcasts.length === 0 ? (
-                            <div className="text-center py-12 border border-dashed border-dark-border rounded-2xl bg-dark-100/30">
-                                <Music className="mx-auto text-gray-600 mb-3" size={32} />
-                                <p className="text-gray-400">No podcasts in this folder yet.</p>
+                            <div className="text-center py-12 border border-dashed border-silver-dark/20 rounded-3xl bg-dark-android shadow-inner-metallic">
+                                <Music className="mx-auto text-silver-600 mb-3 drop-shadow-sm" size={32} />
+                                <p className="text-silver-400 font-medium">No podcasts in this folder yet.</p>
                                 <button
                                     onClick={() => activeFolder && router.push(`/admin/podcasts/create?folderId=${activeFolder.id}`)}
-                                    className="text-primary-400 hover:text-primary-300 text-sm font-bold mt-2"
+                                    className="text-silver-100 bg-silver-metallic/10 hover:bg-silver-metallic/20 px-4 py-2 rounded-xl text-sm font-bold mt-4 transition-all shadow-inner border border-silver-dark/30"
                                 >
                                     + Upload One
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 gap-3">
+                            <div className="grid grid-cols-1 gap-4">
                                 {podcasts.map(podcast => (
-                                    <div key={podcast.id} className="card p-4 flex items-center gap-6 group hover:border-primary-500/30 transition-all">
-                                        <div className="w-12 h-12 rounded-lg bg-orange-500/10 flex items-center justify-center text-orange-500 shrink-0">
+                                    <div key={podcast.id} className="p-4 rounded-2xl bg-dark-surface shadow-android-card border border-silver-dark/10 relative overflow-hidden flex items-center gap-6 group hover:border-silver-metallic/40 transition-all">
+                                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-20" />
+                                        <div className="w-12 h-12 rounded-xl bg-dark-android border border-silver-dark/20 shadow-inner flex items-center justify-center text-silver-400 shrink-0 group-hover:bg-silver-metallic/10 group-hover:text-white transition-all">
                                             <Music size={20} />
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="font-bold truncate">{podcast.title}</h4>
+                                        <div className="flex-1 min-w-0 relative z-10">
+                                            <h4 className="font-bold text-white truncate drop-shadow-md">{podcast.title}</h4>
                                             <div className="flex gap-2 mt-1">
                                                 {podcast.versions.map(v => (
-                                                    <span key={v.language} className="text-[10px] uppercase bg-dark-300 px-1.5 py-0.5 rounded text-gray-400 border border-dark-border">
+                                                    <span key={v.language} className="text-[10px] uppercase font-bold bg-dark-android px-2 py-0.5 rounded-md text-silver-400 border border-silver-dark/20 shadow-inner tracking-wider">
                                                         {v.language}
                                                     </span>
                                                 ))}
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button className="p-2 hover:bg-dark-200 rounded-lg text-gray-400 hover:text-white transition-colors">
+                                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity relative z-10">
+                                            <button className="p-2 hover:bg-dark-android rounded-xl border border-transparent hover:border-silver-dark/20 shadow-inner text-silver-400 hover:text-white transition-all">
                                                 <FileAudio size={18} />
                                             </button>
-                                            <button className="p-2 hover:bg-dark-200 rounded-lg text-gray-400 hover:text-white transition-colors">
+                                            <button className="p-2 hover:bg-dark-android rounded-xl border border-transparent hover:border-silver-dark/20 shadow-inner text-silver-400 hover:text-white transition-all">
                                                 <ImageIcon size={18} />
                                             </button>
-                                            <button onClick={(e) => handleDeletePodcast(podcast.id, e)} className="p-2 hover:bg-red-500/10 rounded-lg text-gray-400 hover:text-red-500 transition-colors">
+                                            <button onClick={(e) => handleDeletePodcast(podcast.id, e)} className="p-2 hover:bg-red-500/10 rounded-xl border border-transparent hover:border-red-500/20 shadow-inner text-silver-400 hover:text-red-400 transition-all">
                                                 <Trash2 size={18} />
                                             </button>
                                         </div>
@@ -317,19 +321,22 @@ export default function AdminPodcastsPage() {
 
             {/* Create Folder Modal */}
             {showCreateFolder && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <form onSubmit={handleCreateFolder} className="card w-full max-w-md p-6 bg-dark-100 border-primary-500/20 shadow-2xl">
-                        <h2 className="text-xl font-bold mb-4">Create New Folder</h2>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
+                    <form onSubmit={handleCreateFolder} className="w-full max-w-md p-8 rounded-3xl bg-dark-surface shadow-android-card border border-silver-dark/20 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30" />
+                        <h2 className="text-xl font-display font-bold text-white mb-6 drop-shadow-md relative z-10">Create New Folder</h2>
                         <input
                             autoFocus
                             placeholder="Folder Name (e.g., Unit 1)"
                             value={newFolderName}
                             onChange={e => setNewFolderName(e.target.value)}
-                            className="w-full bg-dark-200 border border-dark-border rounded-xl px-4 py-3 outline-none focus:border-primary-500 mb-6"
+                            className="w-full bg-dark-android border border-silver-800 rounded-xl px-4 py-4 outline-none focus:border-silver-500 text-white font-bold mb-8 shadow-inner-metallic placeholder-silver-600 transition-all relative z-10"
                         />
-                        <div className="flex justify-end gap-3">
-                            <button type="button" onClick={() => setShowCreateFolder(false)} className="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
-                            <button type="submit" disabled={!newFolderName.trim()} className="btn-primary px-6 py-2 rounded-xl">Create Folder</button>
+                        <div className="flex justify-end gap-3 relative z-10">
+                            <button type="button" onClick={() => setShowCreateFolder(false)} className="px-6 py-2.5 text-silver-400 hover:text-white font-bold transition-colors">Cancel</button>
+                            <button type="submit" disabled={!newFolderName.trim()} className="px-6 py-2.5 bg-silver-gradient text-dark-android rounded-xl font-bold shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                Create Folder
+                            </button>
                         </div>
                     </form>
                 </div>

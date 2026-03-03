@@ -82,56 +82,58 @@ export default function AdminCoursesPage() {
         <div className="p-8 max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Internal Academy</h1>
-                    <p className="text-gray-400">Manage premium courses and certifications</p>
+                    <h1 className="text-3xl font-display font-bold text-white mb-2 drop-shadow-md">Internal Academy</h1>
+                    <p className="text-silver-400">Manage premium courses and certifications</p>
                 </div>
 
                 <button
                     onClick={() => setShowCreate(true)}
-                    className="btn-primary flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all hover:scale-105"
+                    className="bg-silver-gradient text-dark-android font-bold flex items-center gap-2 px-5 py-2.5 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all overflow-hidden relative group"
                 >
-                    <Plus size={18} />
-                    New Course
+                    <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/10 rounded-t-xl" />
+                    <Plus size={18} className="relative z-10" />
+                    <span className="relative z-10">New Course</span>
                 </button>
             </div>
 
             {showCreate && (
-                <form onSubmit={handleCreate} className="card p-6 mb-8 border-primary-500/20 bg-primary-500/5 max-w-2xl">
-                    <h2 className="text-lg font-bold mb-4">Launch New Course</h2>
-                    <div className="space-y-4">
+                <form onSubmit={handleCreate} className="w-full max-w-2xl p-8 rounded-3xl bg-dark-surface shadow-android-card border border-silver-dark/20 relative overflow-hidden mb-8">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30" />
+                    <h2 className="text-xl font-display font-bold text-white mb-6 drop-shadow-md relative z-10">Launch New Course</h2>
+                    <div className="space-y-6 relative z-10">
                         <div>
-                            <label className="text-xs font-semibold text-gray-400 uppercase mb-2 block">Course Title</label>
+                            <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 block ml-2">Course Title</label>
                             <input
                                 required
                                 value={newCourse.title}
                                 onChange={e => setNewCourse({ ...newCourse, title: e.target.value })}
-                                className="w-full bg-dark-200 border border-dark-border rounded-lg py-2 px-4 outline-none focus:border-primary-500"
+                                className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold shadow-inner-metallic placeholder-silver-600 transition-all"
                             />
                         </div>
                         <div>
-                            <label className="text-xs font-semibold text-gray-400 uppercase mb-2 block">Description</label>
+                            <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 block ml-2">Description</label>
                             <textarea
                                 required
                                 value={newCourse.description}
                                 onChange={e => setNewCourse({ ...newCourse, description: e.target.value })}
-                                className="w-full bg-dark-200 border border-dark-border rounded-lg py-2 px-4 outline-none focus:border-primary-500 min-h-[100px]"
+                                className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white shadow-inner-metallic placeholder-silver-600 min-h-[100px] transition-all resize-y"
                             />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-6">
                             <div>
-                                <label className="text-xs font-semibold text-gray-400 uppercase mb-2 block">Pricing</label>
-                                <div className="flex items-center gap-2">
+                                <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 block ml-2">Pricing</label>
+                                <div className="flex items-center gap-2 p-1 bg-dark-android rounded-xl border border-silver-dark/20 shadow-inner">
                                     <button
                                         type="button"
                                         onClick={() => setNewCourse({ ...newCourse, isPaid: false })}
-                                        className={`flex-1 py-2 rounded-lg text-sm border ${!newCourse.isPaid ? 'bg-primary-500/10 border-primary-500 text-primary-400' : 'bg-dark-200 border-dark-border text-gray-500'}`}
+                                        className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all shadow-inner ${!newCourse.isPaid ? 'bg-dark-surface border border-silver-dark/30 text-white shadow-android-card' : 'text-silver-500 hover:text-silver-300'}`}
                                     >
                                         Free
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setNewCourse({ ...newCourse, isPaid: true })}
-                                        className={`flex-1 py-2 rounded-lg text-sm border ${newCourse.isPaid ? 'bg-primary-500/10 border-primary-500 text-primary-400' : 'bg-dark-200 border-dark-border text-gray-500'}`}
+                                        className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all shadow-inner ${newCourse.isPaid ? 'bg-dark-surface border border-silver-dark/30 text-white shadow-android-card' : 'text-silver-500 hover:text-silver-300'}`}
                                     >
                                         Paid
                                     </button>
@@ -139,58 +141,60 @@ export default function AdminCoursesPage() {
                             </div>
                             {newCourse.isPaid && (
                                 <div>
-                                    <label className="text-xs font-semibold text-gray-400 uppercase mb-2 block">Price (INR)</label>
+                                    <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 block ml-2">Price (INR)</label>
                                     <input
                                         type="number"
                                         value={newCourse.price}
                                         onChange={e => setNewCourse({ ...newCourse, price: parseInt(e.target.value) })}
-                                        className="w-full bg-dark-200 border border-dark-border rounded-lg py-2 px-4 outline-none focus:border-primary-500"
+                                        className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold shadow-inner-metallic transition-all"
                                     />
                                 </div>
                             )}
                         </div>
                     </div>
-                    <div className="flex justify-end gap-3 mt-8">
-                        <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 text-sm text-gray-400 hover:text-white">Cancel</button>
-                        <button type="submit" className="btn-primary px-6 py-2 rounded-lg text-sm font-bold">Launch Course</button>
+                    <div className="flex justify-end gap-3 mt-8 relative z-10">
+                        <button type="button" onClick={() => setShowCreate(false)} className="px-6 py-2.5 text-sm font-bold text-silver-400 hover:text-white transition-colors">Cancel</button>
+                        <button type="submit" className="px-6 py-2.5 bg-silver-gradient text-dark-android rounded-xl font-bold shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all">Launch Course</button>
                     </div>
                 </form>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {loading ? (
-                    Array(3).fill(0).map((_, i) => <div key={i} className="skeleton h-48 rounded-2xl" />)
+                    Array(3).fill(0).map((_, i) => <div key={i} className="animate-pulse bg-dark-surface border border-silver-dark/10 shadow-android-card h-48 rounded-3xl" />)
                 ) : courses.length === 0 ? (
-                    <div className="col-span-full py-20 text-center text-gray-500 card border-dashed">
+                    <div className="col-span-full py-20 text-center text-silver-500 border border-dashed border-silver-dark/20 rounded-3xl bg-dark-android shadow-inner-metallic font-bold">
                         No courses launched yet
                     </div>
                 ) : (
                     courses.map((course) => (
-                        <div key={course.id} className="card overflow-hidden group hover:border-primary-500/30 transition-all flex flex-col">
-                            <div className="aspect-video bg-gradient-to-br from-indigo-500 to-purple-600 relative">
+                        <div key={course.id} className="rounded-3xl bg-dark-surface shadow-android-card border border-silver-dark/10 overflow-hidden group hover:border-silver-metallic/40 transition-all flex flex-col relative">
+                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                            <div className="aspect-video bg-dark-android relative overflow-hidden border-b border-white/5">
+                                <div className="absolute inset-0 bg-silver-gradient opacity-10 group-hover:opacity-20 transition-opacity z-10" />
                                 {course.thumbnailUrl ? (
-                                    <img src={course.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                                    <img src={course.thumbnailUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                 ) : (
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <GraduationCap size={48} className="text-white/20" />
+                                        <GraduationCap size={48} className="text-silver-600 drop-shadow-md" />
                                     </div>
                                 )}
-                                <div className={`absolute top-3 right-3 px-2 py-1 rounded-md text-[10px] font-bold uppercase ${course.isPaid ? 'bg-yellow-500 text-black' : 'bg-green-500 text-white'}`}>
+                                <div className={`absolute top-3 right-3 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest z-20 shadow-md backdrop-blur-md ${course.isPaid ? 'bg-yellow-500/90 text-black border border-yellow-400' : 'bg-green-500/90 text-white border border-green-400'}`}>
                                     {course.isPaid ? `₹${course.price}` : 'FREE'}
                                 </div>
                             </div>
-                            <div className="p-5 flex-1 flex flex-col">
-                                <h3 className="font-bold text-white mb-2">{course.title}</h3>
-                                <p className="text-xs text-gray-500 line-clamp-2 mb-4">{course.description}</p>
+                            <div className="p-6 flex-1 flex flex-col relative z-10">
+                                <h3 className="font-display font-bold text-white mb-2 text-lg drop-shadow-md group-hover:text-silver-300 transition-colors">{course.title}</h3>
+                                <p className="text-sm text-silver-400 line-clamp-2 mb-6 font-medium">{course.description}</p>
 
-                                <div className="mt-auto flex items-center justify-between">
-                                    <div className="flex items-center gap-4 text-xs text-gray-400">
-                                        <span className="flex items-center gap-1.5"><Users size={14} /> {course.enrollmentCount}</span>
-                                        <span className="flex items-center gap-1.5 text-green-400"><CheckCircle2 size={14} /> Active</span>
+                                <div className="mt-auto flex items-center justify-between pt-4 border-t border-silver-dark/10">
+                                    <div className="flex items-center gap-4 text-xs font-bold text-silver-500">
+                                        <span className="flex items-center gap-1.5 bg-dark-android px-2 py-1 rounded-md border border-silver-dark/20 shadow-inner"><Users size={14} className="text-silver-400" /> {course.enrollmentCount}</span>
+                                        <span className="flex items-center gap-1.5 text-green-400 bg-green-500/10 px-2 py-1 rounded-md border border-green-500/20"><CheckCircle2 size={14} /> Active</span>
                                     </div>
                                     <button
                                         onClick={() => handleDelete(course.id)}
-                                        className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                                        className="p-2 text-silver-500 hover:text-red-400 bg-dark-android hover:bg-red-500/10 border border-transparent hover:border-red-500/20 rounded-xl shadow-inner transition-all"
                                     >
                                         <Trash2 size={16} />
                                     </button>

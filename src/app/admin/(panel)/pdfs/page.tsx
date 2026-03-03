@@ -359,15 +359,20 @@ export default function PDFsPage() {
 
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">PDF Management</h1>
-                    <p className="text-gray-400">Manage and upload study resources</p>
+        <div className="p-6 md:p-8 max-w-7xl mx-auto min-h-screen pb-24 space-y-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-dark-android border border-silver-dark/20 shadow-inner flex items-center justify-center text-silver-400 group">
+                        <FileText size={28} className="drop-shadow-md group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-display font-bold text-white drop-shadow-md">PDF Management</h1>
+                        <p className="text-[10px] font-bold text-silver-500 uppercase tracking-widest mt-1">Manage study resources</p>
+                    </div>
                 </div>
                 <button
                     onClick={() => setIsUploadModalOpen(true)}
-                    className="btn-primary w-full md:w-auto px-4 py-2 rounded-lg flex items-center justify-center gap-2"
+                    className="bg-silver-gradient text-dark-android font-bold uppercase tracking-widest text-[10px] w-full md:w-auto px-6 py-3.5 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all flex items-center justify-center gap-3 shrink-0"
                 >
                     <Upload size={18} />
                     Upload PDF
@@ -375,97 +380,104 @@ export default function PDFsPage() {
             </div>
 
             {/* Recent Uploads Table & Mobile Cards */}
-            <div className="bg-dark-200 border border-dark-border rounded-xl overflow-hidden shadow-lg">
-                <div className="px-6 py-4 border-b border-dark-border">
-                    <h3 className="font-bold text-white">Recent Uploads</h3>
+            <div className="bg-dark-surface shadow-android-card border border-silver-dark/10 rounded-3xl overflow-hidden relative mb-8">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-20 z-20" />
+                <div className="px-8 py-6 border-b border-silver-dark/20 bg-dark-android relative z-10">
+                    <h3 className="font-display font-bold text-white drop-shadow-md text-lg">Recent Uploads</h3>
                 </div>
                 {loading ? (
-                    <div className="p-8 flex justify-center"><Loader2 className="animate-spin text-primary-500" /></div>
+                    <div className="p-20 text-center relative z-10">
+                        <Loader2 className="animate-spin text-silver-500 mx-auto drop-shadow-md" size={40} />
+                        <p className="text-[10px] font-bold text-silver-500 uppercase tracking-widest mt-4">Scanning Records...</p>
+                    </div>
                 ) : pdfs.length === 0 ? (
-                    <div className="p-8 text-center text-gray-400">No PDFs found. Upload one to get started.</div>
+                    <div className="p-20 text-center opacity-40 relative z-10">
+                        <FileText className="text-silver-600 mx-auto drop-shadow-md mb-4" size={60} />
+                        <p className="text-sm font-bold text-silver-500">No PDFs found. Upload one to get started.</p>
+                    </div>
                 ) : (
-                    <>
+                    <div className="relative z-10">
                         {/* Desktop Table */}
                         <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-left min-w-[800px]">
-                                <thead className="bg-dark-300 text-gray-400 text-sm">
+                                <thead className="bg-dark-android border-b border-silver-dark/10">
                                     <tr>
-                                        <th className="px-6 py-3 font-medium">Title</th>
-                                        <th className="px-6 py-3 font-medium">Location</th>
-                                        <th className="px-6 py-3 font-medium">Size</th>
-                                        <th className="px-6 py-3 font-medium">Downloads</th>
-                                        <th className="px-6 py-3 font-medium">Date</th>
-                                        <th className="px-6 py-3 font-medium text-right">Actions</th>
+                                        <th className="px-6 py-4 text-[10px] font-bold text-silver-500 uppercase tracking-widest leading-loose">Title</th>
+                                        <th className="px-6 py-4 text-[10px] font-bold text-silver-500 uppercase tracking-widest leading-loose">Location</th>
+                                        <th className="px-6 py-4 text-[10px] font-bold text-silver-500 uppercase tracking-widest leading-loose">Size</th>
+                                        <th className="px-6 py-4 text-[10px] font-bold text-silver-500 uppercase tracking-widest leading-loose">Downloads</th>
+                                        <th className="px-6 py-4 text-[10px] font-bold text-silver-500 uppercase tracking-widest leading-loose">Date</th>
+                                        <th className="px-6 py-4 text-[10px] font-bold text-silver-500 uppercase tracking-widest leading-loose text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-dark-border">
+                                <tbody className="divide-y divide-silver-dark/10">
                                     {pdfs.map((pdf) => {
                                         const folderName = pdf.folder?.name || 'Unknown';
                                         return (
-                                            <tr key={pdf.id} className="hover:bg-dark-300/50 transition-colors">
+                                            <tr key={pdf.id} className="hover:bg-dark-android/50 transition-colors group">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
                                                         {/* Thumbnail with overlay */}
-                                                        <div className="w-10 h-10 rounded bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center flex-shrink-0 relative overflow-hidden transition-transform hover:scale-105">
+                                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center flex-shrink-0 relative overflow-hidden transition-all group-hover:shadow-glow border border-white/10 shadow-inner">
                                                             {pdf.thumbnailUrl ? (
-                                                                <img src={pdf.thumbnailUrl} alt={pdf.title} className="w-full h-full object-cover" />
+                                                                <img src={pdf.thumbnailUrl} alt={pdf.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                             ) : (
-                                                                <FileText size={16} />
+                                                                <FileText size={20} className="drop-shadow-md" />
                                                             )}
                                                             {/* View Count Badge */}
-                                                            <div className="absolute top-0 right-0 bg-black/70 px-0.5 rounded-bl-[2px] text-[6px] font-bold text-white flex items-center gap-[1px]">
-                                                                <Eye size={6} /> {pdf.viewCount}
+                                                            <div className="absolute top-0 right-0 bg-dark-android/80 px-1 py-0.5 rounded-bl shadow-inner text-[8px] font-bold text-silver-300 flex items-center gap-[2px] backdrop-blur-sm">
+                                                                <Eye size={8} /> {pdf.viewCount}
                                                             </div>
                                                         </div>
                                                         <div>
-                                                            <div className="font-medium text-white">{pdf.title}</div>
-                                                            <div className="text-xs text-gray-500 truncate max-w-[200px]">{pdf.fileName}</div>
+                                                            <div className="font-bold text-white group-hover:text-silver-300 transition-colors">{pdf.title}</div>
+                                                            <div className="text-xs text-silver-500 truncate max-w-[200px] font-medium mt-0.5">{pdf.fileName}</div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 text-sm">
                                                     <div className="flex items-center gap-3">
-                                                        <div className="flex items-center gap-2 text-white font-medium">
-                                                            <Folder size={14} className="text-yellow-500" />
+                                                        <div className="flex items-center gap-2 text-silver-300 font-bold bg-dark-android px-3 py-1.5 rounded-lg border border-silver-dark/20 shadow-inner">
+                                                            <Folder size={14} className="text-silver-500" />
                                                             {folderName}
                                                         </div>
                                                         <button
                                                             onClick={() => openLocationPopup(pdf)}
-                                                            className="p-1 text-gray-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-md transition-all"
+                                                            className="p-1.5 text-silver-500 hover:text-white bg-dark-android hover:bg-silver-dark/20 border border-transparent hover:border-silver-dark/30 rounded-lg shadow-inner transition-all"
                                                         >
                                                             <Info size={14} />
                                                         </button>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 text-gray-400 text-sm">{pdf.sizeFormatted}</td>
-                                                <td className="px-6 py-4 text-gray-400 text-sm">{pdf.downloadCount}</td>
-                                                <td className="px-6 py-4 text-gray-400 text-sm">
+                                                <td className="px-6 py-4 text-silver-400 font-medium text-sm">{pdf.sizeFormatted}</td>
+                                                <td className="px-6 py-4 text-silver-400 font-bold text-sm bg-dark-android/30">{pdf.downloadCount}</td>
+                                                <td className="px-6 py-4 text-silver-500 font-medium text-sm">
                                                     {new Date(pdf.createdAt).toLocaleDateString()}
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
-                                                    <div className="flex items-center justify-end gap-2">
+                                                    <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <button
                                                             onClick={() => openEditModal(pdf)}
-                                                            className="p-2 text-gray-400 hover:text-primary-500 hover:bg-primary-500/10 rounded-lg transition-colors"
+                                                            className="p-2 text-silver-400 hover:text-white bg-dark-android border border-transparent hover:border-silver-dark/20 shadow-inner rounded-xl transition-all"
                                                         >
-                                                            <Edit2 size={18} />
+                                                            <Edit2 size={16} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleEditContent(pdf)}
-                                                            className="p-2 text-gray-400 hover:text-purple-500 hover:bg-purple-500/10 rounded-lg transition-colors"
+                                                            className="p-2 text-silver-400 hover:text-purple-400 bg-dark-android border border-transparent hover:border-purple-500/20 shadow-inner rounded-xl transition-all"
                                                             title="Edit Content (Magic Wand)"
                                                         >
                                                             {isPreparingEdit && editingContentPdf?.id === pdf.id ? (
-                                                                <Loader2 size={18} className="animate-spin" />
+                                                                <Loader2 size={16} className="animate-spin text-purple-400" />
                                                             ) : (
-                                                                <Wand2 size={18} />
+                                                                <Wand2 size={16} />
                                                             )}
                                                         </button>
                                                         <button
                                                             onClick={() => handleDelete(pdf.id)}
-                                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                                            className="p-2 text-silver-400 hover:text-red-400 bg-dark-android border border-transparent hover:border-red-500/20 shadow-inner rounded-xl transition-all"
                                                         >
-                                                            <Trash2 size={18} />
+                                                            <Trash2 size={16} />
                                                         </button>
                                                     </div>
                                                 </td>
@@ -477,68 +489,72 @@ export default function PDFsPage() {
                         </div>
 
                         {/* Mobile Cards */}
-                        <div className="md:hidden divide-y divide-dark-border">
+                        <div className="md:hidden divide-y divide-silver-dark/10">
                             {pdfs.map((pdf) => {
                                 const folderName = pdf.folder?.name || 'Unknown';
                                 return (
-                                    <div key={pdf.id} className="p-4 space-y-3">
+                                    <div key={pdf.id} className="p-5 space-y-4 hover:bg-dark-android/30 transition-colors">
                                         <div className="flex items-start justify-between">
                                             <div className="flex items-center gap-3">
                                                 {/* Thumbnail with overlay */}
-                                                <div className="w-10 h-10 rounded bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center flex-shrink-0 relative overflow-hidden">
+                                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-white flex items-center justify-center flex-shrink-0 relative overflow-hidden border border-white/10 shadow-inner">
                                                     {pdf.thumbnailUrl ? (
                                                         <img src={pdf.thumbnailUrl} alt={pdf.title} className="w-full h-full object-cover" />
                                                     ) : (
-                                                        <FileText size={20} />
+                                                        <FileText size={20} className="drop-shadow-md" />
                                                     )}
                                                     {/* Mobile Badge */}
-                                                    <div className="absolute top-0 right-0 bg-black/70 px-0.5 rounded-bl-[2px] text-[6px] font-bold text-white flex items-center gap-[1px]">
-                                                        <Eye size={6} /> {pdf.viewCount}
+                                                    <div className="absolute top-0 right-0 bg-dark-android/80 px-1 py-0.5 rounded-bl shadow-inner text-[8px] font-bold text-silver-300 flex items-center gap-[2px] backdrop-blur-sm">
+                                                        <Eye size={8} /> {pdf.viewCount}
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <div className="font-medium text-white line-clamp-1">{pdf.title}</div>
-                                                    <div className="text-xs text-gray-500 truncate max-w-[200px]">{pdf.fileName}</div>
+                                                    <div className="font-bold text-white line-clamp-1 drop-shadow-md">{pdf.title}</div>
+                                                    <div className="text-xs text-silver-500 truncate max-w-[200px] font-medium mt-0.5">{pdf.fileName}</div>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-1">
                                                 <button
                                                     onClick={() => openEditModal(pdf)}
-                                                    className="p-2 text-gray-400 hover:text-primary-500"
+                                                    className="p-2 text-silver-400 hover:text-white bg-dark-android border border-transparent hover:border-silver-dark/20 shadow-inner rounded-xl transition-all"
                                                 >
-                                                    <Edit2 size={18} />
+                                                    <Edit2 size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(pdf.id)}
-                                                    className="p-2 text-gray-400 hover:text-red-500"
+                                                    className="p-2 text-silver-400 hover:text-red-400 bg-dark-android border border-transparent hover:border-red-500/20 shadow-inner rounded-xl transition-all"
                                                 >
-                                                    <Trash2 size={18} />
+                                                    <Trash2 size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleEditContent(pdf)}
-                                                    className="p-2 text-gray-400 hover:text-purple-500"
+                                                    className="p-2 text-silver-400 hover:text-purple-400 bg-dark-android border border-transparent hover:border-purple-500/20 shadow-inner rounded-xl transition-all"
                                                 >
-                                                    <Wand2 size={18} />
+                                                    {isPreparingEdit && editingContentPdf?.id === pdf.id ? (
+                                                        <Loader2 size={16} className="animate-spin text-purple-400" />
+                                                    ) : (
+                                                        <Wand2 size={16} />
+                                                    )}
                                                 </button>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2 text-sm text-gray-300 bg-dark-300/30 p-2 rounded-lg">
-                                            <Folder size={14} className="text-yellow-500" />
+                                        <div className="flex items-center gap-2 text-sm text-silver-300 font-bold bg-dark-android p-3 rounded-xl border border-silver-dark/20 shadow-inner">
+                                            <Folder size={16} className="text-silver-500" />
                                             <span className="truncate flex-1">{folderName}</span>
                                             <button
                                                 onClick={() => openLocationPopup(pdf)}
-                                                className="text-blue-400"
+                                                className="text-silver-400 hover:text-white transition-colors"
                                             >
-                                                <Info size={14} />
+                                                <Info size={16} />
                                             </button>
                                         </div>
 
-                                        <div className="flex items-center justify-between text-xs text-gray-400 px-1">
+                                        <div className="flex items-center justify-between text-[11px] font-bold text-silver-500 px-1 uppercase tracking-wider">
                                             <span>{pdf.sizeFormatted}</span>
                                             <div className="flex items-center gap-3">
-                                                <span className="flex items-center gap-1"><Eye size={10} /> {pdf.viewCount}</span>
-                                                <span className="flex items-center gap-1"><Download size={10} /> {pdf.downloadCount}</span>
+                                                <span className="flex items-center gap-1"><Eye size={12} /> {pdf.viewCount}</span>
+                                                <span className="flex items-center gap-1 text-silver-400"><Download size={12} /> {pdf.downloadCount}</span>
                                                 <span>{new Date(pdf.createdAt).toLocaleDateString()}</span>
                                             </div>
                                         </div>
@@ -546,100 +562,116 @@ export default function PDFsPage() {
                                 );
                             })}
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
 
             {/* Upload Modal */}
             {isUploadModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-0 md:p-4">
-                    <div className="bg-dark-200 border-none md:border md:border-dark-border md:rounded-2xl w-full h-full md:h-auto md:max-w-2xl md:max-h-[90vh] flex flex-col shadow-2xl animate-in zoom-in-95">
-                        <div className="flex-shrink-0 bg-dark-200 p-4 md:p-6 border-b border-dark-border flex items-center justify-between z-10 sticky top-0">
-                            <h2 className="text-xl font-bold text-white">Upload New PDF</h2>
-                            <button onClick={() => setIsUploadModalOpen(false)} className="text-gray-400 hover:text-white">
-                                <X size={24} />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-0 md:p-4">
+                    <div className="bg-dark-surface shadow-android-card border-none md:border md:border-silver-dark/20 md:rounded-3xl w-full h-full md:h-auto md:max-w-2xl md:max-h-[90vh] flex flex-col relative overflow-hidden animate-in zoom-in-95 duration-300">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                        <div className="flex-shrink-0 bg-dark-android p-6 border-b border-silver-dark/20 flex items-center justify-between z-10 sticky top-0">
+                            <h2 className="text-xl font-display font-bold text-white drop-shadow-md">Upload New PDF</h2>
+                            <button onClick={() => setIsUploadModalOpen(false)} className="p-2 text-silver-400 hover:text-white bg-dark-surface hover:bg-silver-dark/20 rounded-xl transition-all active:scale-95 shadow-inner">
+                                <X size={20} />
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+                        <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-dark-surface">
                             {/* Hierarchy Selection */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-gray-400">College</label>
-                                    <select
-                                        className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
-                                        value={selectedCollege}
-                                        onChange={(e) => setSelectedCollege(e.target.value)}
-                                    >
-                                        <option value="">Select College</option>
-                                        {colleges.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                    </select>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block ml-2">College</label>
+                                    <div className="relative">
+                                        <select
+                                            className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold text-xs uppercase tracking-widest shadow-inner-metallic appearance-none"
+                                            value={selectedCollege}
+                                            onChange={(e) => setSelectedCollege(e.target.value)}
+                                        >
+                                            <option value="">Select College</option>
+                                            {colleges.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-silver-500"><svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                    </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-gray-400">Branch</label>
-                                    <select
-                                        className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
-                                        value={selectedBranch}
-                                        onChange={(e) => setSelectedBranch(e.target.value)}
-                                        disabled={!selectedCollege}
-                                    >
-                                        <option value="">Select Branch</option>
-                                        {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                                    </select>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block ml-2">Branch</label>
+                                    <div className="relative">
+                                        <select
+                                            className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold text-xs uppercase tracking-widest shadow-inner-metallic appearance-none disabled:opacity-50"
+                                            value={selectedBranch}
+                                            onChange={(e) => setSelectedBranch(e.target.value)}
+                                            disabled={!selectedCollege}
+                                        >
+                                            <option value="">Select Branch</option>
+                                            {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-silver-500"><svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                    </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-gray-400">Year</label>
-                                    <select
-                                        className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
-                                        value={selectedYear}
-                                        onChange={(e) => setSelectedYear(e.target.value)}
-                                        disabled={!selectedBranch}
-                                    >
-                                        <option value="">Select Year</option>
-                                        {years.map(y => <option key={y.id} value={y.id}>{y.displayName}</option>)}
-                                    </select>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block ml-2">Year</label>
+                                    <div className="relative">
+                                        <select
+                                            className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold text-xs uppercase tracking-widest shadow-inner-metallic appearance-none disabled:opacity-50"
+                                            value={selectedYear}
+                                            onChange={(e) => setSelectedYear(e.target.value)}
+                                            disabled={!selectedBranch}
+                                        >
+                                            <option value="">Select Year</option>
+                                            {years.map(y => <option key={y.id} value={y.id}>{y.displayName}</option>)}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-silver-500"><svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                    </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <label className="text-xs font-medium text-gray-400">Semester</label>
-                                    <select
-                                        className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
-                                        value={selectedSemester}
-                                        onChange={(e) => setSelectedSemester(e.target.value)}
-                                        disabled={!selectedYear}
-                                    >
-                                        <option value="">Select Semester</option>
-                                        {semesters.map(s => <option key={s.id} value={s.id}>{s.displayName}</option>)}
-                                    </select>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block ml-2">Semester</label>
+                                    <div className="relative">
+                                        <select
+                                            className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold text-xs uppercase tracking-widest shadow-inner-metallic appearance-none disabled:opacity-50"
+                                            value={selectedSemester}
+                                            onChange={(e) => setSelectedSemester(e.target.value)}
+                                            disabled={!selectedYear}
+                                        >
+                                            <option value="">Select Semester</option>
+                                            {semesters.map(s => <option key={s.id} value={s.id}>{s.displayName}</option>)}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-silver-500"><svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-gray-400">Subject</label>
-                                <select
-                                    className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
-                                    value={selectedSubject}
-                                    onChange={(e) => setSelectedSubject(e.target.value)}
-                                    disabled={!selectedSemester}
-                                >
-                                    <option value="">Select Subject</option>
-                                    {subjects.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
-                                </select>
+                            <div className="space-y-2 relative z-0">
+                                <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block ml-2">Subject</label>
+                                <div className="relative">
+                                    <select
+                                        className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold text-xs uppercase tracking-widest shadow-inner-metallic appearance-none disabled:opacity-50"
+                                        value={selectedSubject}
+                                        onChange={(e) => setSelectedSubject(e.target.value)}
+                                        disabled={!selectedSemester}
+                                    >
+                                        <option value="">Select Subject</option>
+                                        {subjects.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
+                                    </select>
+                                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-silver-500"><svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                </div>
                             </div>
 
                             {/* Folder Selection & Management */}
                             {selectedSubject && (
-                                <div className="space-y-2 p-4 bg-dark-300/50 rounded-lg border border-dark-border">
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                                        <label className="text-sm font-medium text-white flex items-center gap-2">
-                                            <Folder size={16} className="text-yellow-500" />
+                                <div className="space-y-3 p-5 bg-dark-android rounded-2xl border border-silver-dark/20 shadow-inner-metallic relative z-0">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                        <label className="text-sm font-bold text-white flex items-center gap-2 drop-shadow-md">
+                                            <Folder size={18} className="text-silver-400" />
                                             Target Folder
                                         </label>
                                         {!isCreatingFolder && !isRenamingFolder && (
                                             <button
                                                 onClick={() => setIsCreatingFolder(true)}
-                                                className="text-xs text-primary-400 hover:text-white flex items-center gap-1 self-start sm:self-auto"
+                                                className="text-[10px] font-bold tracking-widest uppercase text-silver-400 hover:text-white flex items-center gap-1.5 self-start sm:self-auto transition-colors"
                                             >
-                                                <Plus size={12} /> New Folder
+                                                <Plus size={14} /> New Folder
                                             </button>
                                         )}
                                     </div>
@@ -651,17 +683,17 @@ export default function PDFsPage() {
                                                 value={newFolderName}
                                                 onChange={(e) => setNewFolderName(e.target.value)}
                                                 placeholder="Folder Name (e.g. Unit 1)"
-                                                className="flex-1 bg-dark-100 border border-dark-border rounded px-3 py-1.5 text-sm outline-none focus:border-primary-500"
+                                                className="flex-1 bg-dark-surface border border-silver-dark/30 rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-inner outline-none focus:border-silver-400 transition-colors"
                                             />
                                             <button
                                                 onClick={handleCreateFolder}
-                                                className="px-3 py-1.5 bg-primary-600 rounded text-xs font-medium hover:bg-primary-500"
+                                                className="px-5 py-2.5 bg-silver-gradient text-dark-android rounded-xl text-xs font-bold uppercase tracking-widest shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 transition-all"
                                             >
                                                 Create
                                             </button>
                                             <button
                                                 onClick={() => setIsCreatingFolder(false)}
-                                                className="px-3 py-1.5 bg-dark-100 rounded text-xs font-medium hover:bg-dark-50"
+                                                className="px-5 py-2.5 bg-dark-surface border border-silver-dark/30 text-silver-400 hover:text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-inner"
                                             >
                                                 Cancel
                                             </button>
@@ -673,50 +705,51 @@ export default function PDFsPage() {
                                                 value={renameFolderName}
                                                 onChange={(e) => setRenameFolderName(e.target.value)}
                                                 placeholder="Rename folder..."
-                                                className="flex-1 bg-dark-100 border border-dark-border rounded px-3 py-1.5 text-sm outline-none focus:border-primary-500"
+                                                className="flex-1 bg-dark-surface border border-silver-dark/30 rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-inner outline-none focus:border-silver-400 transition-colors"
                                             />
                                             <button
                                                 onClick={handleRenameFolder}
-                                                className="px-3 py-1.5 bg-green-600 rounded text-xs font-medium hover:bg-green-500"
+                                                className="px-5 py-2.5 bg-silver-gradient text-dark-android rounded-xl text-xs font-bold uppercase tracking-widest shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 transition-all"
                                             >
                                                 Save
                                             </button>
                                             <button
                                                 onClick={() => setIsRenamingFolder(false)}
-                                                className="px-3 py-1.5 bg-dark-100 rounded text-xs font-medium hover:bg-dark-50"
+                                                className="px-5 py-2.5 bg-dark-surface border border-silver-dark/30 text-silver-400 hover:text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-inner"
                                             >
                                                 Cancel
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-2 relative">
                                             <select
-                                                className="flex-1 bg-dark-100 border border-dark-border rounded px-3 py-2 text-white outline-none focus:border-primary-500"
+                                                className="flex-1 bg-dark-surface border border-silver-dark/30 rounded-xl px-4 py-3 text-white font-bold text-sm shadow-inner outline-none focus:border-silver-500 appearance-none transition-colors disabled:opacity-50"
                                                 value={selectedFolder}
                                                 onChange={(e) => setSelectedFolder(e.target.value)}
                                             >
                                                 <option value="">Select a Folder</option>
                                                 {folders.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
                                             </select>
+                                            <div className="absolute inset-y-0 right-14 pr-2 flex items-center pointer-events-none text-silver-500"><svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
                                             {selectedFolder && (
-                                                <div className="flex gap-1">
+                                                <div className="flex gap-2 shrink-0">
                                                     <button
                                                         onClick={() => {
                                                             setIsRenamingFolder(true);
                                                             const f = folders.find(fo => fo.id === selectedFolder);
                                                             if (f) setRenameFolderName(f.name);
                                                         }}
-                                                        className="px-3 py-2 bg-blue-500/10 text-blue-500 rounded hover:bg-blue-500/20 transition-colors"
+                                                        className="w-11 h-11 flex items-center justify-center bg-dark-surface border border-silver-dark/20 text-silver-400 hover:text-white rounded-xl hover:bg-silver-dark/10 transition-colors shadow-inner"
                                                         title="Rename Folder"
                                                     >
-                                                        <Edit2 size={18} />
+                                                        <Edit2 size={16} />
                                                     </button>
                                                     <button
                                                         onClick={handleDeleteFolder}
-                                                        className="px-3 py-2 bg-red-500/10 text-red-500 rounded hover:bg-red-500/20 transition-colors"
+                                                        className="w-11 h-11 flex items-center justify-center bg-dark-surface border border-red-500/20 text-silver-400 hover:text-red-400 rounded-xl hover:bg-red-500/10 transition-colors shadow-inner"
                                                         title="Delete Folder"
                                                     >
-                                                        <Trash2 size={18} />
+                                                        <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                             )}
@@ -726,10 +759,10 @@ export default function PDFsPage() {
                             )}
 
                             {/* File Details */}
-                            <div className="space-y-4 pt-4 border-t border-dark-border">
-                                <div className="flex flex-col md:flex-row gap-4">
+                            <div className="space-y-6 pt-6 border-t border-silver-dark/20">
+                                <div className="flex flex-col md:flex-row gap-6">
                                     <div
-                                        className="flex-1 border-2 border-dashed border-dark-border rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary-500 hover:bg-dark-200/50 transition-all group"
+                                        className="flex-1 border-2 border-dashed border-silver-dark/30 rounded-2xl p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:border-silver-500 hover:bg-silver-dark/5 transition-all group bg-dark-android shadow-inner-metallic"
                                         onClick={() => document.getElementById('file-upload')?.click()}
                                     >
                                         <input
@@ -739,82 +772,84 @@ export default function PDFsPage() {
                                             accept=".pdf"
                                             onChange={(e) => setFile(e.target.files?.[0] || null)}
                                         />
-                                        <div className="w-16 h-16 bg-dark-300 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                            <Upload className="text-gray-400 group-hover:text-primary-500" size={32} />
+                                        <div className="w-20 h-20 bg-dark-surface border border-silver-dark/20 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-android-card">
+                                            <Upload className="text-silver-400 group-hover:text-silver-200" size={36} />
                                         </div>
-                                        <p className="text-gray-300 font-medium mb-1">
-                                            {file ? file.name : 'Click to upload PDF'}
+                                        <p className="text-white font-bold text-lg mb-2 drop-shadow-md">
+                                            {file ? file.name : 'Choose PDF to upload'}
                                         </p>
-                                        <p className="text-xs text-gray-500">Max file size 50MB</p>
+                                        <p className="text-xs font-bold text-silver-600 uppercase tracking-widest">Max file size 50MB</p>
                                     </div>
 
                                     <button
                                         onClick={() => setShowPDFCreator(true)}
-                                        className="flex flex-row md:flex-col items-center justify-center p-4 md:px-6 border-2 border-dashed border-dark-border rounded-xl hover:border-primary-500 hover:bg-dark-200/50 transition-all group gap-2 w-full md:w-auto"
+                                        className="flex flex-row md:flex-col items-center justify-center p-6 md:px-8 border border-silver-dark/20 rounded-2xl bg-dark-surface shadow-android-card hover:border-silver-500 hover:bg-silver-dark/10 transition-all group gap-4 w-full md:w-auto"
                                         title="Create PDF from Images"
                                     >
-                                        <div className="w-8 h-8 md:w-12 md:h-12 bg-dark-300 rounded-full flex items-center justify-center group-hover:bg-primary-500/20 transition-colors">
-                                            <Scan className="text-gray-400 group-hover:text-primary-500" size={20} />
+                                        <div className="w-12 h-12 md:w-16 md:h-16 bg-dark-android border border-silver-dark/20 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform shadow-inner-metallic">
+                                            <Scan className="text-silver-400 group-hover:text-silver-200" size={24} />
                                         </div>
-                                        <span className="text-sm md:text-xs font-medium text-gray-400 group-hover:text-primary-400 text-center w-auto md:w-20">
+                                        <span className="text-sm md:text-xs font-bold text-silver-400 group-hover:text-white text-center w-auto md:w-28 uppercase tracking-widest leading-relaxed">
                                             Create from Images
                                         </span>
                                     </button>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-medium text-gray-400">Document Title</label>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block ml-2">Document Title</label>
                                         <input
                                             type="text"
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
                                             placeholder="e.g. Data Structures Notes Unit 1"
-                                            className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
+                                            className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold shadow-inner-metallic placeholder-silver-600 transition-all"
                                         />
                                     </div>
-                                    <div className="space-y-1">
-                                        <label className="text-xs font-medium text-gray-400">Description (Optional)</label>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block ml-2">Description <span className="text-silver-600/50">(Optional)</span></label>
                                         <input
                                             type="text"
                                             value={description}
                                             onChange={(e) => setDescription(e.target.value)}
                                             placeholder="Brief detail about the content"
-                                            className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
+                                            className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold shadow-inner-metallic placeholder-silver-600 transition-all"
                                         />
                                     </div>
-                                    <div className="flex flex-col gap-2 pt-2">
-                                        <div className="flex items-center gap-2">
+                                    <div className="flex flex-col gap-3 pt-4 col-span-full">
+                                        <label className="flex items-center gap-3 cursor-pointer group w-fit">
+                                            <div className={`w-5 h-5 rounded border ${notifyUsers ? 'bg-silver-gradient border-silver-light' : 'bg-dark-android border-silver-dark/40'} flex items-center justify-center shadow-inner transition-colors`}>
+                                                {notifyUsers && <Check size={14} className="text-dark-android" />}
+                                            </div>
                                             <input
                                                 type="checkbox"
                                                 id="notifyUsers"
                                                 checked={notifyUsers}
                                                 onChange={(e) => setNotifyUsers(e.target.checked)}
-                                                className="w-4 h-4 rounded border-gray-600 bg-dark-300 text-primary-600 focus:ring-primary-500"
+                                                className="hidden"
                                             />
-                                            <label htmlFor="notifyUsers" className="text-sm text-gray-300 cursor-pointer select-none">
-                                                Notify users via email
-                                            </label>
-                                        </div>
+                                            <span className="text-sm font-bold text-silver-400 group-hover:text-white transition-colors">Notify users via email</span>
+                                        </label>
 
                                         {notifyUsers && (
-                                            <div className="ml-6 p-3 bg-dark-300/50 rounded-lg border border-dark-border animate-in slide-in-from-top-2">
-                                                <div className="flex items-center gap-2 mb-1">
+                                            <div className="ml-8 p-4 bg-dark-android rounded-xl border border-silver-dark/20 shadow-inner-metallic animate-in slide-in-from-top-2">
+                                                <label className="flex items-center gap-3 cursor-pointer group mb-3 w-fit">
+                                                    <div className={`w-5 h-5 rounded border ${isBacklog ? 'bg-yellow-500 border-yellow-400' : 'bg-dark-surface border-silver-dark/40'} flex items-center justify-center shadow-inner transition-colors`}>
+                                                        {isBacklog && <Check size={14} className="text-dark-android" />}
+                                                    </div>
                                                     <input
                                                         type="checkbox"
                                                         id="isBacklog"
                                                         checked={isBacklog}
                                                         onChange={(e) => setIsBacklog(e.target.checked)}
-                                                        className="w-4 h-4 rounded border-gray-600 bg-dark-300 text-yellow-500 focus:ring-yellow-500"
+                                                        className="hidden"
                                                     />
-                                                    <label htmlFor="isBacklog" className="text-sm font-medium text-white cursor-pointer select-none">
-                                                        Prefer Backlog / Important Update?
-                                                    </label>
-                                                </div>
-                                                <p className="text-xs text-gray-400 leading-relaxed">
-                                                    <span className="text-yellow-500 font-bold">Checked:</span> Broadcasts to <b>ALL</b> users (Important for exams).
+                                                    <span className="text-sm font-bold text-white group-hover:text-yellow-100 transition-colors drop-shadow-md">Prefer Backlog / Important Update?</span>
+                                                </label>
+                                                <p className="text-[11px] text-silver-500 font-bold leading-relaxed max-w-lg">
+                                                    <span className="text-yellow-500 drop-shadow-md">Checked:</span> Broadcasts to <b>ALL</b> users (Important for exams).
                                                     <br />
-                                                    <span className="text-blue-400 font-bold">Unchecked:</span> Sends email <b>ONLY</b> to users in this Semester/Year.
+                                                    <span className="text-blue-400 drop-shadow-md">Unchecked:</span> Sends email <b>ONLY</b> to users in this Semester/Year.
                                                 </p>
                                             </div>
                                         )}
@@ -823,19 +858,19 @@ export default function PDFsPage() {
                             </div>
                         </div>
 
-                        <div className="flex-shrink-0 p-4 md:p-6 border-t border-dark-border flex justify-end gap-3 bg-dark-200 sticky bottom-0 z-10 pb-6 md:pb-6">
+                        <div className="flex-shrink-0 p-6 border-t border-silver-dark/20 flex justify-end gap-3 bg-dark-android sticky bottom-0 z-10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
                             <button
                                 onClick={() => setIsUploadModalOpen(false)}
-                                className="px-4 py-2 text-gray-400 hover:text-white"
+                                className="px-6 py-3 text-[10px] font-bold text-silver-500 uppercase tracking-widest hover:text-white transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleUpload}
                                 disabled={uploading || !file || !selectedFolder || !title}
-                                className="btn-primary px-6 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-silver-gradient text-dark-android font-bold uppercase tracking-widest text-[10px] px-8 py-3 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:-translate-y-0 disabled:hover:shadow-3d"
                             >
-                                {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
+                                {uploading ? <Loader2 size={16} className="animate-spin" /> : <Upload size={16} />}
                                 Upload PDF
                             </button>
                         </div>
@@ -844,38 +879,39 @@ export default function PDFsPage() {
             )}
             {/* Edit Modal */}
             {editingPdf && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-dark-200 border border-dark-border rounded-2xl w-full max-w-md shadow-2xl animate-in zoom-in-95">
-                        <div className="p-6 border-b border-dark-border flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-white">Edit PDF</h2>
-                            <button onClick={() => setEditingPdf(null)} className="text-gray-400 hover:text-white">
-                                <X size={24} />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+                    <div className="bg-dark-surface shadow-android-card border border-silver-dark/20 rounded-3xl w-full max-w-md relative overflow-hidden animate-in zoom-in-95 duration-200">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                        <div className="p-6 border-b border-silver-dark/20 flex items-center justify-between bg-dark-android">
+                            <h2 className="text-xl font-display font-bold text-white drop-shadow-md">Edit PDF Title</h2>
+                            <button onClick={() => setEditingPdf(null)} className="p-2 text-silver-400 hover:text-white bg-dark-surface hover:bg-silver-dark/20 rounded-xl transition-all active:scale-95 shadow-inner">
+                                <X size={20} />
                             </button>
                         </div>
-                        <div className="p-6 space-y-4">
-                            <div className="space-y-1">
-                                <label className="text-xs font-medium text-gray-400">Document Title</label>
+                        <div className="p-6 space-y-4 bg-dark-surface">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block ml-2">Document Title</label>
                                 <input
                                     type="text"
                                     value={editTitle}
                                     onChange={(e) => setEditTitle(e.target.value)}
-                                    className="w-full bg-dark-300 border border-dark-border rounded-lg px-3 py-2 text-white outline-none focus:border-primary-500"
+                                    className="w-full bg-dark-android border border-silver-800 rounded-xl py-3 px-4 outline-none focus:border-silver-500 text-white font-bold shadow-inner-metallic placeholder-silver-600 transition-all"
                                 />
                             </div>
                         </div>
-                        <div className="p-6 border-t border-dark-border flex justify-end gap-3 bg-dark-300/30">
+                        <div className="p-6 border-t border-silver-dark/20 flex justify-end gap-3 bg-dark-android">
                             <button
                                 onClick={() => setEditingPdf(null)}
-                                className="px-4 py-2 text-gray-400 hover:text-white"
+                                className="px-6 py-3 text-[10px] font-bold text-silver-500 uppercase tracking-widest hover:text-white transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleUpdate}
                                 disabled={updating || !editTitle}
-                                className="btn-primary px-6 py-2 rounded-lg flex items-center gap-2"
+                                className="bg-silver-gradient text-dark-android font-bold uppercase tracking-widest text-[10px] px-8 py-3 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:-translate-y-0 disabled:hover:shadow-3d"
                             >
-                                {updating ? <Loader2 size={18} className="animate-spin" /> : 'Save Changes'}
+                                {updating ? <Loader2 size={16} className="animate-spin" /> : 'Save Changes'}
                             </button>
                         </div>
                     </div>
@@ -884,48 +920,49 @@ export default function PDFsPage() {
 
             {/* Location Details Popup */}
             {locationPopupPdf && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-all">
-                    <div className="bg-dark-200 border border-dark-border rounded-2xl w-full max-w-lg shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-                        <div className="p-6 border-b border-dark-border flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center">
-                                    <Folder size={20} />
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 transition-all">
+                    <div className="bg-dark-surface shadow-android-card border border-silver-dark/20 rounded-3xl w-full max-w-lg relative overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                        <div className="p-6 border-b border-silver-dark/20 flex items-center justify-between bg-dark-android relative z-10">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-dark-surface border border-silver-dark/20 shadow-inner flex items-center justify-center text-silver-400 group">
+                                    <Folder size={24} className="drop-shadow-md group-hover:scale-110 transition-transform duration-300" />
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-bold text-white">Location Details</h2>
-                                    <p className="text-xs text-gray-400">Full path hierarchy</p>
+                                    <h2 className="text-lg font-display font-bold text-white drop-shadow-md">Location Details</h2>
+                                    <p className="text-[10px] font-bold text-silver-500 uppercase tracking-widest mt-0.5">Full path hierarchy</p>
                                 </div>
                             </div>
-                            <button onClick={() => setLocationPopupPdf(null)} className="text-gray-400 hover:text-white transition-colors">
-                                <X size={24} />
+                            <button onClick={() => setLocationPopupPdf(null)} className="p-2 text-silver-400 hover:text-white bg-dark-surface hover:bg-silver-dark/20 rounded-xl transition-all active:scale-95 shadow-inner">
+                                <X size={20} />
                             </button>
                         </div>
 
-                        <div className="p-6 space-y-6">
+                        <div className="p-6 space-y-6 bg-dark-surface relative z-10">
                             {/* Hierarchy Visualizer */}
-                            <div className="relative pl-4 space-y-6 border-l-2 border-dark-300 ml-2">
+                            <div className="relative pl-6 space-y-8 border-l-2 border-silver-dark/20 ml-2">
                                 {/* College */}
                                 <div className="relative">
-                                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-dark-300 border-2 border-dark-200"></span>
-                                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">College</div>
-                                    <div className="text-white font-medium bg-dark-300/50 p-2 rounded-lg border border-dark-border/50">
+                                    <span className="absolute -left-[29px] top-1.5 w-3 h-3 rounded-full bg-dark-android border-2 border-silver-500 shadow-[0_0_10px_rgba(156,163,175,0.5)]"></span>
+                                    <div className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">College</div>
+                                    <div className="text-white font-bold bg-dark-android p-3 rounded-xl border border-silver-dark/20 shadow-inner-metallic text-sm">
                                         {locationPopupPdf.folder?.subject?.semester?.year?.branch?.college?.name}
                                     </div>
                                 </div>
 
                                 {/* Branch & Year */}
                                 <div className="relative">
-                                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-dark-300 border-2 border-dark-200"></span>
+                                    <span className="absolute -left-[29px] top-1.5 w-3 h-3 rounded-full bg-dark-android border-2 border-silver-500 shadow-[0_0_10px_rgba(156,163,175,0.5)]"></span>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Branch</div>
-                                            <div className="text-white font-medium bg-dark-300/50 p-2 rounded-lg border border-dark-border/50">
+                                            <div className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Branch</div>
+                                            <div className="text-white font-bold bg-dark-android p-3 rounded-xl border border-silver-dark/20 shadow-inner-metallic text-sm truncate">
                                                 {locationPopupPdf.folder?.subject?.semester?.year?.branch?.name}
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Year</div>
-                                            <div className="text-white font-medium bg-dark-300/50 p-2 rounded-lg border border-dark-border/50">
+                                            <div className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Year</div>
+                                            <div className="text-white font-bold bg-dark-android p-3 rounded-xl border border-silver-dark/20 shadow-inner-metallic text-sm truncate">
                                                 {locationPopupPdf.folder?.subject?.semester?.year?.displayName}
                                             </div>
                                         </div>
@@ -934,17 +971,17 @@ export default function PDFsPage() {
 
                                 {/* Semester & Subject */}
                                 <div className="relative">
-                                    <span className="absolute -left-[21px] top-1 w-3 h-3 rounded-full bg-dark-300 border-2 border-dark-200"></span>
+                                    <span className="absolute -left-[29px] top-1.5 w-3 h-3 rounded-full bg-dark-android border-2 border-silver-500 shadow-[0_0_10px_rgba(156,163,175,0.5)]"></span>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Semester</div>
-                                            <div className="text-white font-medium bg-dark-300/50 p-2 rounded-lg border border-dark-border/50">
+                                            <div className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Semester</div>
+                                            <div className="text-white font-bold bg-dark-android p-3 rounded-xl border border-silver-dark/20 shadow-inner-metallic text-sm truncate">
                                                 {locationPopupPdf.folder?.subject?.semester?.displayName}
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Subject</div>
-                                            <div className="text-white font-medium bg-dark-300/50 p-2 rounded-lg border border-dark-border/50">
+                                            <div className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Subject</div>
+                                            <div className="text-white font-bold bg-dark-android p-3 rounded-xl border border-silver-dark/20 shadow-inner-metallic text-sm truncate">
                                                 {locationPopupPdf.folder?.subject?.name}
                                             </div>
                                         </div>
@@ -953,8 +990,8 @@ export default function PDFsPage() {
 
                                 {/* Target Folder (Editable) */}
                                 <div className="relative">
-                                    <span className="absolute -left-[22px] top-1 w-4 h-4 rounded-full bg-primary-500 border-2 border-dark-200 shadow-[0_0_10px_rgba(99,102,241,0.5)]"></span>
-                                    <div className="text-xs font-semibold text-primary-400 uppercase tracking-wider mb-1">Current Folder</div>
+                                    <span className="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-white border-2 border-dark-android shadow-[0_0_15px_rgba(255,255,255,0.8)]"></span>
+                                    <div className="text-[10px] font-bold text-white uppercase tracking-widest mb-2 ml-2 drop-shadow-md">Current Folder</div>
 
                                     {isRenamingLocationFolder ? (
                                         <div className="flex gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -962,31 +999,31 @@ export default function PDFsPage() {
                                                 type="text"
                                                 value={newLocationFolderName}
                                                 onChange={(e) => setNewLocationFolderName(e.target.value)}
-                                                className="flex-1 bg-dark-100 border border-primary-500/50 rounded-lg px-3 py-2 text-white outline-none focus:ring-2 focus:ring-primary-500/20"
+                                                className="flex-1 bg-dark-android border border-silver-500/50 rounded-xl px-4 py-3 text-white font-bold text-sm shadow-inner outline-none focus:border-silver-300 transition-colors"
                                                 autoFocus
                                             />
                                             <button
                                                 onClick={handleRenameLocationFolder}
-                                                className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+                                                className="px-4 py-3 bg-silver-gradient text-dark-android font-bold rounded-xl shadow-3d hover:-translate-y-0.5 hover:shadow-3d-hover transition-all flex items-center justify-center shrink-0"
                                             >
                                                 <Check size={18} />
                                             </button>
                                             <button
                                                 onClick={() => setIsRenamingLocationFolder(false)}
-                                                className="px-3 py-2 bg-dark-300 hover:bg-dark-400 text-gray-400 hover:text-white rounded-lg transition-colors"
+                                                className="px-4 py-3 bg-dark-android border border-silver-dark/30 text-silver-400 hover:text-white rounded-xl shadow-inner transition-colors flex items-center justify-center shrink-0"
                                             >
                                                 <XIcon size={18} />
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="flex items-center gap-2 group">
-                                            <div className="flex-1 text-white font-bold text-lg bg-primary-500/10 border border-primary-500/20 p-3 rounded-lg flex items-center gap-2">
-                                                <Folder size={20} className="text-primary-500" />
+                                        <div className="flex items-center gap-3 group">
+                                            <div className="flex-1 text-dark-android font-bold text-lg bg-silver-gradient border border-white/20 p-4 rounded-xl flex items-center gap-3 shadow-inner">
+                                                <div className="p-1.5 bg-dark-android/10 rounded-lg"><Folder size={20} className="text-dark-android" /></div>
                                                 {locationPopupPdf.folder?.name}
                                             </div>
                                             <button
                                                 onClick={() => setIsRenamingLocationFolder(true)}
-                                                className="p-3 text-gray-500 hover:text-primary-500 hover:bg-primary-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                                className="p-4 bg-dark-android border border-silver-dark/20 text-silver-400 hover:text-white hover:border-silver-dark/50 rounded-xl shadow-inner transition-all opacity-0 group-hover:opacity-100 hover:scale-105"
                                             >
                                                 <Edit2 size={20} />
                                             </button>
@@ -996,10 +1033,10 @@ export default function PDFsPage() {
                             </div>
                         </div>
 
-                        <div className="p-6 border-t border-dark-border bg-dark-300/30 flex justify-end">
+                        <div className="p-6 border-t border-silver-dark/20 bg-dark-android flex justify-end relative z-10">
                             <button
                                 onClick={() => setLocationPopupPdf(null)}
-                                className="px-6 py-2 bg-white text-black font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                                className="px-8 py-3 bg-silver-gradient text-dark-android font-bold uppercase tracking-widest text-[10px] rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all"
                             >
                                 Close
                             </button>

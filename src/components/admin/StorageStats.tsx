@@ -76,9 +76,10 @@ export default function StorageStats() {
     };
 
     return (
-        <div className="card">
-            <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                <Database className="text-primary" size={24} />
+        <div className="p-6 rounded-3xl bg-dark-surface shadow-android-card border border-silver-dark/10 relative overflow-hidden flex flex-col h-full">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30" />
+            <h2 className="text-xl font-display font-bold text-white mb-6 flex items-center gap-2 drop-shadow-md relative z-10">
+                <Database className="text-silver-400" size={24} />
                 Storage & Maintenance
             </h2>
 
@@ -86,47 +87,52 @@ export default function StorageStats() {
             <div className="space-y-4 mb-8">
                 {loading ? (
                     <div className="flex justify-center p-4">
-                        <RefreshCw className="animate-spin text-gray-400" />
+                        <RefreshCw className="animate-spin text-silver-600" />
                     </div>
                 ) : (
                     stats.map((stat) => (
-                        <div key={stat.name} className="flex items-center justify-between p-3 rounded-lg bg-dark-100 border border-white/5">
-                            <div className="flex items-center gap-3">
-                                <HardDrive size={18} className="text-gray-400" />
-                                <div>
-                                    <p className="text-sm font-medium text-gray-200 capitalize">{stat.name}</p>
-                                    <p className="text-xs text-gray-500">{stat.fileCount} files</p>
+                        <div key={stat.name} className="flex items-center justify-between p-3 flex-1">
+                            <div className="flex items-center justify-between p-4 rounded-2xl bg-dark-android border border-silver-dark/20 shadow-inner w-full group overflow-hidden relative">
+                                <div className="absolute inset-0 bg-silver-gradient opacity-0 group-hover:opacity-5 transition-opacity duration-300" />
+                                <div className="flex items-center gap-3 relative z-10">
+                                    <div className="p-2 bg-dark-surface rounded-xl shadow-android-card border border-silver-dark/10">
+                                        <HardDrive size={18} className="text-silver-400 group-hover:text-silver-200 transition-colors" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-silver-200 capitalize tracking-wide">{stat.name}</p>
+                                        <p className="text-xs text-silver-500 font-medium">{stat.fileCount} files</p>
+                                    </div>
                                 </div>
+                                <span className="text-sm font-display font-bold text-silver-300 relative z-10 bg-dark-surface px-3 py-1.5 rounded-lg border border-silver-dark/20 shadow-inner">
+                                    {formatBytes(stat.totalSize)}
+                                </span>
                             </div>
-                            <span className="text-sm font-bold text-primary-400">
-                                {formatBytes(stat.totalSize)}
-                            </span>
                         </div>
                     ))
                 )}
             </div>
 
             {/* Actions */}
-            <div className="space-y-3">
+            <div className="space-y-3 relative z-10 mt-auto">
                 <button
                     onClick={handleCleanup}
                     disabled={cleaning || loading}
-                    className="w-full btn-secondary text-sm p-3 flex items-center justify-between group disabled:opacity-50"
+                    className="w-full bg-dark-android hover:bg-silver-dark/10 text-silver-300 text-sm p-4 rounded-2xl border border-silver-dark/20 shadow-inner flex items-center justify-between group disabled:opacity-50 transition-all font-semibold overflow-hidden relative"
                 >
-                    <span className="flex items-center gap-2">
-                        <Trash2 size={16} className={cleaning ? 'animate-bounce' : ''} />
+                    <span className="flex items-center gap-2 relative z-10 group-hover:text-white transition-colors">
+                        <Trash2 size={18} className={`group-hover:text-red-400 transition-colors ${cleaning ? 'animate-bounce text-red-400' : ''}`} />
                         Cleanup Orphans
                     </span>
-                    {cleaning && <span className="text-xs">Processing...</span>}
+                    {cleaning && <span className="text-xs text-silver-400 relative z-10">Processing...</span>}
                 </button>
 
                 <button
                     onClick={handleClearCache}
                     disabled={clearingCache}
-                    className="w-full btn-secondary text-sm p-3 flex items-center justify-between group disabled:opacity-50"
+                    className="w-full bg-dark-android hover:bg-silver-dark/10 text-silver-300 text-sm p-4 rounded-2xl border border-silver-dark/20 shadow-inner flex items-center justify-between group disabled:opacity-50 transition-all font-semibold overflow-hidden relative"
                 >
-                    <span className="flex items-center gap-2">
-                        <RefreshCw size={16} className={clearingCache ? 'animate-spin' : ''} />
+                    <span className="flex items-center gap-2 relative z-10 group-hover:text-white transition-colors">
+                        <RefreshCw size={18} className={`group-hover:text-blue-400 transition-colors ${clearingCache ? 'animate-spin text-blue-400' : ''}`} />
                         Clear Server Cache
                     </span>
                 </button>

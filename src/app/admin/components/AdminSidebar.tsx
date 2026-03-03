@@ -31,16 +31,19 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
     const { logout, user } = useAuthStore();
 
     return (
-        <aside className={`${isMobile ? 'flex w-full' : 'hidden md:flex w-72'} bg-white border-r border-slate-200 h-full flex-col z-20`}>
+        <aside className={`${isMobile ? 'flex w-full' : 'hidden md:flex w-72'} bg-dark-android h-full flex-col z-20 border-r border-silver-dark/10 shadow-silver-glow`}>
             {/* Logo Area */}
             <div className="p-8 pb-4 flex items-center gap-3">
-                <img src="/logo.png" alt="Admin Logo" className="w-8 h-8 object-contain" />
-                <span className="font-bold text-lg tracking-tight text-slate-900">Admin Console</span>
+                <div className="w-10 h-10 bg-dark-surface rounded-xl flex items-center justify-center shadow-android-card border border-silver-dark/20 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-silver-gradient opacity-10" />
+                    <img src="/logo.png" alt="Admin Logo" className="w-6 h-6 object-contain relative z-10" />
+                </div>
+                <span className="font-display font-bold text-lg tracking-tight text-white drop-shadow-md">Admin Console</span>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 overflow-y-auto px-4 space-y-1.5 py-4">
-                <div className="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+            <nav className="flex-1 overflow-y-auto px-4 space-y-2 py-4 scrollbar-hide">
+                <div className="px-4 mb-3 text-[10px] font-bold text-silver-600 uppercase tracking-widest">
                     Main Menu
                 </div>
                 {menuItems.map((item) => {
@@ -53,58 +56,62 @@ export default function AdminSidebar({ isMobile, onItemClick }: AdminSidebarProp
                             key={item.href}
                             href={item.href}
                             onClick={onItemClick}
-                            className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 group ${isActive
-                                ? 'bg-primary/10 text-primary'
-                                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                            className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-300 group relative overflow-hidden ${isActive
+                                ? 'bg-dark-surface text-white shadow-inner-metallic border border-silver-dark/20'
+                                : 'text-silver-400 hover:text-white hover:bg-dark-surface hover:shadow-android-card border border-transparent hover:border-silver-dark/10'
                                 }`}
                         >
+                            {isActive && (
+                                <div className="absolute inset-0 bg-silver-gradient opacity-5" />
+                            )}
                             <item.icon
                                 size={20}
-                                className={`transition-colors ${isActive ? 'text-primary' : 'text-slate-500 group-hover:text-slate-900'}`}
+                                className={`transition-all duration-300 relative z-10 ${isActive ? 'text-silver-light drop-shadow-md scale-110' : 'text-silver-500 group-hover:text-silver-300 group-hover:scale-110'}`}
                             />
-                            {item.label}
+                            <span className="relative z-10">{item.label}</span>
                         </Link>
                     );
                 })}
 
-                <div className="mt-8 px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <div className="mt-8 px-4 mb-3 text-[10px] font-bold text-silver-600 uppercase tracking-widest">
                     System
                 </div>
                 <Link
                     href="/admin/settings"
-                    className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-200 group ${pathname === '/admin/settings'
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-medium transition-all duration-300 group relative overflow-hidden ${pathname === '/admin/settings'
+                        ? 'bg-dark-surface text-white shadow-inner-metallic border border-silver-dark/20'
+                        : 'text-silver-400 hover:text-white hover:bg-dark-surface hover:shadow-android-card border border-transparent hover:border-silver-dark/10'
                         }`}
                 >
-                    <Settings size={20} className="text-slate-500 group-hover:text-slate-900" />
-                    Settings
+                    <Settings size={20} className="text-silver-500 group-hover:text-silver-300 relative z-10" />
+                    <span className="relative z-10">Settings</span>
                 </Link>
             </nav>
 
             {/* Footer / User Profile */}
-            <div className="p-4 mx-4 mb-4 rounded-2xl bg-slate-50 border border-slate-200">
-                <div className="flex items-center justify-between">
+            <div className="p-4 mx-4 mb-4 rounded-2xl bg-dark-surface border border-silver-dark/10 shadow-android-card relative overflow-hidden group">
+                <div className="absolute inset-0 bg-silver-gradient opacity-0 group-hover:opacity-5 transition-opacity" />
+                <div className="flex items-center justify-between relative z-10">
                     <div className="flex items-center gap-3">
                         <img
                             src={useAuthStore.getState().user?.avatar || '/default-avatar.png'}
                             alt="Profile"
                             referrerPolicy="no-referrer"
-                            className="w-9 h-9 rounded-full object-cover"
+                            className="w-10 h-10 rounded-full object-cover border border-silver-dark/30 shadow-inner"
                         />
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1">
-                                <span className="text-sm font-semibold text-slate-900">{user?.name || 'Admin'}</span>
+                                <span className="text-sm font-semibold text-white">{user?.name || 'Admin'}</span>
                                 {user?.badges?.includes('VERIFIED_ADMIN') && (
-                                    <BadgeCheck className="w-4 h-4 text-blue-400" fill="currentColor" size={12} />
+                                    <BadgeCheck className="w-4 h-4 text-silver-metallic" fill="currentColor" size={12} />
                                 )}
                             </div>
-                            <span className="text-[10px] text-slate-500 truncate max-w-[100px]">{user?.email}</span>
+                            <span className="text-[10px] text-silver-500 truncate max-w-[100px]">{user?.email}</span>
                         </div>
                     </div>
                     <button
                         onClick={() => logout()}
-                        className="text-slate-500 hover:text-accent transition-colors p-2 hover:bg-slate-100 rounded-full"
+                        className="text-silver-500 hover:text-accent transition-colors p-2 hover:bg-dark-android rounded-full border border-transparent hover:border-silver-dark/20"
                         title="Logout"
                     >
                         <LogOut size={18} />

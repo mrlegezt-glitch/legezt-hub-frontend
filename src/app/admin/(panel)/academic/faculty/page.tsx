@@ -12,59 +12,41 @@ export default function FacultyPage() {
     const [phone, setPhone] = useState('');
     const [branchId, setBranchId] = useState('');
     const [email, setEmail] = useState('');
-
-    // Hardcoded College ID for V1 (Or fetch from admin profile later)
-    const collegeId = "COLLEGE_UUID_HERE"; // User asked to hide it, but backend needs it. Ideally we fetch it. 
-    // For now, let's keep it as an optional hidden field or just ask user nicely once? 
-    // Wait, the user said "College UID nahi aana chahiye".
-    // I will fetch the first college from the system or just use a default one since we are in a single-tenant mental model for now?
-    // Let's rely on the user picking a Branch, and we can infer College from Branch? 
-    // No, Branch belongs to College. Faculity belongs to College.
-    // Let's Fetch College ID from the Branch selected? 
-    // Or just fetch `branches` and use the ID. 
-    // I need a collegeId to create a faculty. 
-    // I'll make a helper to "Get My College" or just hide it and use a default.
-
+    const [collegeId, setCollegeId] = useState('');
     const [branches, setBranches] = useState<any[]>([]);
+    const [colleges, setColleges] = useState<any[]>([]);
 
     useEffect(() => {
-        const fetchBranches = async () => {
+        const fetchData = async () => {
             try {
-                const res = await api.get('/academic/branches');
-                setBranches(res.data);
+                const [branchesRes, collegesRes] = await Promise.all([
+                    api.get('/academic/branches'),
+                    api.get('/admin/colleges')
+                ]);
+                setBranches(branchesRes.data);
+
+                const fetchedColleges = collegesRes.data?.data || collegesRes.data || [];
+                setColleges(fetchedColleges);
+                if (fetchedColleges.length > 0) {
+                    setCollegeId(fetchedColleges[0].id);
+                }
             } catch (e) {
-                toast.error('Failed to load branches');
+                toast.error('Failed to load required data');
             }
         };
-        fetchBranches();
+        fetchData();
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        // Find collegeId from selected branch (if possible) or just use a placeholder
-        // Actually, we can just send the first college ID we find from branches?
-        // Let's Try to be smart. If user is Admin, they have a college. 
-        // For now, I will send a Dummy ID or rely on the backend to handle it if I made it optional? No it's required.
-        // I will add a hidden input or just pick the collegeId from the first branch found?
-        // Risky. Let's just ask the user for "College ID" but hide it if we can?
-        // User explicitly said "College UID nahi aana chahiye".
-        // I'll assume the admin knows the context. I'll pass a HARDCODED or valid one if I can.
-        // Better: Fetch `getAllSemesters` or something that has it.
-        // PRO TIP: I'll use the 'branches' list. Each branch usually has a collegeId if I selected it in Prisma.
-        // BUT my `getAllBranches` only selects id, name, code. 
-        // I'll update getAllBranches to return collegeId too.
-
         try {
-            // Retrieve valid collegeID from the branch list if possible
-            // For this quick fix, I will ask user for "Department" (Branch) and use that.
-            // I'll assume the backend needs `collegeId`. 
-            // I will use a placeholder or handle it.
-            // Wait, checking schema: collegeId is Required.
-            // I will add a text input for College ID but pre-fill it or hide it? No user said REMOVE it.
-            // I will default it to a specific value or fetch it.
-            // LET'S FETCH IT.
+            if (!collegeId) {
+                toast.error('College ID is missing. Cannot create faculty.');
+                setLoading(false);
+                return;
+            }
 
             await api.post('/academic/faculty', {
                 name,
@@ -72,8 +54,7 @@ export default function FacultyPage() {
                 phone,
                 email: email || undefined,
                 branchId,
-                collegeId: "d67c1968-3e42-45e0-91c6-30232462370f" // HARDCODING FOR NOW TO UNBLOCK - User has 1 college usually.
-                // Replace with dynamic fetch later.
+                collegeId
             });
             toast.success('Faculty added successfully');
             setName('');
@@ -88,66 +69,101 @@ export default function FacultyPage() {
     };
 
     return (
-        <div className="p-8 max-w-4xl">
-            <h1 className="text-3xl font-bold text-white mb-6">Faculty Management</h1>
+        <div className="p-6 md:p-8 max-w-4xl mx-auto pb-24">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="w-12 h-12 rounded-2xl bg-dark-android border border-silver-dark/20 shadow-inner flex items-center justify-center text-silver-400">
+                    <User size={24} className="drop-shadow-md" />
+                </div>
+                <h1 className="text-3xl font-display font-bold text-white drop-shadow-md">Faculty Management</h1>
+            </div>
 
-            <div className="bg-dark-200 p-6 rounded-2xl border border-dark-border">
-                <h2 className="text-xl font-bold text-white mb-4">Add New Faculty</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <input
-                            type="text"
-                            placeholder="Full Name (e.g. Ms. Farheen Sultana)"
-                            className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white uppercase"
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="text"
-                            placeholder="Designation (e.g. Asst. Professor)"
-                            className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white uppercase"
-                            value={designation}
-                            onChange={e => setDesignation(e.target.value)}
-                            required
-                        />
-                        <input
-                            type="tel"
-                            placeholder="Mobile Number"
-                            className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white"
-                            value={phone}
-                            onChange={e => setPhone(e.target.value)}
-                            required
-                        />
+            <div className="bg-dark-surface shadow-android-card border border-silver-dark/10 p-8 rounded-3xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                <h2 className="text-2xl font-display font-bold text-white mb-8 drop-shadow-md relative z-10">Add New Faculty</h2>
+                <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Full Name</label>
+                            <input
+                                type="text"
+                                placeholder="e.g. Ms. Farheen Sultana"
+                                className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3.5 text-white font-bold uppercase placeholder-silver-600 outline-none focus:border-silver-500 transition-all"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Designation</label>
+                            <input
+                                type="text"
+                                placeholder="e.g. Asst. Professor"
+                                className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3.5 text-white font-bold uppercase placeholder-silver-600 outline-none focus:border-silver-500 transition-all"
+                                value={designation}
+                                onChange={e => setDesignation(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Mobile Number</label>
+                            <input
+                                type="tel"
+                                placeholder="Enter phone number"
+                                className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3.5 text-white font-bold placeholder-silver-600 font-mono tracking-wider outline-none focus:border-silver-500 transition-all"
+                                value={phone}
+                                onChange={e => setPhone(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                        <select
-                            className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white"
-                            value={branchId}
-                            onChange={e => setBranchId(e.target.value)}
-                            required
-                        >
-                            <option value="">Select Department (Branch)</option>
-                            {branches.map(br => (
-                                <option key={br.id} value={br.id}>{br.name}</option>
-                            ))}
-                        </select>
+                        <div>
+                            <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Department</label>
+                            <div className="relative">
+                                <select
+                                    className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3.5 text-white font-bold appearance-none outline-none focus:border-silver-500 transition-all"
+                                    value={branchId}
+                                    onChange={e => setBranchId(e.target.value)}
+                                    required
+                                >
+                                    <option value="" className="text-silver-600">Select Department (Branch)</option>
+                                    {branches.map(br => (
+                                        <option key={br.id} value={br.id} className="text-white bg-dark-surface font-bold">{br.name}</option>
+                                    ))}
+                                </select>
+                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-silver-500">
+                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="md:col-span-2 hidden">
+                            {/* Hidden College ID Select - Auto picked first one to keep UI clean per user request */}
+                            <select value={collegeId} onChange={e => setCollegeId(e.target.value)} className="hidden">
+                                {colleges.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            </select>
+                        </div>
 
                         {/* Hidden or Optional Email */}
-                        <input
-                            type="email"
-                            placeholder="Email (Optional)"
-                            className="w-full bg-dark-100 border border-dark-border rounded-xl p-3 text-white col-span-2"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                        />
+                        <div className="md:col-span-2">
+                            <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Email Address (Optional)</label>
+                            <input
+                                type="email"
+                                placeholder="name@college.edu"
+                                className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3.5 text-white font-bold placeholder-silver-600 outline-none focus:border-silver-500 transition-all"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                            />
+                        </div>
                     </div>
-                    <button
-                        disabled={loading}
-                        className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
-                    >
-                        {loading ? <Loader2 className="animate-spin" /> : <Plus size={20} />}
-                        Add Faculty
-                    </button>
+                    <div className="pt-4 border-t border-silver-dark/10">
+                        <button
+                            disabled={loading}
+                            className="w-full md:w-auto md:ml-auto bg-silver-gradient text-dark-android font-bold px-8 py-4 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
+                        >
+                            {loading ? <Loader2 size={20} className="animate-spin" /> : <Plus size={20} />}
+                            <span className="uppercase tracking-widest">Add Faculty</span>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

@@ -49,20 +49,21 @@ export default function CollegesPage() {
         <div className="p-8 max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">College Management</h1>
-                    <p className="text-gray-400">Manage colleges, branches, years, and semesters here.</p>
+                    <h1 className="text-3xl font-display font-bold text-white mb-2 drop-shadow-md">College Management</h1>
+                    <p className="text-silver-400">Manage colleges, branches, years, and semesters here.</p>
                 </div>
-                <Link href="/admin/colleges/create" className="btn-primary px-4 py-2 rounded-lg flex items-center gap-2">
-                    <Plus size={18} /> Add New College
+                <Link href="/admin/colleges/create" className="bg-silver-gradient text-dark-android font-bold px-6 py-2.5 rounded-xl flex items-center gap-2 shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all overflow-hidden relative group">
+                    <div className="absolute top-0 left-0 right-0 h-1/2 bg-white/10 rounded-t-xl" />
+                    <Plus size={18} className="relative z-10" /> <span className="relative z-10">Add New College</span>
                 </Link>
             </div>
 
             {loading ? (
                 <div className="flex justify-center p-12">
-                    <Loader2 size={32} className="animate-spin text-primary-500" />
+                    <Loader2 size={32} className="animate-spin text-silver-400" />
                 </div>
             ) : colleges.length === 0 ? (
-                <div className="text-gray-500 italic p-12 text-center border-2 border-dashed border-dark-border rounded-xl">
+                <div className="text-silver-500 font-bold p-12 text-center border border-dashed border-silver-dark/20 rounded-3xl bg-dark-android shadow-inner-metallic">
                     No colleges found. Click &quot;Add New College&quot; to create one.
                 </div>
             ) : (
@@ -71,39 +72,40 @@ export default function CollegesPage() {
                         <Link
                             key={college.id}
                             href={`/admin/colleges/${college.id}`}
-                            className="bg-dark-200 border border-dark-border rounded-xl p-6 flex items-center justify-between hover:border-primary-500/30 transition-colors group"
+                            className="bg-dark-surface shadow-android-card border border-silver-dark/10 rounded-3xl p-6 flex items-center justify-between hover:border-silver-metallic/40 transition-all group relative overflow-hidden"
                         >
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-dark-300 rounded-lg flex items-center justify-center text-2xl">
-                                    {college.logo ? <div className="relative w-full h-full"><Image src={college.logo} alt="" fill className="object-cover rounded-lg" /></div> : '🏛️'}
+                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                            <div className="flex items-center gap-4 relative z-10">
+                                <div className="w-14 h-14 bg-dark-android rounded-xl border border-silver-dark/20 shadow-inner flex items-center justify-center text-3xl group-hover:shadow-glow transition-all">
+                                    {college.logo ? <div className="relative w-full h-full"><Image src={college.logo} alt="" fill className="object-cover rounded-xl" /></div> : <School size={28} className="text-silver-500 drop-shadow-md" />}
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg text-white group-hover:text-primary-400 transition-colors">
+                                    <h3 className="font-display font-bold text-xl text-white group-hover:text-silver-300 drop-shadow-md transition-colors">
                                         {college.name}
                                     </h3>
-                                    <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
-                                        <span className="font-mono bg-dark-300 px-2 py-0.5 rounded text-xs">
+                                    <div className="flex items-center gap-4 text-[11px] font-bold text-silver-500 mt-2 tracking-wide uppercase">
+                                        <span className="font-mono bg-dark-android border border-silver-dark/20 shadow-inner px-2 py-1 rounded-md text-silver-300 tracking-wider">
                                             {college.code}
                                         </span>
-                                        <span className="flex items-center gap-1">
-                                            <Layers size={14} /> {college._count?.branches || 0} Branches
+                                        <span className="flex items-center gap-1.5 bg-dark-android border border-silver-dark/20 shadow-inner px-2 py-1 rounded-md">
+                                            <Layers size={14} className="text-silver-400" /> {college._count?.branches || 0} Branches
                                         </span>
-                                        <span className="flex items-center gap-1">
-                                            <Users size={14} /> {college._count?.users || 0} Users
+                                        <span className="flex items-center gap-1.5 bg-dark-android border border-silver-dark/20 shadow-inner px-2 py-1 rounded-md">
+                                            <Users size={14} className="text-silver-400" /> {college._count?.users || 0} Users
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 relative z-10">
                                 <button
                                     onClick={(e) => handleDelete(e, college.id, college.name)}
-                                    className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                    className="p-2 text-silver-500 hover:text-red-400 bg-dark-android hover:bg-red-500/10 border border-transparent hover:border-red-500/20 rounded-xl shadow-inner transition-all"
                                     title="Delete College"
                                 >
                                     <Trash2 size={20} />
                                 </button>
-                                <button className="p-2 text-gray-500 group-hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                                <button className="p-2 text-silver-400 bg-dark-android border border-transparent group-hover:border-silver-dark/20 group-hover:text-white rounded-xl shadow-inner transition-all">
                                     <ChevronRight size={20} />
                                 </button>
                             </div>

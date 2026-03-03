@@ -46,17 +46,17 @@ export default function AdminDashboardPage() {
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
-                    <p className="text-gray-400">Welcome back, {user.name}</p>
+                    <h1 className="text-3xl font-display font-bold text-white mb-2 drop-shadow-md">Dashboard Overview</h1>
+                    <p className="text-silver-400">Welcome back, {user.name}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-gray-500 bg-dark-200 px-3 py-1 rounded-full border border-dark-border">
+                    <span className="text-xs font-mono text-silver-500 bg-dark-surface px-3 py-1 rounded-full border border-silver-dark/20 shadow-inner">
                         v1.2.0-beta
                     </span>
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="btn-primary text-sm px-4 py-2 flex items-center gap-2 ripple-effect">
+                        className="bg-silver-gradient text-dark-android font-bold rounded-xl text-sm px-4 py-2 flex items-center gap-2 shadow-3d hover:shadow-3d-hover border border-silver-light transition-all">
                         <Sparkles size={16} />
                         What&apos;s New
                     </motion.button>
@@ -66,10 +66,10 @@ export default function AdminDashboardPage() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {[
-                    { label: 'Total Users', value: stats?.users || 0, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-                    { label: 'Total PDFs', value: stats?.pdfs || 0, icon: FileText, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-                    { label: 'Total Downloads', value: stats?.downloads || 0, icon: BarChart3, color: 'text-green-400', bg: 'bg-green-500/10' },
-                    { label: 'Colleges', value: stats?.colleges || 0, icon: Database, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+                    { label: 'Total Users', value: stats?.users || 0, icon: Users, color: 'text-silver-100', bg: 'bg-silver-metallic/20', border: 'border-silver-metallic/30' },
+                    { label: 'Total PDFs', value: stats?.pdfs || 0, icon: FileText, color: 'text-silver-100', bg: 'bg-silver-metallic/20', border: 'border-silver-metallic/30' },
+                    { label: 'Total Downloads', value: stats?.downloads || 0, icon: BarChart3, color: 'text-silver-100', bg: 'bg-silver-metallic/20', border: 'border-silver-metallic/30' },
+                    { label: 'Colleges', value: stats?.colleges || 0, icon: Database, color: 'text-silver-100', bg: 'bg-silver-metallic/20', border: 'border-silver-metallic/30' },
                 ].map((stat, i) => (
                     <motion.div
                         key={i}
@@ -77,13 +77,18 @@ export default function AdminDashboardPage() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{ delay: 0.1 + i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                         whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                        className="card card-tilt">
-                        <div className="flex items-start justify-between mb-4">
+                        className="p-6 rounded-3xl bg-dark-surface shadow-android-card border border-silver-dark/10 relative overflow-hidden group">
+
+                        {/* 3D Glossy Wrapper */}
+                        <div className="absolute inset-0 bg-silver-gradient opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30" />
+
+                        <div className="flex items-start justify-between mb-4 relative z-10">
                             <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ delay: 0.3 + i * 0.1, type: 'spring', stiffness: 300, damping: 15 }}
-                                className={`p-4 rounded-2xl ${stat.bg}`}>
+                                className={`p-4 rounded-2xl ${stat.bg} border ${stat.border} shadow-inner-metallic`}>
                                 {loading ? (
                                     <Loader2 className={`animate-spin ${stat.color}`} size={24} />
                                 ) : (
@@ -95,23 +100,24 @@ export default function AdminDashboardPage() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 + i * 0.1, duration: 0.4 }}
-                            className="text-3xl font-bold text-white mb-1">
+                            className="text-3xl font-display font-bold text-white mb-1 relative z-10 drop-shadow-md">
                             {loading ? '...' : stat.value}
                         </motion.h3>
-                        <p className="text-sm text-gray-400 font-medium">{stat.label}</p>
+                        <p className="text-sm text-silver-500 font-medium relative z-10">{stat.label}</p>
                     </motion.div>
                 ))}
             </div>
 
             {/* Advanced Panels */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 card min-h-[400px] flex flex-col">
-                    <div className="flex items-center justify-between mb-8">
+                <div className="lg:col-span-2 p-6 rounded-3xl bg-dark-surface shadow-android-card border border-silver-dark/10 relative overflow-hidden min-h-[400px] flex flex-col">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30" />
+                    <div className="flex items-center justify-between mb-8 relative z-10">
                         <div>
-                            <h2 className="text-xl font-bold text-white">Top Viewed PDFs</h2>
-                            <p className="text-sm text-gray-500">Highest performing content</p>
+                            <h2 className="text-xl font-display font-bold text-white drop-shadow-md">Top Viewed PDFs</h2>
+                            <p className="text-sm text-silver-500">Highest performing content</p>
                         </div>
-                        <div className="flex items-center gap-2 text-primary text-sm font-medium bg-primary/10 px-4 py-2 rounded-full">
+                        <div className="flex items-center gap-2 text-silver-200 text-sm font-medium bg-silver-dark/20 px-4 py-2 rounded-full border border-silver-dark/40 shadow-inner-metallic">
                             <TrendingUp size={16} />
                             Trending
                         </div>
@@ -129,20 +135,20 @@ export default function AdminDashboardPage() {
                                 return (
                                     <div key={pdf.id} className="flex-1 flex flex-col items-center gap-3 group relative">
                                         {/* Tooltip */}
-                                        <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-dark-bg border border-dark-border px-3 py-1 rounded text-xs text-white whitespace-nowrap z-10 pointer-events-none shadow-lg">
+                                        <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-dark-android border border-silver-dark/30 px-3 py-1 rounded-lg text-xs font-bold text-white whitespace-nowrap z-10 pointer-events-none shadow-3d">
                                             {pdf.viewCount} Views
                                         </div>
 
-                                        <div className="w-full relative bg-dark-bg rounded-t-2xl overflow-hidden h-48 flex items-end justify-center">
+                                        <div className="w-full relative bg-dark-android border border-silver-dark/5 rounded-t-2xl overflow-hidden h-48 flex items-end justify-center shadow-inner-metallic">
                                             {/* Bar */}
                                             <motion.div
                                                 initial={{ height: 0 }}
                                                 animate={{ height: `${Math.max(height, 5)}%` }} // Min 5% height
                                                 transition={{ duration: 1, delay: i * 0.1, ease: "easeOut" }}
-                                                className="w-full bg-gradient-to-t from-primary-600 to-primary-400 group-hover:from-primary-500 group-hover:to-primary-300 transition-all cursor-pointer rounded-t-lg mx-1.5"
+                                                className="w-full bg-silver-inverse opacity-80 group-hover:opacity-100 group-hover:shadow-silver-glow transition-all cursor-pointer rounded-t-lg mx-1.5"
                                             />
                                         </div>
-                                        <span className="text-[10px] text-gray-400 font-medium uppercase tracking-tighter truncate max-w-[60px] md:max-w-[100px]" title={pdf.title}>
+                                        <span className="text-[10px] text-silver-400 font-medium uppercase tracking-tighter truncate w-full text-center px-1" title={pdf.title}>
                                             {pdf.title}
                                         </span>
                                     </div>
@@ -157,22 +163,23 @@ export default function AdminDashboardPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.4, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     className="flex flex-col gap-6 h-fit">
-                    <div className="card">
-                        <h2 className="text-xl font-bold text-white mb-6">Quick Actions</h2>
-                        <div className="space-y-3">
+                    <div className="p-6 rounded-3xl bg-dark-surface shadow-android-card border border-silver-dark/10 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30" />
+                        <h2 className="text-xl font-display font-bold text-white mb-6 drop-shadow-md">Quick Actions</h2>
+                        <div className="space-y-3 relative z-10">
                             <motion.button
                                 whileHover={{ x: 4 }}
                                 whileTap={{ scale: 0.98 }}
-                                onClick={() => router.push('/admin/colleges')} className="w-full p-4 text-left hover:bg-dark-bg rounded-2xl transition-all border border-transparent hover:border-dark-border flex items-center justify-between group ripple-effect">
-                                <span className="text-gray-300 font-medium group-hover:text-white">Add New College</span>
-                                <span className="w-8 h-8 rounded-full bg-dark-bg flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-primary transition-all">+</span>
+                                onClick={() => router.push('/admin/colleges')} className="w-full p-4 text-left bg-dark-android hover:bg-silver-dark/10 rounded-2xl transition-all border border-silver-dark/20 shadow-inner flex items-center justify-between group overflow-hidden relative">
+                                <span className="text-silver-300 font-medium group-hover:text-white relative z-10">Add New College</span>
+                                <span className="w-8 h-8 rounded-full bg-dark-surface shadow-3d flex items-center justify-center text-silver-500 group-hover:text-dark-android group-hover:bg-silver-metallic transition-all relative z-10">+</span>
                             </motion.button>
                             <motion.button
                                 whileHover={{ x: 4 }}
                                 whileTap={{ scale: 0.98 }}
-                                onClick={() => router.push('/admin/pdfs')} className="w-full p-4 text-left hover:bg-dark-bg rounded-2xl transition-all border border-transparent hover:border-dark-border flex items-center justify-between group ripple-effect">
-                                <span className="text-gray-300 font-medium group-hover:text-white">Upload Bulk PDFs</span>
-                                <span className="w-8 h-8 rounded-full bg-dark-bg flex items-center justify-center text-gray-500 group-hover:text-white group-hover:bg-primary transition-all">↑</span>
+                                onClick={() => router.push('/admin/pdfs')} className="w-full p-4 text-left bg-dark-android hover:bg-silver-dark/10 rounded-2xl transition-all border border-silver-dark/20 shadow-inner flex items-center justify-between group overflow-hidden relative">
+                                <span className="text-silver-300 font-medium group-hover:text-white relative z-10">Upload Bulk PDFs</span>
+                                <span className="w-8 h-8 rounded-full bg-dark-surface shadow-3d flex items-center justify-center text-silver-500 group-hover:text-dark-android group-hover:bg-silver-metallic transition-all relative z-10">↑</span>
                             </motion.button>
                         </div>
                     </div>

@@ -151,20 +151,21 @@ export default function AssessmentManager() {
     };
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto pb-20">
+        <div className="space-y-8 max-w-7xl mx-auto pb-20 p-6 md:p-8">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                    <h1 className="text-4xl font-black text-white tracking-tighter italic">
-                        ASSESSMENT <span className="text-primary-500">ENGINE</span>
-                    </h1>
-                    <p className="text-gray-500 font-bold text-xs uppercase tracking-[0.3em] mt-1">
-                        Management of Assignments & Evaluating Materials
-                    </p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-dark-android border border-silver-dark/20 shadow-inner flex items-center justify-center text-silver-400">
+                        <BookOpen size={24} className="drop-shadow-md" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-display font-bold text-white drop-shadow-md">Assessment Manager</h1>
+                        <p className="text-silver-500 font-bold text-[10px] uppercase tracking-widest mt-1">Manage Assignments & Materials</p>
+                    </div>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-3 bg-primary-600 hover:bg-primary-500 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all shadow-lg shadow-primary-500/20 active:scale-95 shrink-0"
+                    className="bg-silver-gradient text-dark-android px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-3 shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light shrink-0"
                 >
                     <Plus size={18} />
                     New Assessment
@@ -175,22 +176,23 @@ export default function AssessmentManager() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Stats / Filter Sidebar (Optional) */}
                 <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-dark-200 border border-dark-border rounded-[2.5rem] p-8 space-y-6 shadow-2xl">
-                        <h3 className="text-sm font-black text-white tracking-widest uppercase">Quick Stats</h3>
-                        <div className="space-y-4">
-                            <div className="bg-dark-300/50 p-4 rounded-2xl border border-white/5">
-                                <span className="text-[10px] font-black text-gray-500 uppercase block mb-1">Total Items</span>
-                                <span className="text-2xl font-black text-white italic">{assessments.length}</span>
+                    <div className="bg-dark-surface shadow-android-card border border-silver-dark/10 rounded-3xl p-8 space-y-6 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-20 z-20" />
+                        <h3 className="text-[10px] font-bold text-silver-500 tracking-widest uppercase relative z-10">Quick Stats</h3>
+                        <div className="space-y-4 relative z-10">
+                            <div className="bg-dark-android shadow-inner-metallic p-5 rounded-2xl border border-silver-800">
+                                <span className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block mb-1">Total Items</span>
+                                <span className="text-3xl font-display font-bold text-white drop-shadow-md">{assessments.length}</span>
                             </div>
-                            <div className="bg-dark-300/50 p-4 rounded-2xl border border-white/5">
-                                <span className="text-[10px] font-black text-gray-500 uppercase block mb-1">Assignments</span>
-                                <span className="text-2xl font-black text-indigo-400 italic">
+                            <div className="bg-dark-android shadow-inner-metallic p-5 rounded-2xl border border-silver-800">
+                                <span className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block mb-1">Assignments</span>
+                                <span className="text-3xl font-display font-bold text-silver-300 drop-shadow-md">
                                     {assessments.filter(a => a.type === 'ASSIGNMENT').length}
                                 </span>
                             </div>
-                            <div className="bg-dark-300/50 p-4 rounded-2xl border border-white/5">
-                                <span className="text-[10px] font-black text-gray-500 uppercase block mb-1">Surprise Tests</span>
-                                <span className="text-2xl font-black text-orange-400 italic">
+                            <div className="bg-dark-android shadow-inner-metallic p-5 rounded-2xl border border-silver-800">
+                                <span className="text-[10px] font-bold text-silver-600 uppercase tracking-widest block mb-1">Surprise Tests</span>
+                                <span className="text-3xl font-display font-bold text-silver-400 drop-shadow-md">
                                     {assessments.filter(a => a.type === 'SURPRISE_TEST').length}
                                 </span>
                             </div>
@@ -200,58 +202,59 @@ export default function AssessmentManager() {
 
                 {/* Table Area */}
                 <div className="lg:col-span-3">
-                    <div className="bg-dark-200 border border-dark-border rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <div className="bg-dark-surface shadow-android-card border border-silver-dark/10 rounded-3xl overflow-hidden relative">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-20 z-20" />
                         {loading ? (
-                            <div className="py-20 flex flex-col items-center justify-center">
-                                <Loader2 className="animate-spin text-primary-500 mb-4" size={40} />
-                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Scanning Repository...</p>
+                            <div className="py-20 flex flex-col items-center justify-center relative z-10">
+                                <Loader2 className="animate-spin text-silver-500 mb-4" size={40} />
+                                <p className="text-[10px] font-bold text-silver-500 uppercase tracking-widest">Scanning Repository...</p>
                             </div>
                         ) : assessments.length === 0 ? (
-                            <div className="py-20 flex flex-col items-center justify-center opacity-40">
-                                <FileText size={60} className="text-gray-600 mb-4" />
-                                <p className="text-sm font-bold text-gray-500">No assessments found.</p>
+                            <div className="py-20 flex flex-col items-center justify-center opacity-40 relative z-10">
+                                <FileText size={60} className="text-silver-600 mb-4 drop-shadow-md" />
+                                <p className="text-sm font-bold text-silver-500">No assessments found.</p>
                             </div>
                         ) : (
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto relative z-10">
                                 <table className="w-full text-left">
-                                    <thead className="bg-dark-300/50 border-b border-white/5">
-                                        <tr className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">
+                                    <thead className="bg-dark-android border-b border-silver-dark/20">
+                                        <tr className="text-[10px] font-bold text-silver-500 uppercase tracking-widest">
                                             <th className="px-8 py-5">Title / Subject</th>
                                             <th className="px-8 py-5">Type</th>
                                             <th className="px-8 py-5">Post Date</th>
                                             <th className="px-8 py-5 text-right">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-white/[0.03]">
+                                    <tbody className="divide-y divide-silver-dark/5">
                                         {assessments.map((a) => (
-                                            <tr key={a.id} className="group hover:bg-white/[0.02] transition-colors">
+                                            <tr key={a.id} className="group hover:bg-dark-android transition-colors">
                                                 <td className="px-8 py-6">
                                                     <div className="flex items-center gap-4">
-                                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${a.type === 'SURPRISE_TEST' ? 'bg-orange-500/10 text-orange-400' : 'bg-primary-500/10 text-primary-400'}`}>
+                                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-inner border border-silver-dark/10 ${a.type === 'SURPRISE_TEST' ? 'bg-silver-200/5 text-silver-300' : 'bg-silver-metallic/10 text-white'}`}>
                                                             <FileText size={18} />
                                                         </div>
                                                         <div>
-                                                            <p className="text-sm font-bold text-white group-hover:text-primary-400 transition-colors uppercase tracking-tight">{a.title}</p>
-                                                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-1">
+                                                            <p className="text-sm font-bold text-white group-hover:text-silver-300 transition-colors uppercase tracking-tight">{a.title}</p>
+                                                            <p className="text-[10px] font-bold text-silver-500 uppercase tracking-widest mt-1">
                                                                 {a.subject?.name || 'General'} • {a.section ? `Section ${a.section}` : 'All Sections'}
                                                             </p>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="px-8 py-6">
-                                                    <span className={`text-[10px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest ${a.type === 'SURPRISE_TEST' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'}`}>
+                                                    <span className={`text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-widest shadow-inner border ${a.type === 'SURPRISE_TEST' ? 'bg-dark-android text-silver-400 border-silver-dark/20' : 'bg-silver-metallic/5 text-silver-300 border-silver-metallic/20'}`}>
                                                         {a.type.replace('_', ' ')}
                                                     </span>
                                                 </td>
                                                 <td className="px-8 py-6">
-                                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                                    <p className="text-[10px] font-bold text-silver-500 uppercase tracking-widest font-mono">
                                                         {new Date(a.createdAt).toLocaleDateString()}
                                                     </p>
                                                 </td>
                                                 <td className="px-8 py-6 text-right">
                                                     <button
                                                         onClick={() => handleDelete(a.id)}
-                                                        className="p-3 text-gray-600 hover:text-red-500 bg-dark-300/50 hover:bg-red-500/10 rounded-xl transition-all active:scale-95"
+                                                        className="p-3 text-silver-500 hover:text-red-400 bg-dark-android hover:bg-red-500/10 rounded-xl shadow-inner border border-transparent hover:border-red-500/20 transition-all active:scale-95"
                                                     >
                                                         <Trash2 size={18} />
                                                     </button>
@@ -281,17 +284,18 @@ export default function AssessmentManager() {
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="relative w-full max-w-2xl bg-dark-200 border border-dark-border rounded-[3rem] shadow-2xl overflow-hidden"
+                            className="relative w-full max-w-2xl bg-dark-surface shadow-android-card border border-silver-dark/20 rounded-3xl overflow-hidden"
                         >
-                            <form onSubmit={handleSubmit} className="flex flex-col max-h-[90vh]">
-                                <div className="p-10 border-b border-white/5 flex items-center justify-between">
-                                    <h2 className="text-2xl font-black text-white tracking-tight uppercase italic">Provision <span className="text-primary-500">Resource</span></h2>
-                                    <button type="button" onClick={() => setIsModalOpen(false)} className="text-gray-500 hover:text-white transition-colors">
-                                        <X size={28} />
+                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                            <form onSubmit={handleSubmit} className="flex flex-col max-h-[90vh] relative z-10">
+                                <div className="p-8 border-b border-silver-dark/10 flex items-center justify-between">
+                                    <h2 className="text-2xl font-display font-bold text-white drop-shadow-md">Provision Resource</h2>
+                                    <button type="button" onClick={() => setIsModalOpen(false)} className="text-silver-500 hover:text-white transition-colors bg-dark-android p-2 rounded-xl shadow-inner border border-transparent hover:border-silver-dark/30">
+                                        <X size={20} />
                                     </button>
                                 </div>
 
-                                <div className="p-10 overflow-y-auto space-y-8 custom-scrollbar">
+                                <div className="p-8 overflow-y-auto space-y-8 scrollbar-thin scrollbar-thumb-silver-dark/30 hover:scrollbar-thumb-silver-dark/50 scrollbar-track-transparent">
                                     {/* file upload section */}
                                     <div className="relative group">
                                         <input
@@ -300,13 +304,13 @@ export default function AssessmentManager() {
                                             onChange={(e) => setFile(e.target.files?.[0] || null)}
                                             className="absolute inset-0 opacity-0 cursor-pointer z-10"
                                         />
-                                        <div className={`p-10 rounded-[2rem] border-2 border-dashed transition-all flex flex-col items-center gap-4 ${file ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/5 bg-dark-300/50 group-hover:border-primary-500/30 group-hover:bg-primary-500/5'}`}>
-                                            <div className={`w-16 h-16 rounded-3xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500 ${file ? 'bg-emerald-500/20 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-dark-200 text-gray-600'}`}>
+                                        <div className={`p-10 rounded-2xl border-2 border-dashed transition-all flex flex-col items-center gap-4 ${file ? 'border-silver-metallic/50 bg-silver-gradient/5' : 'border-silver-dark/20 bg-dark-android shadow-inner-metallic group-hover:border-silver-400/30'}`}>
+                                            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-500 border ${file ? 'bg-silver-gradient/10 text-white border-silver-metallic shadow-glow' : 'bg-dark-surface text-silver-500 shadow-android-card border-silver-dark/10'}`}>
                                                 {file ? <CheckCircle2 size={32} /> : <Upload size={32} />}
                                             </div>
                                             <div className="text-center">
-                                                <p className="text-sm font-bold text-gray-300">{file ? file.name : 'Select Evaluation PDF'}</p>
-                                                <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest mt-1">Maximum Load: 50MB • Type: PDF Only</p>
+                                                <p className="text-sm font-bold text-white drop-shadow-md">{file ? file.name : 'Select Evaluation PDF'}</p>
+                                                <p className="text-[10px] font-bold text-silver-600 uppercase tracking-widest mt-1">Maximum Load: 50MB • Type: PDF Only</p>
                                             </div>
                                         </div>
                                     </div>
@@ -314,115 +318,130 @@ export default function AssessmentManager() {
                                     {/* Info Grid */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div className="space-y-4">
-                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Title</label>
+                                            <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest ml-2">Title</label>
                                             <input
                                                 required
                                                 type="text"
-                                                placeholder="e.g., Assignment-01 Logic Gates"
+                                                placeholder="e.g., Assignment-01"
                                                 value={formData.title}
                                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                                className="w-full bg-dark-300 border border-white/5 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 hover:border-white/10 transition-all placeholder:text-gray-700"
+                                                className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3.5 text-white font-bold outline-none focus:border-silver-500 transition-all placeholder-silver-600"
                                             />
                                         </div>
                                         <div className="space-y-4">
-                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Assessment Type</label>
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest ml-2">Assessment Type</label>
+                                            <div className="flex bg-dark-android p-1.5 rounded-xl border border-silver-800 shadow-inner">
                                                 <button
                                                     type="button"
                                                     onClick={() => setFormData({ ...formData, type: 'ASSIGNMENT' })}
-                                                    className={`py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border ${formData.type === 'ASSIGNMENT' ? 'bg-primary-600 border-primary-500 text-white shadow-lg shadow-primary-500/20' : 'bg-dark-300 border-white/5 text-gray-600 hover:text-gray-300'}`}
+                                                    className={`flex-1 text-[10px] uppercase tracking-widest font-bold py-3 pr-2 pl-2 rounded-lg transition-all ${formData.type === 'ASSIGNMENT' ? 'bg-silver-gradient text-dark-android shadow-3d' : 'text-silver-500 hover:text-white hover:bg-white/5'}`}
                                                 >
                                                     Assignment
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => setFormData({ ...formData, type: 'SURPRISE_TEST' })}
-                                                    className={`py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all border ${formData.type === 'SURPRISE_TEST' ? 'bg-orange-600 border-orange-500 text-white shadow-lg shadow-orange-500/20' : 'bg-dark-300 border-white/5 text-gray-600 hover:text-gray-300'}`}
+                                                    className={`flex-1 text-[10px] uppercase tracking-widest font-bold py-3 pr-2 pl-2 rounded-lg transition-all ${formData.type === 'SURPRISE_TEST' ? 'bg-silver-gradient text-dark-android shadow-3d' : 'text-silver-500 hover:text-white hover:bg-white/5'}`}
                                                 >
-                                                    Surprise Test
+                                                    Surp. Test
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="space-y-4">
-                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Target Parameters</label>
+                                        <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest ml-2">Target Parameters</label>
                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                            <select
-                                                className="bg-dark-300 border border-white/5 rounded-2xl px-4 py-4 text-white text-[10px] font-black uppercase tracking-tight outline-none focus:border-primary-500"
-                                                value={selectedCollege}
-                                                onChange={(e) => setSelectedCollege(e.target.value)}
-                                            >
-                                                <option value="">Select College</option>
-                                                {colleges.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                            </select>
-                                            <select
-                                                className="bg-dark-300 border border-white/5 rounded-2xl px-4 py-4 text-white text-[10px] font-black uppercase tracking-tight outline-none focus:border-primary-500"
-                                                value={selectedBranch}
-                                                onChange={(e) => setSelectedBranch(e.target.value)}
-                                                disabled={!selectedCollege}
-                                            >
-                                                <option value="">Select Branch</option>
-                                                {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                                            </select>
-                                            <select
-                                                className="bg-dark-300 border border-white/5 rounded-2xl px-4 py-4 text-white text-[10px] font-black uppercase tracking-tight outline-none focus:border-primary-500"
-                                                value={formData.yearId}
-                                                onChange={(e) => setFormData({ ...formData, yearId: e.target.value })}
-                                                disabled={!selectedBranch}
-                                            >
-                                                <option value="">Select Year</option>
-                                                {years.map(y => <option key={y.id} value={y.id}>{y.displayName}</option>)}
-                                            </select>
-                                            <select
-                                                className="bg-dark-300 border border-white/5 rounded-2xl px-4 py-4 text-white text-[10px] font-black uppercase tracking-tight outline-none focus:border-primary-500"
-                                                value={formData.semesterId}
-                                                onChange={(e) => setFormData({ ...formData, semesterId: e.target.value })}
-                                                disabled={!formData.yearId}
-                                            >
-                                                <option value="">Select Semester</option>
-                                                {semesters.map(s => <option key={s.id} value={s.id}>{s.displayName}</option>)}
-                                            </select>
-                                            <select
-                                                className="bg-dark-300 border border-white/5 rounded-2xl px-4 py-4 text-white text-[10px] font-black uppercase tracking-tight outline-none focus:border-primary-500"
-                                                value={formData.subjectId}
-                                                onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
-                                                disabled={!formData.semesterId}
-                                            >
-                                                <option value="">Select Subject</option>
-                                                {subjects.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
-                                            </select>
+                                            <div className="relative">
+                                                <select
+                                                    className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white text-[10px] font-bold uppercase tracking-widest appearance-none outline-none focus:border-silver-500 transition-all"
+                                                    value={selectedCollege}
+                                                    onChange={(e) => setSelectedCollege(e.target.value)}
+                                                >
+                                                    <option value="" className="text-silver-600">Select College</option>
+                                                    {colleges.map(c => <option key={c.id} value={c.id} className="text-white bg-dark-surface font-bold">{c.name}</option>)}
+                                                </select>
+                                                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-silver-500"><svg className="w-3 h-3 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                            </div>
+                                            <div className="relative">
+                                                <select
+                                                    className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white text-[10px] font-bold uppercase tracking-widest appearance-none outline-none focus:border-silver-500 transition-all disabled:opacity-50"
+                                                    value={selectedBranch}
+                                                    onChange={(e) => setSelectedBranch(e.target.value)}
+                                                    disabled={!selectedCollege}
+                                                >
+                                                    <option value="" className="text-silver-600">Select Branch</option>
+                                                    {branches.map(b => <option key={b.id} value={b.id} className="text-white bg-dark-surface font-bold">{b.name}</option>)}
+                                                </select>
+                                                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-silver-500"><svg className="w-3 h-3 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                            </div>
+                                            <div className="relative">
+                                                <select
+                                                    className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white text-[10px] font-bold uppercase tracking-widest appearance-none outline-none focus:border-silver-500 transition-all disabled:opacity-50"
+                                                    value={formData.yearId}
+                                                    onChange={(e) => setFormData({ ...formData, yearId: e.target.value })}
+                                                    disabled={!selectedBranch}
+                                                >
+                                                    <option value="" className="text-silver-600">Select Year</option>
+                                                    {years.map(y => <option key={y.id} value={y.id} className="text-white bg-dark-surface font-bold">{y.displayName}</option>)}
+                                                </select>
+                                                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-silver-500"><svg className="w-3 h-3 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                            </div>
+                                            <div className="relative">
+                                                <select
+                                                    className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white text-[10px] font-bold uppercase tracking-widest appearance-none outline-none focus:border-silver-500 transition-all disabled:opacity-50"
+                                                    value={formData.semesterId}
+                                                    onChange={(e) => setFormData({ ...formData, semesterId: e.target.value })}
+                                                    disabled={!formData.yearId}
+                                                >
+                                                    <option value="" className="text-silver-600">Select Semester</option>
+                                                    {semesters.map(s => <option key={s.id} value={s.id} className="text-white bg-dark-surface font-bold">{s.displayName}</option>)}
+                                                </select>
+                                                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-silver-500"><svg className="w-3 h-3 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                            </div>
+                                            <div className="relative">
+                                                <select
+                                                    className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white text-[10px] font-bold uppercase tracking-widest appearance-none outline-none focus:border-silver-500 transition-all disabled:opacity-50"
+                                                    value={formData.subjectId}
+                                                    onChange={(e) => setFormData({ ...formData, subjectId: e.target.value })}
+                                                    disabled={!formData.semesterId}
+                                                >
+                                                    <option value="" className="text-silver-600">Select Sub</option>
+                                                    {subjects.map(s => <option key={s.id} value={s.id} className="text-white bg-dark-surface font-bold">{s.name} ({s.code})</option>)}
+                                                </select>
+                                                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-silver-500"><svg className="w-3 h-3 fill-current" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 12l-5-5 1.5-1.5L10 9l3.5-3.5L15 7l-5 5z" clipRule="evenodd" /></svg></div>
+                                            </div>
                                             <input
                                                 placeholder="Section (e.g. A)"
                                                 value={formData.section}
                                                 onChange={(e) => setFormData({ ...formData, section: e.target.value })}
-                                                className="bg-dark-300 border border-white/5 rounded-2xl px-4 py-4 text-white text-[10px] font-black uppercase tracking-tight outline-none focus:border-primary-500"
+                                                className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white text-[10px] font-bold uppercase tracking-widest outline-none focus:border-silver-500 transition-all placeholder-silver-600"
                                             />
                                         </div>
                                         <div className="flex flex-col gap-4">
-                                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-4">Submission Deadline (Optional)</label>
+                                            <label className="text-[10px] font-bold text-silver-600 uppercase tracking-widest ml-2">Submission Deadline (Optional)</label>
                                             <input
                                                 type="datetime-local"
                                                 value={formData.submissionDate}
                                                 onChange={(e) => setFormData({ ...formData, submissionDate: e.target.value })}
-                                                className="bg-dark-300 border border-white/5 rounded-2xl px-6 py-4 text-white font-bold outline-none focus:border-primary-500"
+                                                className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3.5 text-white font-bold font-mono outline-none focus:border-silver-500 transition-all"
                                             />
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="p-10 border-t border-white/5 bg-dark-300/30 flex justify-end gap-6">
+                                <div className="p-8 border-t border-silver-dark/10 bg-dark-android flex justify-end gap-6 items-center">
                                     <button
                                         type="button"
                                         onClick={() => setIsModalOpen(false)}
-                                        className="text-[10px] font-black text-gray-500 hover:text-white uppercase tracking-widest px-8"
+                                        className="text-[10px] font-bold text-silver-500 hover:text-white uppercase tracking-widest transition-colors"
                                     >
-                                        Abort
+                                        Cancel
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={saving}
-                                        className="bg-primary-600 hover:bg-primary-500 disabled:opacity-50 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all flex items-center gap-3 shadow-2xl shadow-primary-500/20 active:scale-95"
+                                        className="bg-silver-gradient text-dark-android px-8 py-3.5 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all flex items-center gap-3 shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
                                     >
                                         {saving ? <Loader2 className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
                                         Initialize Upload

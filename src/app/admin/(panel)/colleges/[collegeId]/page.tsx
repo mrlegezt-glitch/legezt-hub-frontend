@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
-import { ArrowLeft, Loader2, Layers, Calendar, BookOpen, Plus, FolderOpen, Trash2, ListTree, Link as LinkIcon, Search, Share2, CircleDashed } from 'lucide-react';
+import { ArrowLeft, Loader2, Layers, Calendar, BookOpen, Plus, FolderOpen, Trash2, ListTree, Link as LinkIcon, Search, Share2, CircleDashed, UploadCloud } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -279,41 +279,45 @@ export default function CollegeDetailPage() {
     return (
         <div className="p-6 md:p-8 max-w-7xl mx-auto pb-24">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/admin/colleges" className="p-2 -ml-2 hover:bg-white/5 rounded-full text-gray-400 hover:text-white transition-colors">
-                    <ArrowLeft size={24} />
-                </Link>
-                <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-1">
-                        {college.logo && (
-                            <img src={college.logo} alt={college.name} className="w-12 h-12 rounded-lg object-contain bg-white/10" />
-                        )}
-                        <h1 className="text-3xl font-bold text-white">{college.name}</h1>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-gray-400">
-                        <span className="font-mono bg-dark-200 px-2 py-0.5 rounded border border-dark-border">{college.code}</span>
-                        <span>•</span>
-                        <span>{college.branches.length} Branches</span>
+            <div className="flex items-start sm:items-center justify-between gap-4 mb-8 flex-col sm:flex-row">
+                <div className="flex items-center gap-4">
+                    <Link href="/admin/colleges" className="p-2 -ml-2 hover:bg-white/5 rounded-full text-silver-400 hover:text-white transition-colors bg-dark-android shadow-inner border border-transparent hover:border-silver-dark/20">
+                        <ArrowLeft size={24} />
+                    </Link>
+                    <div className="flex-1">
+                        <div className="flex items-center gap-4 mb-1">
+                            {college.logo && (
+                                <img src={college.logo} alt={college.name} className="w-14 h-14 rounded-xl object-contain bg-dark-android shadow-inner border border-silver-dark/20 p-1" />
+                            )}
+                            <h1 className="text-3xl font-display font-bold text-white drop-shadow-md">{college.name}</h1>
+                        </div>
+                        <div className="flex items-center gap-3 text-xs font-bold text-silver-500 mt-2 tracking-wide uppercase">
+                            <span className="font-mono bg-dark-android border border-silver-dark/20 shadow-inner px-2 py-1 rounded-md text-silver-300 tracking-wider">
+                                {college.code}
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-silver-dark/50" />
+                            <span>{college.branches.length} Branches</span>
+                        </div>
                     </div>
                 </div>
                 <button
                     onClick={() => setIsEditModalOpen(true)}
-                    className="btn-primary px-4 py-2 rounded-lg text-sm"
+                    className="bg-silver-gradient text-dark-android font-bold px-6 py-2.5 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all flex items-center justify-center gap-2"
                 >
                     Edit College
                 </button>
             </div>
 
             {/* Branch Tabs & Add Year */}
-            <div className="flex items-center justify-between mb-8 border-b border-dark-border pb-2">
-                <div className="flex items-center gap-2 overflow-x-auto">
+            <div className="flex items-center justify-between mb-8 border-b border-silver-dark/10 pb-4">
+                <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-2">
                     {college.branches.map((branch) => (
-                        <div key={branch.id} className="relative group">
+                        <div key={branch.id} className="relative group flex-shrink-0">
                             <button
                                 onClick={() => setActiveBranch(branch.id)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 ${activeBranch === branch.id
-                                    ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/20'
-                                    : 'bg-dark-200 text-gray-400 hover:text-white hover:bg-dark-100'
+                                className={`px-5 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all flex items-center gap-2 border ${activeBranch === branch.id
+                                    ? 'bg-silver-gradient border-silver-light text-dark-android shadow-3d'
+                                    : 'bg-dark-surface shadow-android-card border-silver-dark/10 text-silver-400 hover:text-white hover:border-silver-dark/30 hover:bg-dark-android'
                                     }`}
                             >
                                 <Layers size={16} />
@@ -331,10 +335,10 @@ export default function CollegeDetailPage() {
                                         }
                                     }
                                 }}
-                                className="absolute -top-1 -right-1 bg-red-500 text-white p-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                className="absolute -top-1.5 -right-1.5 bg-dark-android text-red-500 hover:text-red-400 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all border border-silver-dark/20 shadow-inner hover:bg-red-500/10 z-10"
                                 title="Delete Branch"
                             >
-                                <Trash2 size={10} />
+                                <Trash2 size={12} />
                             </button>
                         </div>
                     ))}
@@ -342,7 +346,7 @@ export default function CollegeDetailPage() {
                 {activeBranch && (
                     <button
                         onClick={() => setIsYearModalOpen(true)}
-                        className="btn-primary px-3 py-1.5 rounded-lg text-xs flex items-center gap-2 ml-4 flex-shrink-0"
+                        className="bg-silver-gradient text-dark-android font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 ml-4 flex-shrink-0 shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all"
                     >
                         <Plus size={14} /> Add Year
                     </button>
@@ -353,17 +357,17 @@ export default function CollegeDetailPage() {
             {currentBranch && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {currentBranch.years.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-16 bg-dark-200 border border-dark-border rounded-xl border-dashed">
-                            <div className="w-16 h-16 bg-dark-300 rounded-full flex items-center justify-center mb-4 text-gray-500">
-                                <Calendar size={32} />
+                        <div className="flex flex-col items-center justify-center py-16 bg-dark-android shadow-inner border border-dashed border-silver-dark/20 rounded-3xl">
+                            <div className="w-20 h-20 bg-dark-surface shadow-android-card rounded-2xl flex items-center justify-center mb-6 text-silver-500 border border-silver-dark/10">
+                                <Calendar size={36} className="drop-shadow-md" />
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-2">No Years Added</h3>
-                            <p className="text-gray-400 mb-6 text-center max-w-sm">
+                            <h3 className="text-2xl font-display font-bold text-silver-300 drop-shadow-md mb-2">No Years Added</h3>
+                            <p className="text-silver-500 mb-8 text-center max-w-sm font-medium">
                                 This branch doesn&apos;t have any years configured yet. Add a year to start organizing semesters and subjects.
                             </p>
                             <button
                                 onClick={() => setIsYearModalOpen(true)}
-                                className="btn-primary px-6 py-2 rounded-lg flex items-center gap-2"
+                                className="bg-silver-gradient text-dark-android font-bold px-8 py-3 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all flex items-center gap-2"
                             >
                                 <Plus size={18} />
                                 Create First Year
@@ -371,13 +375,14 @@ export default function CollegeDetailPage() {
                         </div>
                     ) : (
                         currentBranch.years.map((year) => (
-                            <div key={year.id} className="bg-dark-200 border border-dark-border rounded-xl overflow-hidden">
-                                <div className="bg-dark-300 px-6 py-4 border-b border-dark-border flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
-                                            <Calendar size={18} />
+                            <div key={year.id} className="bg-dark-surface shadow-android-card border border-silver-dark/10 rounded-3xl overflow-hidden relative">
+                                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                                <div className="bg-dark-android px-6 py-5 border-b border-silver-dark/10 flex items-center justify-between relative z-10">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-xl bg-dark-surface border border-silver-dark/20 shadow-inner flex items-center justify-center text-silver-400">
+                                            <Calendar size={20} className="drop-shadow-md" />
                                         </div>
-                                        <h3 className="font-bold text-lg text-white">{year.displayName}</h3>
+                                        <h3 className="font-display font-bold text-xl text-white drop-shadow-md">{year.displayName}</h3>
                                     </div>
                                     <button
                                         onClick={async () => {
@@ -390,76 +395,79 @@ export default function CollegeDetailPage() {
                                                 }
                                             }
                                         }}
-                                        className="text-gray-500 hover:text-red-400 transition-colors p-1"
+                                        className="text-silver-500 hover:text-red-400 bg-dark-surface shadow-inner hover:bg-red-500/10 p-2.5 rounded-xl border border-transparent hover:border-red-500/20 transition-all"
                                         title="Delete Year"
                                     >
-                                        <Trash2 size={16} />
+                                        <Trash2 size={20} />
                                     </button>
                                 </div>
 
-                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
                                     {year.semesters.map((sem) => (
-                                        <div key={sem.id} className="bg-dark-100 rounded-xl p-5 border border-dark-border hover:border-primary-500/30 transition-colors">
-                                            <div className="flex items-center justify-between mb-4">
-                                                <h4 className="font-bold text-gray-300 flex items-center gap-2">
-                                                    <div className="w-2 h-2 rounded-full bg-green-500" />
-                                                    {sem.displayName}
+                                        <div key={sem.id} className="bg-dark-android rounded-2xl p-6 border border-silver-dark/10 shadow-inner hover:border-silver-dark/30 transition-colors">
+                                            <div className="flex items-center justify-between mb-5">
+                                                <h4 className="font-bold text-silver-300 flex items-center gap-3">
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-silver-metallic shadow-glow" />
+                                                    <span className="uppercase tracking-widest">{sem.displayName}</span>
                                                 </h4>
                                                 <button
                                                     onClick={() => openAddSubjectModal(sem.id, sem.displayName)}
-                                                    className="text-xs flex items-center gap-1 text-primary-400 hover:text-white px-2 py-1 rounded hover:bg-white/5 transition-colors"
+                                                    className="text-[10px] font-bold text-silver-300 bg-dark-surface shadow-android-card border border-silver-dark/20 px-3 py-1.5 rounded-lg hover:bg-silver-metallic/20 transition-colors flex items-center gap-1 uppercase tracking-wider"
                                                 >
-                                                    <Plus size={12} /> Add Subject
+                                                    <Plus size={14} /> Subject
                                                 </button>
                                             </div>
 
-                                            <div className="space-y-2">
+                                            <div className="space-y-3">
                                                 {sem.subjects.map((sub) => (
-                                                    <div key={sub.id} className="flex items-center justify-between p-2 bg-dark-300 rounded-lg group hover:bg-dark-400 transition-colors">
+                                                    <div key={sub.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-dark-surface border border-silver-dark/10 rounded-xl shadow-android-card group hover:bg-dark-android hover:border-silver-dark/30 transition-all gap-2">
                                                         <div className="flex items-center gap-3">
-                                                            <BookOpen size={16} className="text-gray-500 group-hover:text-primary-400" />
-                                                            <span className="text-sm font-medium text-gray-300 group-hover:text-white">{sub.name}</span>
+                                                            <div className="p-2 bg-dark-android rounded-lg shadow-inner group-hover:bg-dark-surface transition-colors">
+                                                                <BookOpen size={16} className="text-silver-500 group-hover:text-silver-300" />
+                                                            </div>
+                                                            <span className="text-sm font-bold text-silver-400 group-hover:text-white transition-colors">{sub.name}</span>
                                                         </div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-xs font-mono text-gray-600 group-hover:text-gray-400">{sub.code}</span>
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-[10px] font-mono font-bold text-silver-500 bg-dark-android border border-silver-dark/20 shadow-inner px-2 py-1 rounded tracking-widest">{sub.code}</span>
                                                             {sub.isShared && (
-                                                                <span className="text-[10px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded flex items-center gap-1" title="Shared Subject">
+                                                                <span className="text-[10px] bg-dark-android border border-blue-500/20 shadow-inner text-blue-400 px-2 py-1 rounded flex items-center gap-1 font-bold uppercase tracking-widest" title="Shared Subject">
                                                                     <Share2 size={10} /> Shared
                                                                 </span>
                                                             )}
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    openAddSubjectModal(sem.id, sem.displayName, sub);
-                                                                }}
-                                                                className="text-gray-500 hover:text-primary-400 opacity-0 group-hover:opacity-100 transition-all p-1"
-                                                            >
-                                                                <FolderOpen size={14} />
-                                                            </button>
-                                                            <button
-                                                                onClick={async (e) => {
-                                                                    e.stopPropagation();
-                                                                    if (confirm(`Delete subject "${sub.name}"?`)) {
-                                                                        try {
-                                                                            // Use context-aware delete endpoint
-                                                                            await api.delete(`/content/semesters/${sem.id}/subjects/${sub.id}`);
-                                                                            await fetchCollege();
-                                                                            toast.success('Subject removed');
-                                                                        } catch (err) {
-                                                                            toast.error('Failed to remove subject');
+                                                            <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        openAddSubjectModal(sem.id, sem.displayName, sub);
+                                                                    }}
+                                                                    className="text-silver-500 hover:text-silver-300 p-2 bg-dark-android hover:bg-dark-100/10 rounded-lg shadow-inner transition-colors"
+                                                                >
+                                                                    <FolderOpen size={14} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={async (e) => {
+                                                                        e.stopPropagation();
+                                                                        if (confirm(`Delete subject "${sub.name}"?`)) {
+                                                                            try {
+                                                                                await api.delete(`/content/semesters/${sem.id}/subjects/${sub.id}`);
+                                                                                await fetchCollege();
+                                                                                toast.success('Subject removed');
+                                                                            } catch (err) {
+                                                                                toast.error('Failed to remove subject');
+                                                                            }
                                                                         }
-                                                                    }
-                                                                }}
-                                                                className="text-gray-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all p-1"
-                                                                title="Delete Subject"
-                                                            >
-                                                                <Trash2 size={14} />
-                                                            </button>
+                                                                    }}
+                                                                    className="text-silver-500 hover:text-red-400 p-2 bg-dark-android hover:bg-red-500/10 rounded-lg shadow-inner transition-colors border border-transparent hover:border-red-500/20"
+                                                                    title="Delete Subject"
+                                                                >
+                                                                    <Trash2 size={14} />
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 ))}
                                                 {sem.subjects.length === 0 && (
-                                                    <div className="text-xs text-gray-600 italic text-center py-2">
+                                                    <div className="text-xs font-bold tracking-wider uppercase text-silver-600 italic text-center py-4 bg-dark-surface shadow-inner-metallic rounded-xl border border-dashed border-silver-dark/20">
                                                         No subjects yet
                                                     </div>
                                                 )}
@@ -474,28 +482,29 @@ export default function CollegeDetailPage() {
             )}
             {/* Subject Creation Modal */}
             {isModalOpen && selectedSemester && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="bg-dark-200 border border-dark-border p-6 rounded-xl w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-xl font-bold text-white">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+                    <div className="bg-dark-surface shadow-android-card border border-silver-dark/20 p-8 rounded-3xl w-full max-w-md shadow-2xl animate-in zoom-in-95 duration-200 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                        <div className="flex items-center justify-between mb-6 relative z-10">
+                            <h3 className="text-2xl font-display font-bold text-white drop-shadow-md">
                                 {editingSubject ? 'Edit Subject' : isBulkMode ? 'Bulk Add Subjects' : `Add Subject to ${selectedSemester.name}`}
                             </h3>
-                            <div className="flex bg-dark-300 p-1 rounded-lg">
+                            <div className="flex bg-dark-android p-1.5 rounded-xl border border-silver-dark/10 shadow-inner">
                                 <button
                                     onClick={() => { setIsLinkingMode(false); setIsBulkMode(false); }}
-                                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${!isLinkingMode && !isBulkMode ? 'bg-primary-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                    className={`flex-1 text-[10px] uppercase tracking-widest font-bold py-2 px-3 rounded-lg transition-all ${!isLinkingMode && !isBulkMode ? 'bg-silver-gradient text-dark-android shadow-3d' : 'text-silver-500 hover:text-white hover:bg-white/5'}`}
                                 >
                                     New
                                 </button>
                                 <button
                                     onClick={() => { setIsLinkingMode(false); setIsBulkMode(true); }}
-                                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${isBulkMode ? 'bg-primary-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                    className={`flex-1 text-[10px] uppercase tracking-widest font-bold py-2 px-3 rounded-lg transition-all ${isBulkMode ? 'bg-silver-gradient text-dark-android shadow-3d' : 'text-silver-500 hover:text-white hover:bg-white/5'}`}
                                 >
                                     Bulk
                                 </button>
                                 <button
                                     onClick={() => { setIsLinkingMode(true); setIsBulkMode(false); }}
-                                    className={`flex-1 text-xs py-1.5 rounded-md transition-colors ${isLinkingMode ? 'bg-primary-600 text-white' : 'text-gray-400 hover:text-white'}`}
+                                    className={`flex-1 text-[10px] uppercase tracking-widest font-bold py-2 px-3 rounded-lg transition-all ${isLinkingMode ? 'bg-silver-gradient text-dark-android shadow-3d' : 'text-silver-500 hover:text-white hover:bg-white/5'}`}
                                 >
                                     Link Existing
                                 </button>
@@ -503,40 +512,40 @@ export default function CollegeDetailPage() {
                         </div>
 
                         {isLinkingMode ? (
-                            <div className="space-y-4">
+                            <div className="space-y-4 relative z-10">
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-silver-500" size={18} />
                                     <input
                                         type="text"
                                         value={linkSearchQuery}
                                         onChange={(e) => setLinkSearchQuery(e.target.value)}
-                                        className="w-full bg-dark-300 border border-dark-border rounded-lg pl-9 pr-4 py-2 text-white focus:ring-2 focus:ring-primary-500 outline-none placeholder:text-gray-600"
+                                        className="w-full bg-dark-android border border-silver-800 rounded-xl pl-11 pr-4 py-3 text-white font-bold shadow-inner-metallic outline-none focus:border-silver-500 transition-all placeholder-silver-600"
                                         placeholder="Search subjects..."
                                         autoFocus
                                     />
                                     {isSearching && (
-                                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 animate-spin" size={14} />
+                                        <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 text-silver-500 animate-spin" size={16} />
                                     )}
                                 </div>
-                                <div className="max-h-60 overflow-y-auto space-y-2 pr-1">
+                                <div className="max-h-60 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-silver-dark/30 hover:scrollbar-thumb-silver-dark/50 scrollbar-track-transparent">
                                     {linkSearchResults.length === 0 && linkSearchQuery.length > 1 && !isSearching ? (
-                                        <p className="text-center text-gray-500 text-sm py-4">No subjects found</p>
+                                        <p className="text-center text-silver-500 text-sm py-4 font-medium">No subjects found</p>
                                     ) : (
                                         linkSearchResults.map((subject) => (
                                             <div
                                                 key={subject.id}
                                                 onClick={() => setSelectedLinkSubject(subject)}
-                                                className={`p-3 rounded-lg cursor-pointer border transition-colors flex items-center justify-between ${selectedLinkSubject?.id === subject.id
-                                                    ? 'bg-primary-500/20 border-primary-500 text-white'
-                                                    : 'bg-dark-300 border-transparent hover:bg-dark-400 text-gray-300'
+                                                className={`p-4 rounded-xl cursor-pointer border transition-all flex items-center justify-between ${selectedLinkSubject?.id === subject.id
+                                                    ? 'bg-silver-metallic/10 border-silver-metallic shadow-glow text-white'
+                                                    : 'bg-dark-android border-silver-dark/10 shadow-inner hover:bg-dark-surface hover:border-silver-dark/30 text-silver-300'
                                                     }`}
                                             >
                                                 <div className="flex-1">
-                                                    <p className="font-medium text-sm">{subject.name}</p>
-                                                    <p className="text-xs opacity-70">{subject.code}</p>
+                                                    <p className="font-bold text-sm">{subject.name}</p>
+                                                    <p className="text-xs font-mono font-bold text-silver-500 mt-1 uppercase tracking-widest">{subject.code}</p>
                                                 </div>
                                                 {selectedLinkSubject?.id === subject.id && (
-                                                    <div className="w-2 h-2 rounded-full bg-primary-500" />
+                                                    <div className="w-2.5 h-2.5 rounded-full bg-silver-metallic shadow-glow" />
                                                 )}
                                             </div>
                                         ))
@@ -544,44 +553,44 @@ export default function CollegeDetailPage() {
                                 </div>
                             </div>
                         ) : isBulkMode ? (
-                            <div className="space-y-4">
-                                <p className="text-xs text-gray-500 bg-dark-300 p-2 rounded border border-dark-border">
+                            <div className="space-y-4 relative z-10">
+                                <p className="text-xs font-bold tracking-wide text-silver-500 bg-dark-android p-3 rounded-xl border border-silver-dark/10 shadow-inner leading-relaxed">
                                     Enter one subject per line: <br />
-                                    <code className="text-primary-400">Subject Name, Code</code> or just <code className="text-primary-400">Subject Name</code>
+                                    <code className="text-silver-300 font-mono tracking-wider bg-dark-surface px-1.5 py-0.5 rounded ml-1 border border-silver-dark/20 text-[11px] shadow-sm">Subject Name, Code</code> or just <code className="text-silver-300 font-mono tracking-wider bg-dark-surface px-1.5 py-0.5 rounded ml-1 border border-silver-dark/20 text-[11px] shadow-sm">Subject Name</code>
                                 </p>
                                 <textarea
                                     value={bulkSubjectText}
                                     onChange={(e) => setBulkSubjectText(e.target.value)}
-                                    className="w-full h-48 bg-dark-300 border border-dark-border rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary-500 outline-none font-mono text-sm"
+                                    className="w-full h-48 bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white font-bold focus:border-silver-500 outline-none font-mono text-sm resize-none transition-all placeholder-silver-700"
                                     placeholder="Mathematics III, MATH301&#10;Data Structures, CS202&#10;Operating Systems"
                                 />
                             </div>
                         ) : (
-                            <div className="space-y-4">
+                            <div className="space-y-5 relative z-10">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-1">Subject Name</label>
+                                    <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Subject Name</label>
                                     <input
                                         type="text"
                                         value={newSubject.name}
                                         onChange={(e) => setNewSubject({ ...newSubject, name: e.target.value })}
-                                        className="w-full bg-dark-300 border border-dark-border rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-silver-500 transition-all placeholder-silver-600"
                                         placeholder="e.g. Data Structures"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-400 mb-1">Subject Code</label>
+                                    <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Subject Code</label>
                                     <input
                                         type="text"
                                         value={newSubject.code}
                                         onChange={(e) => setNewSubject({ ...newSubject, code: e.target.value })}
-                                        className="w-full bg-dark-300 border border-dark-border rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-primary-500 outline-none"
+                                        className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white font-bold font-mono tracking-wider outline-none focus:border-silver-500 transition-all placeholder-silver-600"
                                         placeholder="e.g. CS101"
                                     />
                                 </div>
                             </div>
                         )}
 
-                        <div className="flex justify-end gap-3 mt-8">
+                        <div className="flex justify-end gap-3 mt-8 relative z-10">
                             <button
                                 onClick={() => {
                                     setIsModalOpen(false);
@@ -591,14 +600,14 @@ export default function CollegeDetailPage() {
                                     setLinkSearchQuery('');
                                     setSelectedLinkSubject(null);
                                 }}
-                                className="px-4 py-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                                className="px-6 py-3 text-sm font-bold text-silver-400 hover:text-white rounded-xl transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={isBulkMode ? handleBulkAddSubjects : handleAddSubject}
                                 disabled={createLoading || (isLinkingMode ? !selectedLinkSubject : isBulkMode ? !bulkSubjectText.trim() : (!newSubject.name || !newSubject.code))}
-                                className="btn-primary px-4 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-silver-gradient text-dark-android font-bold px-6 py-3 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
                             >
                                 {createLoading ? <Loader2 size={18} className="animate-spin" /> : isLinkingMode ? <LinkIcon size={18} /> : isBulkMode ? <ListTree size={18} /> : editingSubject ? <FolderOpen size={18} /> : <Plus size={18} />}
                                 {editingSubject ? 'Update Subject' : isLinkingMode ? 'Link Subject' : isBulkMode ? 'Add Subjects' : 'Create Subject'}
@@ -716,45 +725,46 @@ export default function CollegeDetailPage() {
 
             {/* Add Year Modal */}
             {isYearModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-                    <div className="bg-dark-200 border border-dark-border p-6 rounded-xl w-full max-w-md shadow-2xl animate-in zoom-in-95">
-                        <h3 className="text-xl font-bold text-white mb-6">Add Year</h3>
-                        <div className="space-y-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
+                    <div className="bg-dark-surface shadow-android-card border border-silver-dark/20 p-8 rounded-3xl w-full max-w-md shadow-2xl animate-in zoom-in-95 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-silver-metallic to-transparent opacity-30 z-20" />
+                        <h3 className="text-2xl font-display font-bold text-white mb-8 drop-shadow-md relative z-10">Add Year</h3>
+                        <div className="space-y-5 relative z-10">
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">Display Name</label>
+                                <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Display Name</label>
                                 <input
                                     type="text"
                                     value={newYear.displayName}
                                     onChange={(e) => setNewYear({ ...newYear, displayName: e.target.value })}
-                                    className="w-full bg-dark-300 border border-dark-border rounded-lg px-4 py-2 text-white outline-none focus:border-primary-500"
+                                    className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-silver-500 transition-all placeholder-silver-600"
                                     placeholder="e.g. First Year"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-1">Year Number</label>
+                                <label className="block text-[10px] font-bold text-silver-600 uppercase tracking-widest mb-2 ml-2">Year Number</label>
                                 <input
                                     type="number"
                                     min="1"
                                     max="6"
                                     value={newYear.yearNumber}
                                     onChange={(e) => setNewYear({ ...newYear, yearNumber: parseInt(e.target.value) })}
-                                    className="w-full bg-dark-300 border border-dark-border rounded-lg px-4 py-2 text-white outline-none focus:border-primary-500"
+                                    className="w-full bg-dark-android shadow-inner-metallic border border-silver-800 rounded-xl px-4 py-3 text-white font-bold font-mono tracking-wider outline-none focus:border-silver-500 transition-all placeholder-silver-600"
                                 />
                             </div>
                         </div>
-                        <div className="flex justify-end gap-3 mt-8">
+                        <div className="flex justify-end gap-3 mt-8 relative z-10">
                             <button
                                 onClick={() => setIsYearModalOpen(false)}
-                                className="px-4 py-2 text-gray-400 hover:text-white"
+                                className="px-6 py-3 text-sm font-bold text-silver-400 hover:text-white transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleAddYear}
                                 disabled={createYearLoading || !newYear.displayName}
-                                className="btn-primary px-6 py-2 rounded-lg flex items-center gap-2"
+                                className="bg-silver-gradient text-dark-android font-bold px-6 py-3 rounded-xl shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5 border border-silver-light transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:grayscale disabled:pointer-events-none"
                             >
-                                {createYearLoading ? <Loader2 size={16} className="animate-spin" /> : 'Create Year'}
+                                {createYearLoading ? <Loader2 size={18} className="animate-spin" /> : 'Create Year'}
                             </button>
                         </div>
                     </div>

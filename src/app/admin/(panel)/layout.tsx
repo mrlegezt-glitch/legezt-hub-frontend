@@ -23,22 +23,22 @@ export default function AdminPanelLayout({ children }: { children: React.ReactNo
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-slate-50 flex relative overflow-hidden text-slate-900">
+        <div className="min-h-screen bg-dark-android flex relative overflow-hidden text-white selection:bg-silver-metallic/30">
             {/* Sidebar (Desktop) */}
             <AdminSidebar />
 
             {/* Content Area */}
             <div className="flex-1 flex flex-col min-h-screen relative">
                 {/* Mobile Header */}
-                <header className="md:hidden h-16 border-b border-slate-200 flex items-center justify-between px-4 bg-white/95 backdrop-blur-xl sticky top-0 z-30">
+                <header className="md:hidden h-16 border-b border-silver-dark/10 flex items-center justify-between px-4 bg-dark-android/90 backdrop-blur-xl sticky top-0 z-30 shadow-silver-glow">
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg"
+                        className="p-2 text-silver-400 hover:text-white hover:bg-dark-surface rounded-xl shadow-inner-metallic border border-transparent hover:border-silver-dark/20 transition-all"
                         aria-label="Toggle admin menu"
                     >
                         <Menu size={24} />
                     </button>
-                    <span className="font-bold">Admin Console</span>
+                    <span className="font-display font-bold text-lg tracking-tight drop-shadow-md">Admin Console</span>
                     <div className="w-8" /> {/* Spacer for centering */}
                 </header>
 
@@ -52,41 +52,17 @@ export default function AdminPanelLayout({ children }: { children: React.ReactNo
                             className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
+                            {/* Mobile Menu Overlay */}
                             <motion.div
                                 initial={{ x: '-100%' }}
                                 animate={{ x: 0 }}
                                 exit={{ x: '-100%' }}
                                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                                className="w-80 h-full bg-white/95 backdrop-blur-2xl border-r border-slate-200 shadow-2xl relative overflow-hidden"
+                                className="w-80 h-full bg-dark-android/95 backdrop-blur-2xl border-r border-silver-dark/20 shadow-2xl relative overflow-hidden flex flex-col pt-4"
                                 onClick={(e: React.MouseEvent) => e.stopPropagation()}
                             >
-                                <div className="flex flex-col h-full">
-                                    <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <img src="/logo.png" alt="Admin" className="w-8 h-8 object-contain animate-heartbeat" />
-                                            <span className="font-bold text-lg">Admin</span>
-                                        </div>
-                                        <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-slate-500 hover:text-slate-900" aria-label="Close admin menu">
-                                            <Menu size={20} className="rotate-90" />
-                                        </button>
-                                    </div>
-
-                                    <div className="flex-1 overflow-y-auto p-4">
-                                        <AdminSidebar isMobile onItemClick={() => setIsMobileMenuOpen(false)} />
-                                    </div>
-
-                                    <div className="p-4 border-t border-slate-200 bg-slate-50">
-                                        <div className="flex items-center gap-3 px-2">
-                                            <div className="w-10 h-10 rounded-full bg-primary-600/20 flex items-center justify-center text-primary-400 font-bold border border-primary-500/30">
-                                                {user.name?.[0].toUpperCase()}
-                                            </div>
-                                            <div className="flex flex-col overflow-hidden">
-                                                <span className="text-sm font-semibold text-slate-900 truncate">{user.name}</span>
-                                                <span className="text-[10px] text-slate-500 truncate">{user.email}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {/* Using identical AdminSidebar inside overlay */}
+                                <AdminSidebar isMobile onItemClick={() => setIsMobileMenuOpen(false)} />
                             </motion.div>
                         </motion.div>
                     )}
