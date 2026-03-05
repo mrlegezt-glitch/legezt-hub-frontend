@@ -12,6 +12,7 @@ import LeGeZtHeader from '@/components/labs/LeGeZtHeader';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { safeTextToHtml } from '@/utils/sanitize';
 
 export default function StudentCodeViewerPage({ params }: { params: { labId: string } }) {
     const labId = params.labId;
@@ -29,6 +30,10 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
     const [mobileTab, setMobileTab] = useState<'instructions' | 'code'>('instructions');
     const sidebarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
+
+    const copyToClipboard = (text: string) => {
+        try { navigator.clipboard.writeText(text); } catch { /* clipboard unavailable */ }
+    };
 
     // Fetch Course Structure for Sidebar Navigation
     const [units, setUnits] = useState<any[]>([]);
@@ -321,7 +326,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                     <div className="mb-10">
                                         <h3 className="text-[11px] font-extrabold text-[#4139a8] mb-4 uppercase tracking-[0.2em]">Step-by-Step Instructions</h3>
                                         <div className="prose prose-slate prose-sm max-w-none text-slate-600 leading-7">
-                                            <div dangerouslySetInnerHTML={{ __html: lab.content.procedure.replace(/\n/g, '<br/>') }} />
+                                            <div dangerouslySetInnerHTML={{ __html: safeTextToHtml(lab.content.procedure) }} />
                                         </div>
                                     </div>
                                 )}
@@ -351,7 +356,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                                                 <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
                                                                     <pre className="whitespace-pre-wrap">{tc.input}</pre>
                                                                     <button
-                                                                        onClick={() => navigator.clipboard.writeText(tc.input)}
+                                                                        onClick={() => copyToClipboard(tc.input)}
                                                                         className="absolute top-2 right-2 p-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-600 hover:border-indigo-100"
                                                                     >
                                                                         <Check size={10} />
@@ -363,7 +368,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                                                 <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
                                                                     <pre className="whitespace-pre-wrap">{tc.output}</pre>
                                                                     <button
-                                                                        onClick={() => navigator.clipboard.writeText(tc.output)}
+                                                                        onClick={() => copyToClipboard(tc.output)}
                                                                         className="absolute top-2 right-2 p-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-600 hover:border-indigo-100"
                                                                     >
                                                                         <Check size={10} />
@@ -430,7 +435,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                     <Share2 size={12} className="text-green-500" />
                                 </button>
                                 <button
-                                    onClick={() => navigator.clipboard.writeText(solutionCode)}
+                                    onClick={() => copyToClipboard(solutionCode)}
                                     className="flex bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-2 md:px-3 py-1.5 rounded items-center gap-1.5 md:gap-2 transition-all shadow-md"
                                 >
                                     <span className="opacity-90 hidden md:inline">COPY</span>
