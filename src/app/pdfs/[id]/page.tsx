@@ -106,8 +106,12 @@ export default function PdfViewerPage() {
             }
         } else {
             // Fallback - copy full text to clipboard
-            navigator.clipboard.writeText(shareText);
-            toast.success('Share message copied to clipboard!');
+            try {
+                await navigator.clipboard.writeText(shareText);
+                toast.success('Share message copied to clipboard!');
+            } catch {
+                toast.error('Failed to copy to clipboard');
+            }
         }
     };
 

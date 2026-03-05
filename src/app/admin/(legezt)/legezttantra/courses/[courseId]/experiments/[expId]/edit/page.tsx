@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { labApi } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import { safeTextToHtml } from '@/utils/sanitize';
 
 const MDEditor = dynamic(
     () => import("@uiw/react-md-editor").then((mod) => mod.default),
@@ -356,7 +357,7 @@ export default function EditExperimentPage({ params }: { params: { courseId: str
                                             <p className="text-sm text-slate-700 leading-relaxed font-medium">{labDetails.aim || 'Aim goes here...'}</p>
                                         </div>
                                         <div className="prose prose-sm prose-slate">
-                                            <div dangerouslySetInnerHTML={{ __html: labDetails.procedure?.replace(/\n/g, '<br/>') || 'Instructions will appear here...' }} />
+                                            <div dangerouslySetInnerHTML={{ __html: safeTextToHtml(labDetails.procedure ?? '') || 'Instructions will appear here...' }} />
                                         </div>
                                     </div>
                                 </div>

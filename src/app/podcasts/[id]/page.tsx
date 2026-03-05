@@ -160,7 +160,7 @@ export default function PodcastPlayerPage() {
                     <Volume2 size={32} />
                 </div>
                 <h2 className="text-2xl font-bold mb-2">No Audio Track Available</h2>
-                <p className="text-gray-500 mb-8 max-w-sm text-center">This podcast doesn't have an audio track uploaded yet. Please check back later.</p>
+                <p className="text-gray-500 mb-8 max-w-sm text-center">This podcast doesn&apos;t have an audio track uploaded yet. Please check back later.</p>
                 <button onClick={() => router.back()} className="px-6 py-3 rounded-xl bg-primary-500 text-white font-bold hover:bg-primary-600 transition-colors">
                     Go Back
                 </button>

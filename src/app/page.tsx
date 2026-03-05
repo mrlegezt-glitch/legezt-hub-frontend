@@ -425,7 +425,7 @@ export default function HomePage() {
                             </motion.div>
                             <h2 className="text-3xl md:text-4xl font-black text-white mb-3">Member Exclusive Content</h2>
                             <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                                Browse freely, but you'll need an account to open documents, play full podcasts, or enroll.
+                                Browse freely, but you&apos;ll need an account to open documents, play full podcasts, or enroll.
                             </p>
                             <Link href="/login" className="btn-primary px-10 py-4 rounded-2xl text-base font-bold shadow-2xl shadow-primary-600/30 hover:scale-105 transition-all inline-flex items-center gap-2">
                                 Join for Free <ArrowRight size={18} />
