@@ -31,6 +31,10 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
     const sidebarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
+    const copyToClipboard = (text: string) => {
+        try { navigator.clipboard.writeText(text); } catch { /* clipboard unavailable */ }
+    };
+
     // Fetch Course Structure for Sidebar Navigation
     const [units, setUnits] = useState<any[]>([]);
     const [activeUnitId, setActiveUnitId] = useState<string | null>(null);
@@ -352,7 +356,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                                                 <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
                                                                     <pre className="whitespace-pre-wrap">{tc.input}</pre>
                                                                     <button
-                                                                        onClick={() => { try { navigator.clipboard.writeText(tc.input); } catch { /* clipboard unavailable */ } }}
+                                                                        onClick={() => copyToClipboard(tc.input)}
                                                                         className="absolute top-2 right-2 p-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-600 hover:border-indigo-100"
                                                                     >
                                                                         <Check size={10} />
@@ -364,7 +368,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                                                 <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs font-mono text-slate-800 relative group overflow-hidden">
                                                                     <pre className="whitespace-pre-wrap">{tc.output}</pre>
                                                                     <button
-                                                                        onClick={() => { try { navigator.clipboard.writeText(tc.output); } catch { /* clipboard unavailable */ } }}
+                                                                        onClick={() => copyToClipboard(tc.output)}
                                                                         className="absolute top-2 right-2 p-1.5 bg-slate-50 text-slate-400 border border-slate-200 rounded opacity-0 group-hover:opacity-100 transition-all hover:text-indigo-600 hover:border-indigo-100"
                                                                     >
                                                                         <Check size={10} />
@@ -431,7 +435,7 @@ export default function StudentCodeViewerPage({ params }: { params: { labId: str
                                     <Share2 size={12} className="text-green-500" />
                                 </button>
                                 <button
-                                    onClick={() => { try { navigator.clipboard.writeText(solutionCode); } catch { /* clipboard unavailable */ } }}
+                                    onClick={() => copyToClipboard(solutionCode)}
                                     className="flex bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-[10px] font-bold px-2 md:px-3 py-1.5 rounded items-center gap-1.5 md:gap-2 transition-all shadow-md"
                                 >
                                     <span className="opacity-90 hidden md:inline">COPY</span>
